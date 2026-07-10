@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Workspace</title>
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<header class="global-header" id="global-header">
+  <a class="global-header__brand" href="#/">&#9670; Research Workspace</a>
+  <div class="global-header__search">
+    <input id="global-search-input" class="global-header__search-input" type="search"
+           placeholder="横断検索(資料・知識・質問)" autocomplete="off">
+    <div id="global-search-results" class="search-dropdown" hidden></div>
+  </div>
+  <div id="global-meta" class="global-header__meta"></div>
+</header>
+<main id="app" class="app-root"></main>
+<div id="toast-root" class="toast-root" aria-live="polite"></div>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

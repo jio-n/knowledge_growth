@@ -1,24 +1,27 @@
 # 現在地(handoff)
 
-最終更新: 2026-07-11(設計正本コミット時点)
+最終更新: 2026-07-11 / **状態: MVP完成・E2E検証済み**
 
-## 状態サマリ
+## 何ができているか
 
-- 設計文書: **完了**(docs/product, docs/architecture, docs/decisions)
-- バックエンド: 約70%(config/db/ingest/llm/prompts/context/analysis/sources/qa 実装済)
-- 未実装(バックエンド): `app/routes_knowledge.py`(知識CRUD・suggest・note組立・検索)、`app/routes_export.py`、`app/main.py`、`run.py`、`scripts/fetch_vendor.py`、`tests/`
-- フロントエンド: 未着手(仕様は docs/product/ui_spec.md に完備)
-- 検証: 未実施
+§30の完了条件を満たすMVP。`python run.py` → http://localhost:8300 で以下が動く:
 
-## 進行中の開発方式
+登録(PDF/URL/テキスト・重複検出) → ライブラリ → 読解画面(PDF描画 or ブロック表示) → 構造化初期抽出 → 選択→質問(9種操作) → AI回答(モデル・根拠記録) → 全体/部分保存(AI保存先提案) → 理解ノート(出所バッジ・📍原文ジャンプ) → 翻訳(原文直下) → Markdown/JSONエクスポート → 再訪時の完全復元 → 横断検索。
 
-ADR-005 参照。実装タスクはコミット済み設計文書を仕様としてサブエージェント(または任意の開発者)へ委譲し、オーケストレーターがレビュー・統合する。
+LLMは既定mock(キー不要)。実LLM切替は docs/development/setup.md。
 
-## 次の作業
+## どう検証したか
 
-1. バックエンド残り(api_spec.md 準拠)
-2. フロントエンド一式(ui_spec.md + api_spec.md + source_anchor_spec.md 準拠)
-3. vendor取得スクリプト + 実行
-4. pytest スモークテスト(mockプロバイダー、E2E: 登録→質問→保存→ノート→エクスポート)
-5. ブラウザでの動作確認
-6. docs/development/*(setup/testing/implementation_status/known_issues/roadmap)と handoff 最終化
+docs/development/implementation_status.md の検証ログ参照。pytest 4件 + ブラウザE2E + 実arXivページ取り込み。
+
+## 開発の再開方法(誰でも/どのAIでも)
+
+1. CLAUDE.md → このファイル → docs/development/implementation_status.md を読む
+2. 環境: docs/development/setup.md(Python 3.11+のみ)
+3. 次にやること: docs/handoff/next_actions.md
+4. 要確認事項: docs/handoff/open_questions.md
+5. 開発方式: ADR-005(docs/が正本。実装と文書を常に同期)
+
+## 開発履歴の要点
+
+- 2026-07-11: 設計正本(docs/)作成 → バックエンド → フロントエンド(Sonnetサブエージェント2体が仕様書ベースで実装、オーケストレーターがレビュー・統合・E2E検証)。フロントエンド実装時にライブ検証で5件のバグを検出・修正済(highlight markの属性欠落、anchor JSON文字列/オブジェクト不一致、authors JSON文字列での.join例外、suggest応答による明示的セクション選択の上書き、ルーターの競合レンダリング)。
