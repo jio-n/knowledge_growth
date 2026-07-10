@@ -1,0 +1,81 @@
+# データモデル
+
+最終更新: 2026-07-11 / 正本: `app/db.py` の SCHEMA と本書を常に同期させること。
+
+## ER 概要
+
+```
+sources 1--* source_versions 1--* document_blocks
+sources 1--* questions 1--* answers
+sources 1--* knowledge_items   (question_id/answer_id で Q&A に任意リンク)
+sources 1--* highlights
+sources 1--* translations      (block_id で document_blocks に任意リンク)
+sources *--* tags              (source_tags)
+```
+
+## テーブル
+
+### sources — 資料(ResearchSource, §3・§20)
+共通上位概念。PDF固有情報(file_path)・論文固有情報(doi, arxiv_id)・Web固有情報(canonical_url, site_name)は同一テーブルのnullable列として拡張。
+
+| 列 | 型 | 意味 |
+|----|----|------|
+| id | TEXT PK | uuid4 hex 16桁 |
+| type | TEXT | `pdf` \| `web` \| `text` \| `markdown` |
+| title, authors(JSON配列), year, venue | | 書誌 |
+| url, canonical_url, doi, arxiv_id, site_name, published_at | | 識別子・出典 |
+| lang | TEXT | 2文字言語コード(推定) |
+| content_hash | TEXT | PDF=バイト列sha256 / web,text=抽出本文sha256。重複検出キー |
+| file_path | TEXT | data/files/ 相対。PDF原本 or HTMLスナップショット |
+| reading_status | TEXT | unread/reading/read/recheck |
+| importance | INT | 0-3 |
+| analysis_status | TEXT | pending/running/done/error/skipped(初期抽出の状態機械) |
+| one_line_summary | TEXT | 初期抽出の一言要約(非正規化キャッシュ) |
+| created_at, updated_at, last_opened_at | TEXT | ISO8601 UTC |
+
+### source_versions — 取得版(§6)
+Webページ再取得・PDF差替えに備え、抽出結果は必ず版に属する。MVPでは資料1件=版1件だが、再取得機能追加時にこのテーブルがそのまま受け皿になる。raw_path が取得時スナップショット。
+
+### document_blocks — 抽出本文の構造単位
+全資料タイプの共通正規形。**アンカー・コンテキスト構築・翻訳・表示はすべてブロック単位**(ADR-002)。
+
+| 列 | 意味 |
+|----|------|
+| idx | 版内の順序(0開始)。アンカーの blockIdx に対応 |
+| kind | heading/para/code/quote/list/table/figure |
+| level | 見出しレベル |
+| page | PDFのみ1開始ページ番号 |
+| heading_path | "3 Method > 3.2 Loss" 形式の所属見出し階層 |
+
+### questions / answers — 対話履歴(§10)
+- questions.anchor: SourceAnchor JSON(source_anchor_spec.md)
+- questions.prompt_type: explain/explain_simple/detail/critique/apply/math/free
+- answers に provider, model, prompt_id, prompt_version, context_summary(送信コンテキストの記録JSON) を必ず保存 → 回答の再現性・監査性(§10)
+
+### knowledge_items — 保存された知識(§11・§20)
+理解ノートの実体。ノート=「note_template のセクション順に knowledge_items を並べたもの」であり、独立したノート本文テーブルは持たない(ADR-004)。
+
+| 列 | 意味 |
+|----|------|
+| section_key | config/app.config.json の note_template キー(background, method, ... misc)。テンプレート外キーも許容(エクスポート時は末尾に出力) |
+| origin | source_quote(原文引用)/ auto_extract(初期抽出)/ llm(AI回答由来)/ llm_edited(AI回答をユーザー編集)/ user(ユーザー記述) |
+| info_type | requirements.md の語彙参照 |
+| verification | unverified/verified/disputed(ユーザーが確認したか) |
+| anchor | SourceAnchor JSON。原文へ戻るリンク(§14) |
+| question_id, answer_id | 由来Q&Aへの逆リンク |
+| sort_order | セクション内の並び(REAL、挿入は末尾+1) |
+
+不変条件:
+- `origin='auto_extract'` の項目のみ再解析で削除・再生成される。他のoriginは自動処理で変更禁止(§21)。
+- `origin='llm'` の content をユーザーが編集したら `llm_edited` に遷移させる。
+
+### highlights / translations / tags
+- translations: block_id 単位でキャッシュ(同一ブロック再翻訳を防ぐ)。user_edited フラグでAI訳とユーザー修正を区別(§15)。
+- highlights: anchor + color + comment。
+
+## ID・時刻の規約
+- ID: `uuid.uuid4().hex[:16]`
+- 時刻: UTC ISO8601 秒精度。表示時にローカライズはクライアント側の責務。
+
+## マイグレーション方針
+MVPは CREATE TABLE IF NOT EXISTS のみ。スキーマ変更時は (1) SCHEMA 更新 (2) 本書更新 (3) 必要なら data/knowledge.db の手動移行手順を docs/development/known_issues.md に記録。正式なマイグレーション機構は将来課題。
