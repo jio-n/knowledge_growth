@@ -3,6 +3,10 @@
 All tunables live in config/app.config.json so that other developers /
 AI agents can change LLM providers, context limits and the note template
 without touching code (see docs/architecture/system_architecture.md).
+
+Env overrides:
+  KG_DATA_DIR      — data directory (default <repo>/data). Used by tests.
+  KG_LLM_PROVIDER  — force LLM provider (mock/anthropic/openai_compat).
 """
 from __future__ import annotations
 
@@ -12,11 +16,51 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = ROOT / "config" / "app.config.json"
-DATA_DIR = ROOT / "data"
-FILES_DIR = DATA_DIR / "files"
-DB_PATH = DATA_DIR / "knowledge.db"
 PROMPTS_DIR = ROOT / "prompts"
 CLIENT_DIR = ROOT / "client"
+
+
+def _data_dir() -> Path:
+    return Path(os.environ.get("KG_DATA_DIR", ROOT / "data"))
+
+
+# NOTE: read via functions (not constants) so KG_DATA_DIR set by tests
+# after import still takes effect.
+def data_dir() -> Path:
+    return _data_dir()
+
+
+def files_dir() -> Path:
+    return _data_dir() / "files"
+
+
+def db_path() -> Path:
+    return _data_dir() / "knowledge.db"
+
+
+class _PathProxy:
+    """Backwards-compatible module attributes DATA_DIR/FILES_DIR/DB_PATH that
+    resolve lazily (so tests can set KG_DATA_DIR before first use)."""
+
+    def __init__(self, fn):
+        self._fn = fn
+
+    def __getattr__(self, name):
+        return getattr(self._fn(), name)
+
+    def __fspath__(self):
+        return str(self._fn())
+
+    def __truediv__(self, other):
+        return self._fn() / other
+
+    def __str__(self):
+        return str(self._fn())
+
+
+DATA_DIR = _PathProxy(data_dir)
+FILES_DIR = _PathProxy(files_dir)
+DB_PATH = _PathProxy(db_path)
 
 _config_cache: dict | None = None
 
@@ -45,5 +89,5 @@ def context_config() -> dict:
 
 
 def ensure_dirs() -> None:
-    DATA_DIR.mkdir(exist_ok=True)
-    FILES_DIR.mkdir(exist_ok=True)
+    data_dir().mkdir(parents=True, exist_ok=True)
+    files_dir().mkdir(parents=True, exist_ok=True)
