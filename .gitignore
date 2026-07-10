@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+.pytest_cache/
+.env
+client/vendor/*.mjs
+client/vendor/*.js
+!client/vendor/README.md

@@ -1,0 +1,37 @@
+{
+  "llm": {
+    "provider": "mock",
+    "_providers_available": ["mock", "anthropic", "openai_compat"],
+    "anthropic": {
+      "model": "claude-sonnet-5",
+      "base_url": "https://api.anthropic.com",
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "max_tokens": 2048
+    },
+    "openai_compat": {
+      "model": "gpt-4o-mini",
+      "base_url": "https://api.openai.com/v1",
+      "api_key_env": "OPENAI_API_KEY",
+      "max_tokens": 2048
+    },
+    "timeout_seconds": 120
+  },
+  "context": {
+    "surrounding_blocks": 2,
+    "max_context_chars": 8000,
+    "note_digest_items": 12
+  },
+  "note_template": [
+    { "key": "background",   "label": "研究背景・課題" },
+    { "key": "method",       "label": "提案手法" },
+    { "key": "experiments",  "label": "実験・結果" },
+    { "key": "novelty",      "label": "新規性・既存研究との差分" },
+    { "key": "limitations",  "label": "制約・弱点" },
+    { "key": "terms",        "label": "用語" },
+    { "key": "insights",     "label": "自分の考察" },
+    { "key": "applications", "label": "応用・実装アイデア" },
+    { "key": "questions",    "label": "未解決の疑問" },
+    { "key": "actions",      "label": "次のアクション" },
+    { "key": "misc",         "label": "その他" }
+  ]
+}
