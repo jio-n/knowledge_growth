@@ -1,0 +1,44 @@
+# knowledge_growth redesign v0.4
+
+Status: implementation target  
+Updated: 2026-10-04
+
+This directory is the source-of-truth package for the next reader MVP.
+
+## Reading order
+
+1. [knowledge_growth_mvp_spec_v0_4.md](knowledge_growth_mvp_spec_v0_4.md)  
+   Product behavior, MVP scope, acceptance criteria, subscription-first AI policy.
+2. [knowledge_growth_implementation_tasks_v0_4.md](knowledge_growth_implementation_tasks_v0_4.md)  
+   Phased implementation task list and recommended build order.
+3. [paper_brief_schema_v0_1.md](paper_brief_schema_v0_1.md)  
+   Structured Paper Brief schema, especially for AI/LLM/VLM papers.
+4. [import_bridge_spec_v0_1.md](import_bridge_spec_v0_1.md)  
+   ChatGPT → knowledge_growth `.kgpack` import contract.
+5. [../../decisions/ADR-006_subscription_first_ai_runtime_and_import_bridge.md](../../decisions/ADR-006_subscription_first_ai_runtime_and_import_bridge.md)  
+   Decision record for subscription-first AI runtime and Import Bridge.
+
+## Important distinction
+
+The July 2026 MVP in `docs/handoff/current_status.md` is the **implemented baseline**.
+The documents in this directory describe the **v0.4 implementation target**.
+
+## Development order
+
+Use the task IDs in the implementation task list. Recommended order:
+
+```text
+0. Baseline / migration / AI runtime foundation
+1. PDF bbox / Anchor
+2. Paper Brief + Import Bridge foundation
+3. Japanese / Original / Compare
+4. AI Question + Conversation
+5. Highlight / Memo
+6. Visual Clip
+7. Understanding Note integration
+8. Paper Map / Search
+9. Voice
+10. Export hardening
+```
+
+Do not implement the entire roadmap in one Codex task.
