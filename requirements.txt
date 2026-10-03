@@ -1,6 +1,7 @@
 # Research Reading Workspace — backend dependencies
 # Python >= 3.11 (developed on 3.13)
 fastapi>=0.115
+pydantic>=2.7               # strict Paper Brief / kgpack schemas
 uvicorn>=0.30
 python-multipart>=0.0.9      # file upload
 httpx>=0.27                  # LLM API calls / web fetch / tests

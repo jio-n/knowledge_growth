@@ -34,6 +34,10 @@ Paper Briefは長文要約ではなく、以下の2層で表示する。
 
 ## 2. JSON概念形
 
+この例は概念形。実装済みbackendの厳密なwire schemaは
+[Paper Brief / Import foundation](paper_brief_import_foundation.md#paper-brief-wire-schema)を参照。
+各fieldをflatなenvelopeへ正規化し、JSON schemaで未知keyを拒否する。
+
 ```json
 {
   "schema_version": "paper-brief-0.1",

@@ -35,3 +35,10 @@ pytestでは `pdf_factory.make_pdf()` からメモリ上に生成し、バイナ
 Phase 1では読み順・block/span bbox・図表/数式の候補・安定ID・Anchor fallbackと
 曖昧性・新versionの再抽出・旧schemaからのデータ保全を確認する。
 図表の意味解析、asset保存、crop生成、Visual Clip UIは未実装。
+
+## generated .kgpack
+
+`kgpack_factory.py`は15種類の完全な自作packageをメモリ内で生成する。
+`visual_evidence` PDFの架空スコア/文を使用し、実論文や実AIは利用しない。
+`scripts/generate_kgpack_fixtures.py`は/tmp等へPDF/package/template/JSON schemaを生成する。
+user conflict / duplicate importは同一packageと対応する生成DB状態で検証する。

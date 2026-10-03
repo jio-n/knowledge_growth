@@ -82,3 +82,10 @@ document_blocksを再生成しない。新versionでの再抽出はgenerated fix
 Q&Aの既存context builderにも安全条件を追加し、現行versionのID/indexか、全文quoteの
 一意一致を確認できた場合のみ周辺本文を渡す。曖昧な引用や裸の旧indexからは周辺本文を
 推測しない。検索対象も最新versionに限定する。Context Builder v2やAI runtimeは未実装。
+
+## Import Bridgeのbackend resolver
+
+`app/source_anchor.py`は上記Phase 1契約をPythonで適用する。
+外部packageのID/indexは使用せず、可搬selectorから現行versionのAnchorを生成する。
+field/Key Resultのconfirmedはresolvedのみで保持し、verificationは昇格しない。
+[可搬Evidence契約](../redesign/v0.4/paper_brief_import_foundation.md#evidence-algorithm)を参照。

@@ -99,3 +99,11 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 ### GET /api/sources/{id}/export.md?download=0|1 — text/markdown(export_spec.md準拠)
 ### GET /api/sources/{id}/export.json — 資料の全データダンプ
 ### GET /api/export/all.json — 全資料ダンプ(§19の全退避)
+
+## Import Bridge backend / Paper Brief
+
+`POST /api/import/kgpack/validate`、`POST /api/import/kgpack/preview`（multipart file/source_id/exclude_fields）、
+`POST /api/import/kgpack/commit`（preview_id/confirmed）を分離する。
+`GET /api/sources/{id}/paper-brief`で取得、
+`PATCH /api/sources/{id}/paper-brief/fields/{name}`でユーザー編集を保存する。
+[request/response・status・競合契約](../redesign/v0.4/paper_brief_import_foundation.md#import-flow--api)を参照。

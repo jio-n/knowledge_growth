@@ -79,12 +79,13 @@ example.kgpack
 ```
 
 `manifest.json`:
-- package_schema_version
+- kgpack_schema_version
 - package_id
 - source_identity: title / DOI / arXiv ID / optional source hash
 - generated_by / generated_at
 - paper_brief_schema_version
 - provenance_notice
+- payloads（実装済backendで必須。厳密契約は[Import foundation](paper_brief_import_foundation.md)を参照）
 
 ### ローカルPDFとの照合
 
