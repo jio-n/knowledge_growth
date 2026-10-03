@@ -196,6 +196,15 @@ def run(base, chromium, output):
         result_card.get_by_role('button', name='📍 原文を見る', exact=True).click()
         expect(page.locator('.pdf-scroll')).to_be_visible()
         expect(page.locator('.pdf-evidence-marker')).to_be_visible()
+        # Wait for smooth scrolling and verify the bbox is inside the PDF viewport,
+        # rather than merely attached somewhere on an off-screen page.
+        page.wait_for_function("""() => {
+            const marker = document.querySelector('.pdf-evidence-marker');
+            const pane = document.querySelector('.pdf-scroll');
+            if (!marker || marker.parentElement.dataset.pdfPage !== '2') return false;
+            const m = marker.getBoundingClientRect(), p = pane.getBoundingClientRect();
+            return m.top >= p.top && m.bottom <= p.bottom;
+        }""")
         page.screenshot(path=str(output / 'evidence-jump.png'))
         page.reload()
         expect(panel.get_by_role('heading', name='30秒Brief', exact=True)).to_be_visible()
