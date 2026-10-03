@@ -1,0 +1,152 @@
+{
+  "manifest": {
+    "kgpack_schema_version": "kgpack-0.1",
+    "package_id": "synthetic-package",
+    "source_identity": {
+      "title": "Synthetic Research Fixture",
+      "authors": [
+        "Fixture Author A"
+      ],
+      "year": 2026,
+      "doi": null,
+      "arxiv_id": null,
+      "source_hash": null
+    },
+    "generated_by": "Generated fixture",
+    "generated_at": "2026-10-04T00:00:00Z",
+    "paper_brief_schema_version": "paper-brief-0.1",
+    "provenance_notice": "Invented synthetic AI output; not a publication.",
+    "payloads": [
+      "paper_brief.json",
+      "evidence_refs.json"
+    ]
+  },
+  "paper_brief": {
+    "schema_version": "paper-brief-0.1",
+    "paper_type": {
+      "value": "method",
+      "status": "confirmed",
+      "evidence": [
+        "ev-unique"
+      ],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "one_line_summary": {
+      "value": "An original synthetic method.",
+      "status": "derived",
+      "evidence": [
+        "ev-unique"
+      ],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "research_objective": {
+      "value": "Process synthetic input.",
+      "status": "confirmed",
+      "evidence": [
+        "ev-unique"
+      ],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "background": {
+      "value": null,
+      "status": "not_reported",
+      "evidence": [],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "problem": {
+      "value": null,
+      "status": "not_reported",
+      "evidence": [],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "target_task": {
+      "value": null,
+      "status": "not_reported",
+      "evidence": [],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "target_domain": {
+      "value": null,
+      "status": "not_reported",
+      "evidence": [],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    },
+    "key_results": {
+      "value": [
+        {
+          "id": "result-1",
+          "dataset": "Synthetic-00",
+          "task": "synthetic classification",
+          "setting": "few-shot",
+          "metric": "Accuracy",
+          "score": 62.0,
+          "unit": "%",
+          "split": "test",
+          "comparison": "Synthetic baseline: 60.0%",
+          "status": "confirmed",
+          "evidence": [
+            "ev-result"
+          ]
+        }
+      ],
+      "status": "confirmed",
+      "evidence": [
+        "ev-result"
+      ],
+      "origin": "llm",
+      "user_edited": false,
+      "provenance": {
+        "generated_by": "Generated fixture",
+        "model": "offline-fixture"
+      }
+    }
+  },
+  "evidence_refs": [
+    {
+      "evidence_id": "ev-unique",
+      "page": 1,
+      "quote": "A frozen backbone is evaluated in a few-shot setting."
+    },
+    {
+      "evidence_id": "ev-result",
+      "page": 2,
+      "quote": "Synthetic-00 | Accuracy | few-shot | 60.0 | 62.0",
+      "table_label": "Table 1"
+    }
+  ]
+}

@@ -21,6 +21,11 @@ ChatGPT上で論文を解析し、Paper Brief・Evidence・Knowledge候補・Q&A
 
 ## 3. パッケージ形式
 
+backendの厳密なwire契約・APIは
+[Import foundation](paper_brief_import_foundation.md)を参照。
+manifest version keyは`kgpack_schema_version`、`payloads`を必須とする。
+PDF/assetはこのbackend versionでは常に拒否する。
+
 `.kgpack` はZIP互換コンテナ。
 
 ```text
@@ -37,7 +42,7 @@ example.kgpack
 
 ```json
 {
-  "package_schema_version": "kgpack-0.1",
+  "kgpack_schema_version": "kgpack-0.1",
   "package_id": "...",
   "source_identity": {
     "title": "...",
@@ -50,7 +55,8 @@ example.kgpack
   "generated_by": "ChatGPT",
   "generated_at": "...",
   "paper_brief_schema_version": "paper-brief-0.1",
-  "provenance_notice": "AI-generated analysis; verify against source"
+  "provenance_notice": "AI-generated analysis; verify against source",
+  "payloads": ["paper_brief.json", "evidence_refs.json"]
 }
 ```
 

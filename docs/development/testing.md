@@ -27,3 +27,11 @@
 ## 実LLMでの確認
 
 `KG_LLM_PROVIDER=anthropic`(+キー)で 5・6 を再実行し、回答に原文引用と「資料によると/解釈:」の区別が含まれることを確認。
+
+## Paper Brief / Import foundation
+
+`tests/test_import_bridge.py`はAPIキー・PDF原本なしのvalidator、生成PDFとの照合、
+Python/ブラウザAnchorの一致、preview/commit、競合、stale、二重import、rollback、危険ZIPを検証する。
+`tests/test_migrations.py`はv2→v3のbackup/rollbackと既存研究データ保全も検証する。
+fixture生成: `.venv/bin/python scripts/generate_kgpack_fixtures.py --output /tmp/kgpack-fixtures`。
+CLI確認: `.venv/bin/python -m app.import_bridge validate /tmp/kgpack-fixtures/valid.kgpack`。

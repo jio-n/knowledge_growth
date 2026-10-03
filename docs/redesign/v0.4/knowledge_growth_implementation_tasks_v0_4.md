@@ -48,31 +48,33 @@
 # Phase 2A: ChatGPT Import Bridge（v0.4追加 / P0）
 
 ## T2A-01 `.kgpack` schema
-- [ ] ZIP互換format
-- [ ] manifest.json
-- [ ] paper_brief.json
-- [ ] evidence_refs.json
-- [ ] optional knowledge_items.json / qa_threads.json
-- [ ] schema versioning
-- [ ] package validation
-- [ ] PDF原本はdefaultで含めない
+- [x] ZIP互換format
+- [x] manifest.json
+- [x] paper_brief.json
+- [x] evidence_refs.json
+- [x] optional knowledge_items.json / qa_threads.json
+- [x] schema versioning
+- [x] package validation
+- [x] PDF原本はdefaultで含めない
 
 ## T2A-02 Source matching
-- [ ] source hash
-- [ ] DOI / arXiv ID
-- [ ] title + authors + year
-- [ ] 手動選択fallback
-- [ ] mismatch時は自動適用しない
+- [x] source hash
+- [x] DOI / arXiv ID
+- [x] title + authors + year
+- [x] 手動選択fallback
+- [x] mismatch時は自動適用しない
 
 ## T2A-03 Portable Evidence Resolver
-- [ ] page
-- [ ] quote / prefix / suffix
-- [ ] heading
-- [ ] Figure/Table label
-- [ ] local block_id / bboxへ再解決
-- [ ] unresolved / ambiguous状態
+- [x] page
+- [x] quote / prefix / suffix
+- [x] heading
+- [x] Figure/Table label
+- [x] local block_id / bboxへ再解決
+- [x] unresolved / ambiguous状態
 
 ## T2A-04 Import Preview UI
+
+Backend JSON preview・field除外・commit契約は実装済み。フルUIは未実装。
 - [ ] 対象論文
 - [ ] Brief field差分
 - [ ] Knowledge/Q&A候補
@@ -82,23 +84,26 @@
 - [ ] field/item単位のImport除外
 
 ## T2A-05 Provenance / conflict policy
-- [ ] `chatgpt_import`等のorigin
-- [ ] package_id / generated_by / imported_at
-- [ ] generator label / schema version
-- [ ] user-edited / origin=userを自動上書きしない
-- [ ] imported AI contentをverifiedへ自動昇格しない
+- [x] `chatgpt_import`等のorigin
+- [x] package_id / generated_by / imported_at
+- [x] generator label / schema version
+- [x] user-edited / origin=userを自動上書きしない
+- [x] imported AI contentをverifiedへ自動昇格しない
 
 ## T2A-06 Import API / CLI
-- [ ] `POST /api/import/kgpack` または同等endpoint
-- [ ] previewとcommitを分離
-- [ ] CLI validator（Cloud testでも使用可能）
-- [ ] import transaction / rollback
+- [x] `POST /api/import/kgpack` または同等endpoint
+- [x] previewとcommitを分離
+- [x] CLI validator（Cloud testでも使用可能）
+- [x] import transaction / rollback
 
 ## T2A-07 ChatGPT用Export Template
-- [ ] Paper Brief schemaに沿うJSON template
-- [ ] evidence refsの必須形式
-- [ ] package generator script
-- [ ] schema validator fixture
+- [x] Paper Brief schemaに沿うJSON template
+- [x] evidence refsの必須形式
+- [x] package generator script
+- [x] schema validator fixture
+
+Backend foundation実装記録: [Paper Brief / Import foundation](paper_brief_import_foundation.md)。
+任意Note/Q&Aは検証・preview・package保存まで。既存Note/Q&Aへの反映は後続。
 
 完了条件: ChatGPTで作った`.kgpack`をローカルPDFへ安全に照合し、プレビュー後にPaper Brief等を反映できる。
 
@@ -195,10 +200,10 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 # Phase 2: Paper Brief
 
 ## T2-01 Paper Brief schema実装
-- [ ] Core schema定義
-- [ ] AI/LLM/VLM extension定義
-- [ ] field status: confirmed / derived / not_reported / uncertain / not_applicable
-- [ ] evidence referencesを各fieldに保持
+- [x] Core schema定義
+- [x] AI/LLM/VLM extension定義
+- [x] field status: confirmed / derived / not_reported / uncertain / not_applicable
+- [x] evidence referencesを各fieldに保持
 
 ## T2-02 Paper Type分類
 - [ ] method
@@ -232,10 +237,10 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 - [ ] important figures/tables
 
 ## T2-04 「推測で埋めない」validator
-- [ ] unsupported fieldを検知
-- [ ] evidenceなしの数値をreject/uncertain化
-- [ ] `not_reported` を許容
-- [ ] scoreにdataset / metric / settingを可能な限り紐付け
+- [x] unsupported fieldを検知
+- [x] evidenceなしの数値をreject/uncertain化
+- [x] `not_reported` を許容
+- [x] scoreにdataset / metric / settingを可能な限り紐付け
 
 ## T2-05 Paper Brief UI
 - [ ] 30秒Brief
@@ -245,6 +250,8 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 - [ ] 各fieldから📍根拠へ戻る
 
 ## T2-06 Brief再解析
+
+schema/model/provider/prompt metadataの保存・user-corrected保護は実装済み。AI再生成は未実装。
 - [ ] schema version保存
 - [ ] prompt version保存
 - [ ] provider/model保存

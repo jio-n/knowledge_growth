@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import CLIENT_DIR, llm_config, note_template
 from .db import init_db
-from . import routes_export, routes_knowledge, routes_qa, routes_sources
+from . import routes_export, routes_import, routes_knowledge, routes_qa, routes_sources
 
 PROMPT_TYPES = [
     {"key": "explain", "label": "分かりやすく説明"},
@@ -38,6 +38,7 @@ def create_app() -> FastAPI:
     app.include_router(routes_qa.router)
     app.include_router(routes_knowledge.router)
     app.include_router(routes_export.router)
+    app.include_router(routes_import.router)
 
     @app.get("/api/meta")
     def get_meta():

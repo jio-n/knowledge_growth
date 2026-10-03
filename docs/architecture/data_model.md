@@ -103,3 +103,9 @@ SQLite Backup APIでバックアップしてから登録する。全未適用mig
 
 後続Phaseではv1 SQLを変更せず、連番migrationと本書の更新を追加する。
 詳細な実行方法・backup・復旧手順は [db_migrations.md](../development/db_migrations.md) を参照。
+
+## Paper Brief / Import Bridge（v3追加）
+
+knowledge_itemsとは独立したpaper_briefs / paper_brief_fieldsへ構造化Briefを保存する。
+import_previewsへ確認用snapshot、import_packagesへ二重import防止とprovenanceを保存する。
+既存テーブルは変更しない。[schemaと保護方針](../redesign/v0.4/paper_brief_import_foundation.md#db-schema-v3)を参照。

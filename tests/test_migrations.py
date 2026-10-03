@@ -52,12 +52,14 @@ def _snapshot(con):
     tables = [r[0] for r in con.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name!='schema_version' ORDER BY name"
     )]
+    # Snapshot legacy data independently of newly added, initially empty tables.
     with closing(sqlite3.connect(":memory:")) as baseline:
         baseline.executescript(BASELINE_SCHEMA)
+        baseline_tables = {r[0] for r in baseline.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         columns = {table: [r[1] for r in baseline.execute(f'PRAGMA table_info("{table}")')]
-                   for table in tables if table != "test_extension"}
+                   for table in tables if table in baseline_tables}
     return {table: con.execute('SELECT ' + ','.join(columns.get(table, ["*"])) +
-                              f' FROM "{table}" ORDER BY rowid').fetchall() for table in tables}
+                              f' FROM "{table}" ORDER BY rowid').fetchall() for table in tables if table in columns or table == "test_extension"}
 
 
 def test_fresh_database_and_idempotence(database, tmp_path):
@@ -96,11 +98,11 @@ def test_future_versions_apply_in_order(database):
     before = _snapshot(database)
     run_migrations(database)
     future = MIGRATIONS + (
-        Migration(3, "test_extension", "CREATE TABLE test_extension (id TEXT PRIMARY KEY);"),
-        Migration(4, "test_fill", "INSERT INTO test_extension VALUES ('kept');"),
+        Migration(4, "test_extension", "CREATE TABLE test_extension (id TEXT PRIMARY KEY);"),
+        Migration(5, "test_fill", "INSERT INTO test_extension VALUES ('kept');"),
     )
     assert run_migrations(database, migrations=future).exists()
-    assert database.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [(1,), (2,), (3,), (4,)]
+    assert database.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [(1,), (2,), (3,), (4,), (5,)]
     assert database.execute("SELECT * FROM test_extension").fetchall() == [("kept",)]
     assert {k: v for k, v in _snapshot(database).items() if k != "test_extension"} == before
     assert run_migrations(database, migrations=future) is None
@@ -110,8 +112,8 @@ def test_failure_rolls_back_ddl_data_and_entire_pending_history(database):
     _seed_legacy(database)
     before = _snapshot(database)
     future = MIGRATIONS + (
-        Migration(3, "test_change", "CREATE TABLE test_extension (id TEXT); UPDATE knowledge_items SET content='changed';"),
-        Migration(4, "test_failure", "INSERT INTO nonexistent_table VALUES (1);"),
+        Migration(4, "test_change", "CREATE TABLE test_extension (id TEXT); UPDATE knowledge_items SET content='changed';"),
+        Migration(5, "test_failure", "INSERT INTO nonexistent_table VALUES (1);"),
     )
     with pytest.raises(sqlite3.OperationalError):
         run_migrations(database, migrations=future)
@@ -178,7 +180,7 @@ def test_startup_adopts_existing_database(tmp_path, monkeypatch):
     init_db()
     with closing(sqlite3.connect(tmp_path / "knowledge.db")) as con:
         assert _snapshot(con) == before
-        assert con.execute("SELECT version FROM schema_version").fetchall() == [(1,), (2,)]
+        assert con.execute("SELECT version FROM schema_version").fetchall() == [(1,), (2,), (3,)]
 
 
 def test_cli_status_and_migration(tmp_path):
@@ -192,15 +194,53 @@ def test_cli_status_and_migration(tmp_path):
     status = subprocess.run(command + ["--status"], env=env, capture_output=True, text=True, check=True)
     assert "v1 july_2026_baseline" in status.stdout
     assert "v2 pdf_evidence_geometry" in status.stdout
+    assert "v3 paper_brief_import" in status.stdout
 
 
 def test_stamped_v1_to_v2_preserves_legacy_and_unknown_geometry(database):
     _seed_legacy(database)
     run_migrations(database, migrations=MIGRATIONS[:1])
     before = _snapshot(database)
-    backup = run_migrations(database)
+    backup = run_migrations(database, migrations=MIGRATIONS[:2])
     assert backup.exists() and _snapshot(database) == before
     assert database.execute("SELECT bbox_json,role FROM document_blocks").fetchall() == [(None, None)]
     with closing(sqlite3.connect(backup)) as restored:
         assert restored.execute("SELECT version FROM schema_version").fetchall() == [(1,)]
         assert _snapshot(restored) == before
+
+
+def test_v2_to_v3_backup_preserves_all_existing_rows_and_anchor(database):
+    _seed_legacy(database)
+    run_migrations(database, migrations=MIGRATIONS[:2])
+    before = _snapshot(database)
+    database.execute("UPDATE document_blocks SET bbox_json='generated-bbox',role='para'")
+    database.commit()
+    backup = run_migrations(database)
+    assert backup.exists()
+    assert _snapshot(database) == before
+    assert database.execute('SELECT bbox_json,role FROM document_blocks').fetchall() == [('generated-bbox', 'para')]
+    assert database.execute('SELECT version FROM schema_version').fetchall() == [(1,), (2,), (3,)]
+    for table in ('paper_briefs', 'paper_brief_fields', 'import_packages', 'import_previews'):
+        assert database.execute(f'SELECT COUNT(*) FROM {table}').fetchone()[0] == 0
+    with closing(sqlite3.connect(backup)) as restored:
+        assert restored.execute('SELECT version FROM schema_version').fetchall() == [(1,), (2,)]
+        assert restored.execute("SELECT name FROM sqlite_master WHERE name='paper_briefs'").fetchone() is None
+        assert restored.execute('SELECT bbox_json,role FROM document_blocks').fetchall() == [('generated-bbox', 'para')]
+        assert _snapshot(restored) == before
+        restored.execute('PRAGMA foreign_keys=ON')
+        run_migrations(restored)
+        assert _snapshot(restored) == before
+
+
+def test_v3_pending_failure_rolls_back_extension_and_preserves_v2(database):
+    _seed_legacy(database)
+    run_migrations(database, migrations=MIGRATIONS[:2])
+    before = _snapshot(database)
+    failing = MIGRATIONS + (Migration(4, 'injected_failure', "UPDATE knowledge_items SET content='lost'; INSERT INTO missing_table VALUES (1);"),)
+    with pytest.raises(sqlite3.OperationalError):
+        run_migrations(database, migrations=failing)
+    assert _snapshot(database) == before
+    assert database.execute('SELECT version FROM schema_version').fetchall() == [(1,), (2,)]
+    assert database.execute("SELECT name FROM sqlite_master WHERE name LIKE 'paper_brief%' OR name LIKE 'import_%'").fetchall() == []
+    run_migrations(database)
+    assert _snapshot(database) == before
