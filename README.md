@@ -10,7 +10,7 @@
 
 ## Windows: ワンクリック起動
 
-前提は **Python 3.11+** のみです。
+アプリ起動の前提は **Python 3.11+** のみです。開発用のPhase 1 resolverテストにはNode.js 18+を使います。
 
 `start_knowledge_growth.bat` をダブルクリックしてください。
 

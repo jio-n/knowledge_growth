@@ -1,14 +1,14 @@
 # SQLite migration・バックアップ・復旧
 
-更新: 2026-10-04 / redesign v0.4 Phase 0 (T0-02)
+更新: 2026-10-04 / redesign v0.4 Phase 1 (T1-02)
 
 ## 起動時の移行
 
 FastAPI起動時の `app.db.init_db()` が `app.migrations.run_migrations()` を実行する。
 `KG_DATA_DIR` 未指定なら対象は `data/knowledge.db`。
 
-- 新規DB: `001_baseline.sql` の10テーブルとindexを作成し、v1を登録する。
-- 版管理のない現行DB: v1の列定義・外部キー・indexを検証し、バックアップ後にv1を登録する。
+- 新規DB: `001_baseline.sql` の10テーブルとindexを作成し、v1/v2を登録する。
+- 版管理のない現行DB: v1の列定義・外部キー・indexを検証し、バックアップ後にv1/v2を登録する。
   既存ID、SourceAnchorのJSON、ノート、origin、verification、翻訳修正フラグ等は変更しない。
 - 移行済みDB: 未適用の版のみ順番に実行する。再起動で履歴やバックアップを増やさない。
 - 未知の版、新しい版、履歴の欠落・名前の不一致、現行schemaと異なる未版管理DBは拒否する。
@@ -75,5 +75,8 @@ Python側で `executescript()` を使うと暗黙commitされるためrunnerで�
 既存DBからの移行、繰返し起動、失敗時のデータ・DDL・履歴rollbackをテストし、
 `docs/architecture/data_model.md` を同時に更新する。
 
-現時点の実schemaはv1のみ。テスト中のv2/v3はrunnerの将来移行能力を検証する
-一時的なschemaであり、Phase 1以降のテーブル・機能を追加するものではない。
+現時点の実schemaはv2。`002_pdf_evidence_geometry.sql` はdocument_blocksに
+nullableのbbox_json / roleだけを追加する。v1の既存DBはbackup後にv2へ移行する。
+既存行の新列はNULL。PDFを自動再抽出したり、保存済みAnchorを変更したりしない。
+source_hashは既存source_versions.content_hashで取得する。
+テスト用v3/v4はrunner検証用の一時schemaで、後続Phaseの実装ではない。

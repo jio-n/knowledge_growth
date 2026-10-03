@@ -1,6 +1,6 @@
 # セットアップ手順
 
-前提: Python 3.11+(開発は3.13)、git。**Node.jsは不要**。
+前提: Python 3.11+(開発は3.13)、git。アプリ起動・buildにNode.jsは不要。Phase 1のpytestには、実際のbrowser resolverを実行するためNode.js 18+が必要。
 
 ```bash
 git clone <repo> && cd knowledge_growth

@@ -47,3 +47,10 @@ Use the task IDs in the implementation task list. Recommended order:
 ```
 
 Do not implement the entire roadmap in one Codex task.
+
+## Implementation records
+
+- [Phase 0 baseline](phase0_baseline.md): migration基盤とgenerated fixtures。
+- [Phase 1 PDF / Anchor](phase1_pdf_anchor.md): T1-01〜T1-03、schema v2、検証・制約。
+
+Phase 2以降とPhase 0AのAI runtimeは未実装。

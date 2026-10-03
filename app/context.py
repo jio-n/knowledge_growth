@@ -8,9 +8,46 @@ recorded in answers.context_summary for traceability (§10).
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 
 from .config import context_config, note_template
+
+
+def anchor_context_index(con: sqlite3.Connection, source_id: str, anchor: dict | None) -> int | None:
+    """Gate the existing context builder; stale/ambiguous indices are not evidence.
+
+    This is a safety check, not a second bbox/navigation resolver. Portable
+    selectors without a unique quote leave surrounding context empty.
+    """
+    if not isinstance(anchor, dict):
+        return None
+    version = con.execute(
+        "SELECT id FROM source_versions WHERE source_id=? ORDER BY fetched_at DESC LIMIT 1",
+        (source_id,)).fetchone()
+    if not version:
+        return None
+    blocks = con.execute("SELECT id,idx,text FROM document_blocks WHERE version_id=? ORDER BY idx",
+                         (version["id"],)).fetchall()
+    def norm(text):
+        return re.sub(r"\s+", " ", str(text or "")).strip()
+    quote = norm(anchor.get("quote"))
+    if anchor.get("sourceVersion") == version["id"]:
+        for block in blocks:
+            if ((anchor.get("blockId") and anchor["blockId"] == block["id"])
+                    or (not anchor.get("blockId") and anchor.get("blockIdx") == block["idx"])):
+                return block["idx"] if not quote or quote in norm(block["text"]) else None
+    # Old saved anchors may have a stale idx. Only a full unique quote supports
+    # surrounding context; duplicates (even within one block) remain uncertain.
+    matches = [block for block in blocks if quote and quote in norm(block["text"])]
+    if len(matches) == 1 and norm(matches[0]["text"]).count(quote) == 1:
+        text = norm(matches[0]["text"])
+        start = text.index(quote)
+        prefix, suffix = norm(anchor.get("prefix")), norm(anchor.get("suffix"))
+        if ((not prefix or text[:start].rstrip().endswith(prefix))
+                and (not suffix or text[start + len(quote):].lstrip().startswith(suffix))):
+            return matches[0]["idx"]
+    return None
 
 
 def surrounding_context(con: sqlite3.Connection, source_id: str,
@@ -22,7 +59,9 @@ def surrounding_context(con: sqlite3.Connection, source_id: str,
     n = cfg["surrounding_blocks"]
     rows = con.execute(
         """SELECT idx, kind, text, heading_path FROM document_blocks
-           WHERE source_id = ? AND idx BETWEEN ? AND ? ORDER BY idx""",
+           WHERE version_id = (SELECT id FROM source_versions WHERE source_id=?
+                               ORDER BY fetched_at DESC LIMIT 1)
+           AND idx BETWEEN ? AND ? ORDER BY idx""",
         (source_id, block_idx - n, block_idx + n),
     ).fetchall()
     before, after, heading = [], [], ""

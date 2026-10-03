@@ -1,47 +1,84 @@
-# 原文アンカー仕様(SourceAnchor)
+# 原文アンカー仕様（SourceAnchor）
 
-最終更新: 2026-07-11 / 状態: 確定(v1)。W3C Web Annotation の TextQuoteSelector を参考に、複数の手がかりを冗長に持つことで再解析・ページ更新後もリンク復元できるようにする(§14)。
+更新: 2026-10-04 / redesign v0.4 Phase 1（T1-03）。保存先は従来どおり
+questions.anchor / knowledge_items.anchor / highlights.anchor のJSON文字列。
+既存JSONをmigrationで書き換えない。
 
-## JSON スキーマ
+## JSON形式
 
 ```json
 {
   "type": "text-quote",
-  "quote":  "選択された原文そのもの(最大500字)",
-  "prefix": "直前の文脈(最大60字)",
-  "suffix": "直後の文脈(最大60字)",
-  "blockId":  "document_blocks.id(最優先の解決キー)",
+  "sourceVersion": "source_versions.id",
+  "sourceHash": "source_versions.content_hash",
+  "blockId": "document_blocks.id",
   "blockIdx": 12,
   "page": 5,
+  "bbox": {
+    "coordinate_system": "pymupdf_unrotated",
+    "units": "pt",
+    "rect": [40, 145, 555, 190],
+    "page_rect": [0, 0, 595, 842],
+    "rotation": 0
+  },
+  "quote": "選択された原文（最大500字）",
+  "prefix": "引用直前（最大60字）",
+  "suffix": "引用直後（最大60字）",
   "headingPath": "3 Method > 3.2 Loss"
 }
 ```
 
-すべてのフィールドは任意(ベストエフォート)。ただし作成時は取得可能なものを全部埋めること。
+全フィールドは任意。quote/prefix/suffixは空白を正規化し、quoteは保存された全文で比較する。
+先頭80字への切り詰めや、同点候補から先頭を選ぶ処理は行わない。
+headingPathは表示の手がかりであり、それだけで根拠の一致を確定しない。
 
-## 作成(クライアント側)
+## 作成
 
-- ブロック表示(web/text/markdown/PDF代替テキスト): 選択範囲を含むブロック要素から blockId/blockIdx/headingPath/page を取り、quote=選択文字列、prefix/suffixはブロックテキスト内の前後から切り出す。
-- PDF(pdf.jsテキストレイヤー): 選択スパンの属するページ番号 + quote + 対応する抽出ブロック(後述の対応付けで最も近いもの)の blockIdx。
+- 原文ブロック: version、source hash、ID/index、page、ブロックbbox、quoteと前後文脈。
+- PDF text layer: 選択矩形をPDF.js viewportで逆変換し、ページ左上原点の未回転座標へ戻す。
+  page + bbox + quoteが一意に解決できる場合だけID/index/headingPathを補う。
+  ページ先頭ブロックへの近似割当は行わない。描画順のprefix/suffixは本文順と違うため保存しない。
+- 複数ページ・複数ブロックをまたぐ選択に単一ブロックを割り当てない。
+- ブロックbboxとPDF選択bboxでは粒度が異なる。どちらも同じ座標契約を使う。
 
-## 解決(復元)アルゴリズム — 上から順に試行、成功した時点で終了
+## 解決優先度と安全条件
 
-1. **blockId** が現行版に存在 → そのブロックへスクロールし、ブロック内で quote を部分一致ハイライト。
-2. **blockIdx** が現行版の範囲内で、そのブロックテキストに quote(先頭80字)が含まれる → 同上。
-3. **quote 全文検索**: 全ブロックから quote(先頭80字、空白正規化)を検索。複数一致時は prefix/suffix の一致度で選ぶ。
-4. **page**(PDF)→ 当該ページ先頭へスクロール(引用ハイライトなし)。
-5. すべて失敗 → 資料先頭 + 「原文位置を特定できませんでした(資料が更新された可能性)」のトースト表示。**リンク切れでも知識項目自体は失われない。**
+`client/js/anchor.js` の純粋関数 `resolveSourceAnchor(anchor, blocks, version)` を、
+Readerの根拠ジャンプと保存済みhighlightで共用する。
 
-空白正規化: 連続空白を1つに、前後trim してから比較する。
+1. **sourceVersion + blockId**: 現行versionとblock.version_idが一致すること。
+   quoteがあれば全文がブロックに含まれることも確認する。
+2. **page + bbox**: 座標形式・ページ寸法が一致し、交差面積/小さい方の矩形面積が0.8以上の
+   ブロックを探す。quoteがあれば前後文脈を含めて一致するものだけを対象にする。
+   一意な候補に限って確定し、versionまたはsource hashが一致しない場合は、文書全体でも
+   quoteと文脈が一意に一致することを要求する。異なる原本に座標だけで確定しない。
+3. **quote + prefix + suffix**: 全ブロックの全出現位置を比較。前後文脈がある場合は
+   それぞれの全文一致を要求する。重複が残ったら候補表示。同一ブロック内の重複も数える。
+4. **blockIdx**: 現行versionが一致する場合のみ。quoteがあれば一致が必要。
+   曖昧なbbox/quoteをindexで上書きしない。
+5. **page**: 存在するページへの粗い移動。根拠は未解決と明示し、引用をhighlightしない。
+6. **候補 / unresolved**: 候補は確認ボタンとして表示する。選択はその場の閲覧だけで、
+   保存済みAnchorの自動書換えやverification変更は行わない。
 
-## 設計理由
+返値は `status: resolved | candidates | page_only | unresolved`、`method`、
+`block`、`page`、`candidates`、`reason`。resolved以外は確定根拠扱いしない。
+旧Anchorはquote等の可搬selectorで解決する。versionのない裸のID/indexだけでは自動確定せず、
+pageまたはunresolvedへ劣化する。情報不足でもQ&A・ノート自体は削除しない。
 
-- blockId は高速だが版に依存する。quote+prefix/suffix は版をまたいで生き残る。両方持つことで「速い通常時 + 頑健な劣化時」を実現。
-- Webページ更新で再取得(将来機能)しても、quote ベースの解決が新版ブロックに対して動く。
-- bounding box(PDF座標)は将来拡張(roadmap)。現行はページ+テキスト検索で十分な精度。
+## 表示と永続化
 
-## 実装箇所
+- PDFの確定根拠は対象ブロックのbboxへ移動し、一時的な領域枠を表示する。
+  文字列の最初の出現位置へのジャンプは根拠解決に使わない。
+- bboxがない旧ブロックはページまで移動できる。正確なPDF領域の表示は保証しない。
+- highlightはresolvedブロックにのみ適用。ブロック内の生文字列quoteが複数ある場合は
+  markを適用せず、別の出現位置を誤って塗らない。
+- Anchor解決結果は閲覧時に計算し、既存のユーザーJSONやノートを自動変更しない。
 
-- 作成: `client/js/components/selection.js`(makeAnchor)
-- 解決: `client/js/views/reader.js`(resolveAnchor)— ブロック表示とPDF表示の両方を扱う
-- 保存形式: questions.anchor / knowledge_items.anchor / highlights.anchor(いずれもJSON文字列)
+## 実装範囲
+
+PDF再取得・差替え・再抽出のAPI/UIは今回追加しない。既存 `/reanalyze` はAI解析であり、
+document_blocksを再生成しない。新versionでの再抽出はgenerated fixturesとDBテストで模擬する。
+本resolverはクライアントのEvidence navigationとhighlightに適用する。
+Q&Aの既存context builderにも安全条件を追加し、現行versionのID/indexか、全文quoteの
+一意一致を確認できた場合のみ周辺本文を渡す。曖昧な引用や裸の旧indexからは周辺本文を
+推測しない。検索対象も最新versionに限定する。Context Builder v2やAI runtimeは未実装。

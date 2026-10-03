@@ -1,6 +1,6 @@
 # データモデル
 
-最終更新: 2026-10-04 / schema v1。正本: `app/migrations/001_baseline.sql` と本書を同期させること。後続schemaは新しいmigrationで追加する。
+最終更新: 2026-10-04 / schema v2。正本: `app/migrations/001_baseline.sql` と `002_pdf_evidence_geometry.sql`。v1は固定し、新しいmigrationで拡張する。
 
 ## ER 概要
 
@@ -46,6 +46,17 @@ Webページ再取得・PDF差替えに備え、抽出結果は必ず版に属�
 | level | 見出しレベル |
 | page | PDFのみ1開始ページ番号 |
 | heading_path | "3 Method > 3.2 Loss" 形式の所属見出し階層 |
+| bbox_json | nullable TEXT。未回転PyMuPDF座標・ページ寸法・rotation・span矩形を含むJSON |
+| role | nullable TEXT。figure_caption/table_caption/figure_candidate/table_candidate/equation_candidate |
+
+通常本文・見出しのroleはNULL。図表領域候補はkind=figure/table、textは空文字。
+roleは候補識別であり、意味の確定・captionとassetの確定関係を表さない。
+既存行は新列がNULLのまま残り、座標や分類を推測で補完しない。
+source_hashはsource_versions.content_hashを再利用する。parent_block_id/asset_refは
+Phase 1で使う実体がないため追加しない。bbox契約と読み順は
+[Phase 1記録](../redesign/v0.4/phase1_pdf_anchor.md) を参照。
+
+GET document APIではbbox_jsonに加え、パース済みのbboxを返す。
 
 ### questions / answers — 対話履歴(§10)
 - questions.anchor: SourceAnchor JSON(source_anchor_spec.md)
@@ -74,14 +85,17 @@ Webページ再取得・PDF差替えに備え、抽出結果は必ず版に属�
 - highlights: anchor + color + comment。
 
 ## ID・時刻の規約
-- ID: `uuid.uuid4().hex[:16]`
+- 通常ID: `uuid.uuid4().hex[:16]`。既存IDは変更しない。
+- 新規document_blocks.id: version + kind/text/page/role/bbox + 同一内容の出現回数を
+  SHA-256で64桁にする。idx・heading_pathには依存せず、同一versionで同一抽出結果なら安定。
+  異なるversionは異なるID。内容や座標が変わる場合はAnchor fallbackで確認する。
 - 時刻: UTC ISO8601 秒精度。表示時にローカライズはクライアント側の責務。
 
 ## マイグレーション方針
 
 `schema_version(version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT NOT NULL)`
-に適用済みmigration履歴を保持する。現在はJuly 2026 baselineをv1として登録する。
-研究オブジェクトの列定義はJuly baselineのまま。
+に適用済みmigration履歴を保持する。July 2026 baselineをv1、PDF geometry追加をv2として登録する。
+研究オブジェクトの既存列・ID・Anchor JSONは変更しない。
 
 `app.db.init_db()` がmigration runnerを呼ぶ。未版管理の現行DBはschemaを検証し、
 SQLite Backup APIでバックアップしてから登録する。全未適用migrationを1 transactionで

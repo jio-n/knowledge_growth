@@ -4,6 +4,7 @@
 // shows per-block translations, applies highlights as <mark> elements.
 // IMPORTANT: source text is always inserted via textContent, never innerHTML.
 
+import { resolveSourceAnchor } from "../anchor.js";
 import { api } from "../api.js";
 import { el, flashElement, normalizeWhitespace, parseAnchor } from "../util.js";
 import { marked } from "/vendor/marked.esm.js";
@@ -12,6 +13,7 @@ import { marked } from "/vendor/marked.esm.js";
 let blocksById = new Map();   // block.id -> { block, wrap, body, controlsHost }
 let blocksByIdx = new Map();  // block.idx -> same record
 let currentBlocks = [];
+let currentVersion = {};
 let currentContainer = null;
 let currentSourceId = null;
 let translationState = new Map(); // block.id -> { text, visible }
@@ -44,6 +46,7 @@ export function render(container, doc, sourceId) {
   blocksByIdx = new Map();
   translationState = new Map();
   currentBlocks = doc.blocks || [];
+  currentVersion = doc.version || {};
   container.textContent = "";
   container.classList.add("doc-scroll");
 
@@ -102,6 +105,7 @@ export function render(container, doc, sourceId) {
 
 function renderBlockControls(record) {
   record.controlsHost.textContent = "";
+  if (!record.block.text) return;
   const st = translationState.get(record.block.id);
   if (!st || !st.visible) {
     record.controlsHost.append(el("button", {
@@ -155,31 +159,17 @@ function renderTranslationHost(record) {
 
 // ---------- highlights ----------
 
-function resolveHighlightBlock(anchor) {
-  if (!anchor) return null;
-  if (anchor.blockId && blocksById.has(anchor.blockId)) return blocksById.get(anchor.blockId).block;
-  if (anchor.blockIdx != null && blocksByIdx.has(anchor.blockIdx)) {
-    const b = blocksByIdx.get(anchor.blockIdx).block;
-    if (!anchor.quote || normalizeWhitespace(b.text).includes(normalizeWhitespace(anchor.quote).slice(0, 80))) return b;
-  }
-  if (anchor.quote) {
-    const q = normalizeWhitespace(anchor.quote).slice(0, 80);
-    const candidates = currentBlocks.filter((b) => normalizeWhitespace(b.text).includes(q));
-    if (candidates.length >= 1) return candidates[0];
-  }
-  return null;
-}
-
 export function applyHighlightMark(highlight) {
   const anchor = parseAnchor(highlight.anchor);
-  const block = resolveHighlightBlock(anchor);
+  const result = resolveSourceAnchor(anchor, currentBlocks, currentVersion);
+  const block = result.status === "resolved" ? result.block : null;
   if (!block) return;
   const record = blocksById.get(block.id);
   if (!record) return;
   const quote = anchor?.quote;
   if (!quote) return;
   const idx = block.text.indexOf(quote);
-  if (idx === -1) return;
+  if (idx === -1 || block.text.indexOf(quote, idx + 1) !== -1) return;
   wrapRangeApply(record.body, idx, idx + quote.length, (mark) => {
     mark.className = "kg-highlight";
     mark.dataset.highlightId = highlight.id;

@@ -20,7 +20,10 @@ class Migration:
 
 
 # Append only: later phases add versions here, without changing the v1 snapshot.
-MIGRATIONS = (Migration(1, "july_2026_baseline", BASELINE_SCHEMA),)
+MIGRATIONS = (
+    Migration(1, "july_2026_baseline", BASELINE_SCHEMA),
+    Migration(2, "pdf_evidence_geometry", (Path(__file__).parent / "002_pdf_evidence_geometry.sql").read_text(encoding="utf-8")),
+)
 
 
 class MigrationError(RuntimeError):

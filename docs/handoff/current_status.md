@@ -7,7 +7,10 @@
 mockのブラウザE2Eが成功した。以下はJuly baselineの記録。
 最新の検証結果・残課題は [Phase 0 baseline](../redesign/v0.4/phase0_baseline.md)、
 移行手順は [DB migrations](../development/db_migrations.md) を参照。
-次のReader開発はPhase 1、AI Runtime Foundation（Phase 0A）は別途未着手。
+2026-10-04: Phase 1（T1-01〜T1-03）でPDF block/span bbox、2段組読み順、
+v2 migration、保守的なAnchor resolverを実装。
+最新記録は [Phase 1 PDF / Anchor](../redesign/v0.4/phase1_pdf_anchor.md)。
+次のReader開発はPhase 2。AI Runtime Foundation（Phase 0A）は別途未着手。
 
 ## 何ができているか
 
