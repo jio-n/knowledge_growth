@@ -1,6 +1,6 @@
 # データモデル
 
-最終更新: 2026-07-11 / 正本: `app/db.py` の SCHEMA と本書を常に同期させること。
+最終更新: 2026-10-04 / schema v1。正本: `app/migrations/001_baseline.sql` と本書を同期させること。後続schemaは新しいmigrationで追加する。
 
 ## ER 概要
 
@@ -78,4 +78,14 @@ Webページ再取得・PDF差替えに備え、抽出結果は必ず版に属�
 - 時刻: UTC ISO8601 秒精度。表示時にローカライズはクライアント側の責務。
 
 ## マイグレーション方針
-MVPは CREATE TABLE IF NOT EXISTS のみ。スキーマ変更時は (1) SCHEMA 更新 (2) 本書更新 (3) 必要なら data/knowledge.db の手動移行手順を docs/development/known_issues.md に記録。正式なマイグレーション機構は将来課題。
+
+`schema_version(version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT NOT NULL)`
+に適用済みmigration履歴を保持する。現在はJuly 2026 baselineをv1として登録する。
+研究オブジェクトの列定義はJuly baselineのまま。
+
+`app.db.init_db()` がmigration runnerを呼ぶ。未版管理の現行DBはschemaを検証し、
+SQLite Backup APIでバックアップしてから登録する。全未適用migrationを1 transactionで
+実行し、失敗時はDDL・データ・履歴をrollbackする。未知・新しい版は自動downgradeしない。
+
+後続Phaseではv1 SQLを変更せず、連番migrationと本書の更新を追加する。
+詳細な実行方法・backup・復旧手順は [db_migrations.md](../development/db_migrations.md) を参照。

@@ -30,7 +30,8 @@ app/export.py      エクスポート(Markdown/JSON)
 | `run.py` | エントリポイント(uvicorn起動、初回DB作成) |
 | `app/main.py` | FastAPIアプリ組立、静的ファイル配信、/api/meta |
 | `app/config.py` | 設定ロード、パス定数(ROOT/DATA_DIR/FILES_DIR/DB_PATH) |
-| `app/db.py` | スキーマ(SCHEMA)、get_db()、new_id()、now() |
+| `app/db.py` | get_db()、init_db()からmigrationを実行、new_id()、now()、v1 SCHEMA互換alias |
+| `app/migrations/` | v1 schema snapshot、schema_version履歴、transaction・backup付きrunner、CLI |
 | `app/ingest/common.py` | Block/ExtractedDoc、ハッシュ、DOI/arXiv抽出、重複検出 |
 | `app/ingest/pdf.py` | PyMuPDF抽出(フォントサイズで見出し推定、段落クラスタリング) |
 | `app/ingest/web.py` | httpx取得 + readability本文抽出 + bs4ブロック化 + HTMLスナップショット |
@@ -46,7 +47,7 @@ app/export.py      エクスポート(Markdown/JSON)
 | `app/routes_export.py` | export.md / export.json / all.json |
 | `app/export.py` | Markdown生成(export_spec.md準拠)、JSONダンプ |
 | `client/` | UI仕様は ui_spec.md 参照 |
-| `tests/` | mockプロバイダーでのE2E APIスモークテスト |
+| `tests/` | mockでのE2E API、生成PDF fixtures、DB migration・保全・rollback検証 |
 
 ## 主要フロー
 

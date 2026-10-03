@@ -4,26 +4,10 @@ mock LLM provider.
 """
 from __future__ import annotations
 
-import os
-import tempfile
+import time
 
-# Must be set before any `app.*` module is imported (app.config reads them
-# at call time, but app.db.get_db()/DB_PATH resolve KG_DATA_DIR lazily —
-# still, setting this up front keeps every module consistent).
-os.environ["KG_DATA_DIR"] = tempfile.mkdtemp()
-os.environ["KG_LLM_PROVIDER"] = "mock"
-
-import time  # noqa: E402
-
-from fastapi.testclient import TestClient  # noqa: E402
-
-from app.db import init_db  # noqa: E402
-from app.ingest.common import Block, assign_heading_paths  # noqa: E402
-from app.ingest.textfile import extract_text  # noqa: E402
-from app.main import app  # noqa: E402
-
-init_db()
-client = TestClient(app)
+from app.ingest.common import Block, assign_heading_paths
+from app.ingest.textfile import extract_text
 
 DOC_MARKDOWN = """# 研究テストペーパー
 
@@ -41,7 +25,7 @@ DOC_MARKDOWN = """# 研究テストペーパー
 """
 
 
-def _poll_status(source_id: str, timeout: float = 20.0) -> str:
+def _poll_status(client, source_id: str, timeout: float = 20.0) -> str:
     deadline = time.time() + timeout
     status = None
     while time.time() < deadline:
@@ -54,16 +38,17 @@ def _poll_status(source_id: str, timeout: float = 20.0) -> str:
     raise AssertionError(f"analysis did not finish in time (last status={status})")
 
 
-def test_full_workflow():
+def test_full_workflow(client):
     # 1. register a text source
     r = client.post("/api/sources/text", json={"content": DOC_MARKDOWN})
     assert r.status_code == 200, r.text
     source = r.json()["source"]
     sid = source["id"]
-    assert source["analysis_status"] == "pending"
+    # The background mock can finish before the registration response is read.
+    assert source["analysis_status"] in {"pending", "running", "done"}
 
     # 2. poll until analysis finishes (mock provider -> heuristic fallback, fast)
-    status = _poll_status(sid)
+    status = _poll_status(client, sid)
     assert status == "done", status
 
     # 3. document has blocks with heading_path
@@ -186,7 +171,7 @@ def test_full_workflow():
     assert any(s["source"]["id"] == sid for s in all_json["sources"])
 
 
-def test_meta():
+def test_meta(client):
     r = client.get("/api/meta")
     assert r.status_code == 200, r.text
     meta = r.json()

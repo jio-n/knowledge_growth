@@ -67,6 +67,11 @@ Cloud開発では実際に読む論文や私有PDFをfixtureとしてGitへ追�
 
 **v0.4の方針:** 通常利用でAPI従量課金を前提にしません。第一候補は Codex app-server + ChatGPT plan、ChatGPT Import BridgeもMVP対象です。これは再設計の目標仕様であり、現行baselineにすべて実装済みという意味ではありません。
 
+Phase 0（baseline確認・DB migration基盤・生成PDF fixtures）は実装済みです。
+[検証結果と残課題](docs/redesign/v0.4/phase0_baseline.md)、
+[移行・backup・復旧手順](docs/development/db_migrations.md)、
+[生成PDFの使い方](tests/fixtures/README.md) を参照してください。
+
 ## ドキュメント
 
 | 目的 | 場所 |

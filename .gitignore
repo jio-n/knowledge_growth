@@ -4,6 +4,7 @@ __pycache__/
 data/
 .pytest_cache/
 .env
+tests/fixtures/generated/
 client/vendor/*.mjs
 client/vendor/*.js
 !client/vendor/README.md

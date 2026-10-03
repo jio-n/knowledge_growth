@@ -3,6 +3,11 @@
 Status: implementation target  
 Updated: 2026-10-04
 
+Phase 0（T0-01 / T0-02、generated PDF fixtures）は実装・検証済み。
+[baseline・テスト結果・残課題](phase0_baseline.md) と
+[DB migration / backup / 復旧手順](../../development/db_migrations.md) を参照。
+Phase 0AとPhase 1以降は引き続き未実装。
+
 This directory is the source-of-truth package for the next reader MVP.
 
 ## Reading order
