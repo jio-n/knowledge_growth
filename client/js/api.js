@@ -95,6 +95,28 @@ export const api = {
     return `/api/sources/${id}/file`;
   },
 
+  // --- kgpack / Paper Brief (all validation and import decisions stay on the server) ---
+  validateKgpack(file) {
+    const fd = new FormData();
+    fd.append("file", file);
+    return request("/api/import/kgpack/validate", { method: "POST", body: fd, isForm: true, silent: true });
+  },
+  previewKgpack(file, { sourceId = null, excludeFields = [] } = {}) {
+    const fd = new FormData();
+    fd.append("file", file);
+    if (sourceId) fd.append("source_id", sourceId);
+    fd.append("exclude_fields", JSON.stringify(excludeFields));
+    return request("/api/import/kgpack/preview", { method: "POST", body: fd, isForm: true, silent: true });
+  },
+  commitKgpack(previewId) {
+    return request("/api/import/kgpack/commit", {
+      method: "POST", body: { preview_id: previewId, confirmed: true }, silent: true,
+    });
+  },
+  getPaperBrief(sourceId, opts = {}) {
+    return request(`/api/sources/${sourceId}/paper-brief`, opts);
+  },
+
   // --- questions / translation / highlights ---
   askQuestion(sourceId, payload, opts = {}) {
     return request(`/api/sources/${sourceId}/questions`, { method: "POST", body: payload, ...opts });

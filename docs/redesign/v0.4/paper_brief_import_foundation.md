@@ -221,10 +221,11 @@ fixture binaryはGitに保存しない。
   confirmedは申告statusと一意の根拠位置が揃った状態で、verificationとは独立する。
 - OCR、複数block/pageにまたがるquote、fuzzy quote、複雑なFigure numberingは未対応。
 - Previewやpackage履歴に全文block snapshotを保持するため、保持容量の最適化/GCは後続。
-- Optional Note/Q&A、画像/PDF/asset、per-evidence候補確定UI、Briefの高度UIは未実装。
+- Optional Note/Q&A反映、画像/PDF/asset、per-evidence候補の永続確定UIは未実装。
+  Import確認UI・候補閲覧・Brief表示は後続の[T2A-04/T2-05](import_brief_ui.md)で実装済み。
 - Runtime/app-server/OAuth/Japanese Reader/Compareはこのbranchで実装しない。
-- 次はT2A-04の最小確認UIと根拠候補の手動確認導線、T2-05のBrief表示を推奨する。
-  AI接続は別タスクT0A、Readerは別タスクT3として進める。
+- T2A-04/T2-05の確認・表示UIは[実装記録](import_brief_ui.md)を参照。
+  候補の永続確定と任意候補反映は後続。AI接続は別タスクT0A、Readerは別タスクT3として進める。
 
 ## 検証結果（2026-10-04）
 

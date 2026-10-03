@@ -42,3 +42,7 @@ Phase 1では読み順・block/span bbox・図表/数式の候補・安定ID・A
 `visual_evidence` PDFの架空スコア/文を使用し、実論文や実AIは利用しない。
 `scripts/generate_kgpack_fixtures.py`は/tmp等へPDF/package/template/JSON schemaを生成する。
 user conflict / duplicate importは同一packageと対応する生成DB状態で検証する。
+
+`scripts/smoke_import_brief_browser.py`はこの生成PDF/kgpack factoryから追加のUI受入用packageを
+メモリ上に構築する。全status、解決済み/候補/未解決/ページのみのEvidence、任意Note/Q&A、
+競合・更新・HTML文字列の表示を含む。独立した一時mock DBのみを使用する。

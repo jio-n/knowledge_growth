@@ -15,6 +15,8 @@ import * as pdfviewer from "../components/pdfviewer.js";
 import * as selection from "../components/selection.js";
 import * as qa from "../components/qa.js";
 import * as summary from "../components/summary.js";
+import * as paperbrief from "../components/paperbrief.js";
+import { openImportBridge } from "../components/importbridge.js";
 import * as note from "../components/note.js";
 
 let readerState = null; // { sourceId, source, doc, viewMode, activeTab, ui, els }
@@ -24,7 +26,7 @@ let activeDrag = null; // pane-resize drag context (module-level: see wireDivide
 export async function render(container, sourceId, isCurrent = () => true) {
   container.textContent = "";
   readerState = {
-    sourceId, source: null, doc: null, viewMode: "block", activeTab: "summary",
+    sourceId, source: null, doc: null, viewMode: "block", activeTab: "brief",
     ui: loadReaderUi(sourceId), els: null,
   };
   searchState = { query: "", matches: [], idx: -1 };
@@ -53,7 +55,8 @@ export async function render(container, sourceId, isCurrent = () => true) {
   readerState.source = source;
   readerState.doc = doc;
   readerState.viewMode = source.type === "pdf" ? (readerState.ui.pdfMode || "pdf") : "block";
-  readerState.activeTab = readerState.ui.activeTab || "summary";
+  const routeParams = new URLSearchParams(location.hash.split("?")[1] || "");
+  readerState.activeTab = routeParams.get("tab") === "brief" ? "brief" : (readerState.ui.activeTab || "brief");
 
   buildLayout(container);
   selection.init(readerState.els.leftPane, {
@@ -66,9 +69,20 @@ export async function render(container, sourceId, isCurrent = () => true) {
 
   const focusOpts = consumePendingFocusOpts();
   switchTab(readerState.activeTab, focusOpts);
+  // Import preview evidence opens in a separate Reader so the wizard remains intact.
+  const evidence = routeParams.get("evidence");
+  if (evidence) {
+    try {
+      const request = JSON.parse(evidence);
+      const mounted = readerState;
+      await mounted.pdfReady;
+      if (isCurrent() && readerState === mounted) navigateBriefEvidence(request.anchor, request.kind);
+    } catch { toast("Evidence参照を開けませんでした。"); }
+  }
 }
 
 export function unmount() {
+  paperbrief.unmount();
   summary.unmount();
   qa.unmount();
   note.unmount();
@@ -127,23 +141,24 @@ function buildLayout(container) {
   const leftPane = el("div", { class: "reader-pane-left" }, toolbar, blockContainer, pdfContainer);
   const divider = el("div", { class: "reader-divider" });
 
-  const tabDefs = [["summary", "概要"], ["qa", "対話"], ["note", "ノート"]];
+  const tabDefs = [["brief", "Paper Brief"], ["summary", "概要"], ["qa", "対話"], ["note", "ノート"]];
   const tabsHeader = el("div", { class: "tabs-header" },
     ...tabDefs.map(([key, label]) => el("button", {
       type: "button", dataset: { tab: key }, onClick: () => switchTab(key),
     }, label)),
   );
+  const briefPanel = el("div", { class: "tab-panel", dataset: { tabPanel: "brief" } });
   const summaryPanel = el("div", { class: "tab-panel", dataset: { tabPanel: "summary" } });
   const qaPanel = el("div", { class: "tab-panel", dataset: { tabPanel: "qa" }, hidden: true });
   const notePanel = el("div", { class: "tab-panel", dataset: { tabPanel: "note" }, hidden: true });
-  const rightPane = el("div", { class: "reader-pane-right" }, tabsHeader, summaryPanel, qaPanel, notePanel);
+  const rightPane = el("div", { class: "reader-pane-right" }, tabsHeader, briefPanel, summaryPanel, qaPanel, notePanel);
 
   const split = el("div", { class: "reader-split" }, leftPane, divider, rightPane);
   container.append(el("div", { class: "reader" }, header, split));
 
   readerState.els = {
     leftPane, rightPane, blockContainer, pdfContainer, divider, split,
-    tabsHeader, summaryPanel, qaPanel, notePanel, searchInput, searchCount, toggleButtons,
+    tabsHeader, briefPanel, summaryPanel, qaPanel, notePanel, searchInput, searchCount, toggleButtons,
   };
 
   applyPaneWidth();
@@ -157,7 +172,7 @@ function buildLayout(container) {
     toggleButtons.block.classList.toggle("active", readerState.viewMode === "block");
   }
   if (source.type === "pdf") {
-    pdfviewer.mount(pdfContainer, { fileUrl: api.fileUrl(source.id) });
+    readerState.pdfReady = pdfviewer.mount(pdfContainer, { fileUrl: api.fileUrl(source.id) });
   }
 }
 
@@ -193,7 +208,7 @@ function buildHeader(source) {
   return el("div", { class: "reader-header" },
     backBtn, titleEl, statusSelect,
     el("div", { class: "reader-header__nav" }, prevBtn, nextBtn),
-    mdBtn,
+    el("button", { class: "btn btn--sm", type: "button", onClick: () => openImportBridge() }, "ChatGPTから取り込む"), mdBtn,
   );
 }
 
@@ -219,15 +234,24 @@ function switchTab(tabKey, opts = {}) {
   for (const btn of readerState.els.tabsHeader.querySelectorAll("button")) {
     btn.classList.toggle("active", btn.dataset.tab === tabKey);
   }
+  readerState.els.briefPanel.hidden = tabKey !== "brief";
   readerState.els.summaryPanel.hidden = tabKey !== "summary";
   readerState.els.qaPanel.hidden = tabKey !== "qa";
   readerState.els.notePanel.hidden = tabKey !== "note";
 
+  paperbrief.unmount();
   summary.unmount();
   qa.unmount();
   note.unmount();
 
-  if (tabKey === "summary") {
+  if (tabKey === "brief") {
+    paperbrief.mount(readerState.els.briefPanel, readerState.sourceId, {
+      onEvidence: navigateBriefEvidence,
+      isPdf: readerState.source.type === "pdf",
+      onPdf: () => setViewMode(readerState.source.type === "pdf" ? "pdf" : "block"),
+      onImport: () => openImportBridge(),
+    });
+  } else if (tabKey === "summary") {
     summary.mount(readerState.els.summaryPanel, readerState.sourceId);
   } else if (tabKey === "qa") {
     qa.mount(readerState.els.qaPanel, readerState.sourceId, {
@@ -353,4 +377,25 @@ export function resolveAnchor(rawAnchor) {
     toast("ページのみ表示しました。根拠位置は未解決です。");
   } else toast("原文位置を特定できませんでした(資料が更新された可能性)");
   return result;
+}
+
+// Always switch to the original PDF and reuse Phase 1 resolution against current blocks.
+async function navigateBriefEvidence(anchor, kind = "resolved") {
+  const mounted = readerState;
+  if (!mounted) return;
+  if (mounted.source.type === "pdf") {
+    setViewMode("pdf");
+    await mounted.pdfReady;
+    if (readerState !== mounted) return;
+  }
+  mounted.els.leftPane.querySelector(".brief-navigation-notice")?.remove();
+  mounted.els.pdfContainer.querySelectorAll(".pdf-evidence-marker").forEach((marker) => marker.remove());
+  if (kind === "candidate" || kind === "page_only") {
+    mounted.els.leftPane.prepend(el("p", { class: "brief-navigation-notice", role: "status" },
+      kind === "candidate" ? "候補の閲覧中 · 根拠未確定。保存済みEvidenceは変更されません。" : "ページのみ表示 · 根拠未確定。"));
+  }
+  resolveAnchor(anchor);
+  if (kind === "candidate") mounted.els.pdfContainer.querySelectorAll(".pdf-evidence-marker").forEach((marker) => {
+    marker.style.borderStyle = "dashed";
+  });
 }

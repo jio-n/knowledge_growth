@@ -6,6 +6,7 @@
 import { api } from "../api.js";
 import { el, debounce, fmtDate, parseStringArray } from "../util.js";
 import { setSourcesCache, READING_STATUS_LABEL, SOURCE_TYPE_LABEL } from "../state.js";
+import { openImportBridge } from "../components/importbridge.js";
 import { openAddSourceModal } from "../components/addsource.js";
 
 export async function render(container, isCurrent = () => true) {
@@ -41,7 +42,7 @@ export async function render(container, isCurrent = () => true) {
     }, el("option", { value: "" }, "タグ: すべて"));
 
     const rootEl = el("div", { class: "library__toolbar" },
-      addPdfBtn, addUrlBtn, addTextBtn,
+      addPdfBtn, addUrlBtn, el("button", { class: "btn", type: "button", onClick: () => openImportBridge() }, "ChatGPTから取り込む"), addTextBtn,
       searchInput,
       el("div", { class: "spacer" }),
       el("div", { class: "library__filters" }, statusSelect, tagSelect),
