@@ -2,6 +2,13 @@
 
 最終更新: 2026-07-11 / **状態: MVP完成・E2E検証済み**
 
+2026-10-04追記: redesign v0.4のPhase 0（T0-01 / T0-02）を実装・検証。
+現行schemaをv1登録するmigration基盤と生成PDF fixturesを追加し、pytest 21件と
+mockのブラウザE2Eが成功した。以下はJuly baselineの記録。
+最新の検証結果・残課題は [Phase 0 baseline](../redesign/v0.4/phase0_baseline.md)、
+移行手順は [DB migrations](../development/db_migrations.md) を参照。
+次のReader開発はPhase 1、AI Runtime Foundation（Phase 0A）は別途未着手。
+
 ## 何ができているか
 
 §30の完了条件を満たすMVP。`python run.py` → http://localhost:8300 で以下が動く:

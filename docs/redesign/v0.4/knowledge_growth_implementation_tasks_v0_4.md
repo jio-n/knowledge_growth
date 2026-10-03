@@ -139,24 +139,28 @@
 # Phase 0: 現行状態の固定と安全な移行
 
 ## T0-01 現行E2E再確認
-- [ ] `pytest tests/ -q`
-- [ ] PDF登録
-- [ ] PDF表示
-- [ ] 質問
-- [ ] 翻訳
-- [ ] ノート保存
-- [ ] export
-- [ ] 再訪復元
+- [x] `pytest tests/ -q`
+- [x] PDF登録
+- [x] PDF表示
+- [x] 質問
+- [x] 翻訳
+- [x] ノート保存
+- [x] export
+- [x] 再訪復元
 
 完了条件: 現行機能のbaselineを記録。
 
 ## T0-02 DB migration機構
-- [ ] schema_versionテーブル追加
-- [ ] migration runner追加
-- [ ] 現行schemaをv1登録
-- [ ] rollback / backup手順文書化
+- [x] schema_versionテーブル追加
+- [x] migration runner追加
+- [x] 現行schemaをv1登録
+- [x] rollback / backup手順文書化
 
 完了条件: 既存data/knowledge.dbを消さずに次schemaへ移行可能。
+
+2026-10-04検証: [Phase 0 baseline](phase0_baseline.md)。生成PDF3種類を追加し、
+pytest 21件とmockでのブラウザE2Eを確認。実schemaはv1のみ。
+Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 
 ---
 
