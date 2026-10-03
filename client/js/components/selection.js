@@ -2,6 +2,8 @@
 // Selection popover shown on mouseup inside the reader's left (source) pane, and
 // SourceAnchor construction (source_anchor_spec.md "作成(クライアント側)").
 
+import { resolveSourceAnchor } from "../anchor.js";
+import * as pdfviewer from "./pdfviewer.js";
 import { el, toast } from "../util.js";
 import { api } from "../api.js";
 import { openSaveDialog } from "./savedialog.js";
@@ -16,8 +18,15 @@ let extraCardEl = null;
 /** init(root, context) - call once per reader mount; root = the left-pane element
  *  that contains BOTH the block view and the pdf view (toggled via [hidden]). */
 export function init(root, context) {
+  unmount();
   ctx = { root, ...context };
   root.addEventListener("mouseup", onMouseUp);
+}
+
+export function unmount() {
+  ctx?.root.removeEventListener("mouseup", onMouseUp);
+  ctx = null;
+  closeAll();
 }
 
 document.addEventListener("keydown", (e) => {
@@ -60,7 +69,7 @@ function computeQuoteContext(range, container) {
     return null;
   }
   const startOffset = preRange.toString().length;
-  const endOffset = startOffset + quote.length;
+  const endOffset = startOffset + Math.min(quote.length, 500);
   const prefix = full.slice(Math.max(0, startOffset - 60), startOffset);
   const suffix = full.slice(endOffset, endOffset + 60);
   return {
@@ -77,6 +86,8 @@ function buildAnchorInfo(range) {
   const pdfContainer = closestFromNode(startNode, ".textLayer[data-pdf-page]");
 
   if (blockContainer) {
+    // A multi-block selection has no single authoritative block identity.
+    if (!blockContainer.contains(range.endContainer)) return null;
     const qc = computeQuoteContext(range, blockContainer);
     if (!qc || !qc.quote.trim()) return null;
     const anchor = {
@@ -89,6 +100,9 @@ function buildAnchorInfo(range) {
         ? Number(blockContainer.dataset.blockIdx) : null,
       page: blockContainer.dataset.page ? Number(blockContainer.dataset.page) : null,
       headingPath: blockContainer.dataset.headingPath || null,
+      sourceVersion: ctx.getVersion?.()?.id || null,
+      sourceHash: ctx.getVersion?.()?.content_hash || null,
+      bbox: ctx.getBlocks?.().find((b) => b.id === blockContainer.dataset.blockId)?.bbox || null,
     };
     const coverageRatio = qc.fullLength > 0 ? qc.quote.length / qc.fullLength : 0;
     return { anchor, mode: "block", coverageRatio };
@@ -99,13 +113,21 @@ function buildAnchorInfo(range) {
     if (!qc || !qc.quote.trim()) return null;
     const page = Number(pdfContainer.dataset.pdfPage);
     const blocks = ctx.getBlocks ? ctx.getBlocks() : [];
-    const approxBlock = blocks.find((b) => b.page === page) || null;
+    const bbox = pdfviewer.selectionGeometry(page, range);
+    if (!bbox) return null;
+    const version = ctx.getVersion?.() || {};
+    const portable = { page, bbox, quote: qc.quote, sourceVersion: version.id, sourceHash: version.content_hash };
+    const resolution = resolveSourceAnchor(portable, blocks, version);
+    const approxBlock = resolution.status === "resolved" ? resolution.block : null;
     const anchor = {
       type: "text-quote",
       quote: qc.quote,
-      prefix: qc.prefix,
-      suffix: qc.suffix,
-      blockId: null,
+      prefix: null, // PDF drawing order is not reliable textual context
+      suffix: null,
+      sourceVersion: version.id || null,
+      sourceHash: version.content_hash || null,
+      bbox,
+      blockId: approxBlock?.id || null,
       blockIdx: approxBlock ? approxBlock.idx : null,
       page,
       headingPath: approxBlock ? (approxBlock.heading_path || null) : null,

@@ -2,7 +2,7 @@
 import fitz
 
 
-FIXTURE_NAMES = ("simple", "two_column", "visual_evidence")
+FIXTURE_NAMES = ("simple", "two_column", "visual_evidence", "column_bands", "duplicate_evidence", "image_evidence")
 
 
 def _text(page, rect, text, *, size=11, bold=False):
@@ -12,7 +12,7 @@ def _text(page, rect, text, *, size=11, bold=False):
         raise ValueError(f"Fixture text does not fit: {text[:60]}")
 
 
-def make_pdf(name: str = "simple") -> bytes:
+def make_pdf(name: str = "simple", *, shift: float = 0, rotation: int = 0, crop: bool = False) -> bytes:
     if name not in FIXTURE_NAMES:
         raise ValueError(f"Unknown PDF fixture: {name}")
     with fitz.open() as doc:
@@ -28,19 +28,31 @@ def make_pdf(name: str = "simple") -> bytes:
         _text(first, (40, 32, 555, 78), "Synthetic Research Fixture", size=20, bold=True)
         if name == "simple":
             _text(first, (40, 92, 555, 128), "1 Introduction", size=16, bold=True)
-            _text(first, (40, 145, 555, 300),
+            _text(first, (40, 145 + shift, 555, 300 + shift),
                   "This generated document tests paper registration and reading.\n"
                   "It contains original synthetic text with no external paper content.\n"
                   "The synthetic method processes an input and returns an output.")
-        elif name == "two_column":
+        elif name in ("two_column", "column_bands"):
             # Deliberately insert the right column first: future reading-order tests
             # must use geometry, rather than the order of PDF drawing commands.
             for x, label in ((310, "RIGHT"), (40, "LEFT")):
                 _text(first, (x, 92, x + 245, 132), f"1 {label} Column", size=16, bold=True)
                 for i in range(8):
-                    y = 148 + i * 65
+                    y = 148 + i * 65 + (40 if name == "column_bands" and i >= 4 else 0)
                     _text(first, (x, y, x + 245, y + 60),
                           f"{label} paragraph {i + 1}.\nSynthetic column content for reading order.")
+            if name == "column_bands":
+                _text(first, (40, 400, 555, 437), "2 Full Width Section Between Columns", size=16, bold=True)
+        elif name == "duplicate_evidence":
+            _text(first, (40, 92, 555, 128), "1 Repeated Evidence", size=16, bold=True)
+            for y, context in ((150, "Alpha"), (250, "Beta")):
+                _text(first, (40, y, 555, y + 60), f"{context} before. Shared evidence phrase. {context} after.")
+        elif name == "image_evidence":
+            _text(first, (40, 92, 555, 128), "1 Raster Evidence", size=16, bold=True)
+            pix = fitz.Pixmap(fitz.csRGB, (0, 0, 32, 32), False)
+            pix.clear_with(160)
+            first.insert_image(fitz.Rect(50, 180, 250, 380), stream=pix.tobytes("png"))
+            _text(first, (40, 400, 555, 437), "Figure 2. Generated raster evidence.")
         else:
             _text(first, (40, 92, 555, 128), "1 Architecture", size=16, bold=True)
             for x, label in ((45, "Input"), (220, "Encoder"), (395, "Output")):
@@ -81,4 +93,8 @@ def make_pdf(name: str = "simple") -> bytes:
                   "No real benchmark performance is claimed.")
         _text(second, (40, 715, 555, 755), "3 Conclusion", size=16, bold=True)
         _text(second, (40, 765, 555, 815), "This fixture is for offline regression testing only.")
+        first = doc[0]  # new_page invalidates earlier Page handles
+        if crop:
+            first.set_cropbox(fitz.Rect(20, 20, 575, 822))
+        first.set_rotation(rotation)
         return doc.tobytes(garbage=4, deflate=True, no_new_id=True)

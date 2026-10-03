@@ -40,7 +40,7 @@ def ask_question(source_id: str, body: QuestionIn):
         if not src:
             raise HTTPException(404, "資料が見つかりません")
 
-        block_idx = (body.anchor or {}).get("blockIdx")
+        block_idx = ctx.anchor_context_index(con, source_id, body.anchor)
         before, after, heading = ctx.surrounding_context(con, source_id, block_idx)
         if not heading:
             heading = (body.anchor or {}).get("headingPath", "") or "(位置不明)"

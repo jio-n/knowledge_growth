@@ -3,8 +3,9 @@
 // prev/next source navigation. Only one reader is ever mounted at a time in this SPA,
 // so module-level state below is scoped to "the current reader".
 
+import { resolveSourceAnchor } from "../anchor.js";
 import { api } from "../api.js";
-import { el, toast, debounce, normalizeWhitespace, parseAnchor } from "../util.js";
+import { el, toast, debounce, parseAnchor } from "../util.js";
 import {
   state, loadReaderUi, saveReaderUi, neighborSourceId, setSourcesCache,
   consumePendingFocus, READING_STATUS_LABEL,
@@ -58,6 +59,7 @@ export async function render(container, sourceId, isCurrent = () => true) {
   selection.init(readerState.els.leftPane, {
     sourceId: readerState.sourceId,
     getBlocks: () => (readerState ? readerState.doc.blocks : []),
+    getVersion: () => readerState?.doc.version,
     switchTab,
   });
   restoreScroll();
@@ -70,6 +72,7 @@ export function unmount() {
   summary.unmount();
   qa.unmount();
   note.unmount();
+  selection.unmount();
   pdfviewer.unmount();
   activeDrag = null;
   readerState = null;
@@ -324,76 +327,30 @@ function updateSearchCount() {
 
 export function resolveAnchor(rawAnchor) {
   if (!readerState) return;
-  const anchor = parseAnchor(rawAnchor); // defensive: anchor may arrive pre-parsed or as a JSON string
-  if (!anchor) {
-    toast("原文位置を特定できませんでした(資料が更新された可能性)");
-    return;
-  }
-  const blocks = readerState.doc.blocks || [];
-  const norm = normalizeWhitespace;
-  let target = null;
-
-  // 1. blockId
-  if (anchor.blockId) {
-    target = blocks.find((b) => b.id === anchor.blockId) || null;
-  }
-  // 2. blockIdx (+ quote 先頭80字 contained)
-  if (!target && anchor.blockIdx != null) {
-    const b = blocks.find((bb) => bb.idx === anchor.blockIdx);
-    if (b && (!anchor.quote || norm(b.text).includes(norm(anchor.quote).slice(0, 80)))) target = b;
-  }
-  // 3. full quote search, disambiguate via prefix/suffix + headingPath
-  if (!target && anchor.quote) {
-    const q = norm(anchor.quote).slice(0, 80);
-    const candidates = blocks.filter((b) => norm(b.text).includes(q));
-    if (candidates.length === 1) target = candidates[0];
-    else if (candidates.length > 1) target = pickBestByContext(candidates, anchor);
-  }
-
-  if (target) {
-    if (readerState.source.type === "pdf" && readerState.viewMode === "pdf" && target.page) {
-      pdfviewer.scrollToPage(target.page, anchor.quote || target.text.slice(0, 80));
+  const anchor = parseAnchor(rawAnchor);
+  const result = resolveSourceAnchor(anchor, readerState.doc.blocks || [], readerState.doc.version);
+  readerState.els.leftPane.querySelector(".anchor-candidates")?.remove();
+  const jump = (block) => {
+    if (readerState.source.type === "pdf" && readerState.viewMode === "pdf" && block.page) {
+      if (!pdfviewer.scrollToEvidence(block.page, block.bbox)) toast("PDFの読み込み完了後に再試行してください。");
     } else {
-      if (readerState.viewMode !== "block") setViewMode("block");
-      docviewer.scrollToBlockId(target.id);
+      setViewMode("block");
+      docviewer.scrollToBlockId(block.id);
     }
-    return;
-  }
-
-  // 4. page fallback (PDF)
-  if (anchor.page) {
-    if (readerState.source.type === "pdf") {
-      if (readerState.viewMode !== "pdf") setViewMode("pdf");
-      pdfviewer.scrollToPage(anchor.page, anchor.quote);
-      return;
+  };
+  if (result.status === "resolved") { jump(result.block); return result; }
+  if (result.status === "candidates") {
+    const panel = el("div", { class: "anchor-candidates", role: "status" },
+      el("p", {}, "根拠位置を確定できません。候補を確認してください。"));
+    for (const block of result.candidates) {
+      panel.append(el("button", { class: "btn btn--sm", type: "button", onClick: () => jump(block) },
+        `p.${block.page || "?"} · ${block.text.slice(0, 100) || block.role || block.kind}`));
     }
-    const b = blocks.find((bb) => bb.page === anchor.page);
-    if (b) { docviewer.scrollToBlockId(b.id); return; }
-  }
-
-  // 5. fail
-  toast("原文位置を特定できませんでした(資料が更新された可能性)");
-}
-
-function pickBestByContext(candidates, anchor) {
-  const norm = normalizeWhitespace;
-  const quote = norm(anchor.quote || "").slice(0, 80);
-  const wantPrefix = norm(anchor.prefix || "").slice(-20);
-  const wantSuffix = norm(anchor.suffix || "").slice(0, 20);
-  let best = candidates[0];
-  let bestScore = -1;
-  for (const b of candidates) {
-    const text = norm(b.text);
-    const idx = text.indexOf(quote);
-    let score = 0;
-    if (idx >= 0) {
-      const actualPrefix = text.slice(Math.max(0, idx - 60), idx);
-      const actualSuffix = text.slice(idx + quote.length, idx + quote.length + 60);
-      if (wantPrefix && actualPrefix.endsWith(wantPrefix)) score += 2;
-      if (wantSuffix && actualSuffix.startsWith(wantSuffix)) score += 2;
-    }
-    if (anchor.headingPath && b.heading_path === anchor.headingPath) score += 1;
-    if (score > bestScore) { bestScore = score; best = b; }
-  }
-  return best;
+    readerState.els.leftPane.prepend(panel);
+  } else if (result.status === "page_only" && readerState.source.type === "pdf") {
+    setViewMode("pdf");
+    pdfviewer.scrollToPage(result.page); // no quote highlight: page is only a coarse hint
+    toast("ページのみ表示しました。根拠位置は未解決です。");
+  } else toast("原文位置を特定できませんでした(資料が更新された可能性)");
+  return result;
 }

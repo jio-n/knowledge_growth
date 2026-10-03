@@ -159,7 +159,7 @@
 完了条件: 既存data/knowledge.dbを消さずに次schemaへ移行可能。
 
 2026-10-04検証: [Phase 0 baseline](phase0_baseline.md)。生成PDF3種類を追加し、
-pytest 21件とmockでのブラウザE2Eを確認。実schemaはv1のみ。
+pytest 21件とmockでのブラウザE2Eを確認。Phase 0時点の実schemaはv1。
 Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 
 ---
@@ -167,30 +167,30 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 # Phase 1: PDF構造とAnchor強化
 
 ## T1-01 PDF block bbox取得
-- [ ] `app/ingest/pdf.py` でPyMuPDF block/span座標取得
-- [ ] page + bboxを保存
-- [ ] 2段組の読み順テストfixture追加
-- [ ] Figure/Table/Equation候補のbboxを保持できる下地を作る
+- [x] `app/ingest/pdf.py` でPyMuPDF block/span座標取得
+- [x] page + bboxを保存
+- [x] 2段組の読み順テストfixture追加
+- [x] Figure/Table/Equation候補のbboxを保持できる下地を作る
 
 ## T1-02 document_blocks拡張
-追加候補:
-- `bbox_json`
-- `role`
-- `source_hash`
-- `parent_block_id`
-- `asset_ref`
+実装: v2 migrationで `bbox_json` / `role` のみ追加。
+`source_hash` は既存source_versions.content_hashを使用。
+`parent_block_id` / `asset_ref` はPhase 1で実体がないため保留。
 
 ## T1-03 Anchor resolver拡張
 優先順位:
 1. version + block_id
 2. bbox + page
 3. quote/prefix/suffix
-4. page
-5. 候補提示
+4. block_idx（同一versionのみ）
+5. page（未解決と明示）
+6. 候補提示 / unresolved
 
 完了条件: 再解析後も誤対応を黙って確定しない。
 
 ---
+
+実装・検証・既知の制約: [Phase 1記録](phase1_pdf_anchor.md)。
 
 # Phase 2: Paper Brief
 

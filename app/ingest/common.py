@@ -19,6 +19,8 @@ class Block:
     level: int | None = None  # heading level
     page: int | None = None   # 1-based PDF page
     heading_path: str = ""
+    bbox: dict | None = None
+    role: str | None = None
 
 
 @dataclass
@@ -92,3 +94,21 @@ def find_duplicates(con, *, content_hash=None, doi=None, arxiv_id=None,
         return []
     sql = "SELECT * FROM sources WHERE " + " OR ".join(clauses)
     return [dict(r) for r in con.execute(sql, params).fetchall()]
+
+
+def block_ids(version_id: str, blocks: list[Block]) -> list[str]:
+    """Stable within a version for identical evidence, independent of reading idx.
+
+    A new version gets new IDs. Content/geometry changes must use Anchor fallback.
+    Duplicate identical blocks receive deterministic occurrence suffixes.
+    """
+    import json
+    counts: dict[str, int] = {}
+    result = []
+    for b in blocks:
+        identity = json.dumps([b.kind, b.text, b.page, b.role, b.bbox], sort_keys=True)
+        digest = sha256_text(identity)
+        occurrence = counts.get(digest, 0)
+        counts[digest] = occurrence + 1
+        result.append(sha256_text(f"{version_id}:{digest}:{occurrence}"))
+    return result

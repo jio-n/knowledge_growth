@@ -610,3 +610,8 @@ mark.kg-highlight:hover { background: #ffe680; }
   .reader-divider { display: none; }
   .source-grid { grid-template-columns: 1fr; }
 }
+
+/* Uncertain evidence stays visible until the reader inspects a candidate. */
+.anchor-candidates { padding: var(--space-3); background: var(--color-surface); border-bottom: 1px solid var(--color-border); max-height: 220px; overflow-y: auto; }
+.anchor-candidates p { margin: 0 0 var(--space-2); }
+.anchor-candidates button { display: block; width: 100%; margin: var(--space-2) 0; text-align: left; white-space: normal; }

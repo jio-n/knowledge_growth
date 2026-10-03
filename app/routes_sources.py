@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from .analysis import run_analysis_async
 from .config import FILES_DIR
 from .db import get_db, new_id, now, rows_to_dicts
-from .ingest.common import ExtractedDoc, doc_text, find_duplicates, sha256_bytes, sha256_text
+from .ingest.common import ExtractedDoc, block_ids, doc_text, find_duplicates, sha256_bytes, sha256_text
 from .ingest.pdf import extract_pdf
 from .ingest.textfile import extract_text
 from .ingest.web import extract_web, fetch_url
@@ -33,10 +33,11 @@ def _insert_source(con, doc: ExtractedDoc, *, type_: str, url: str | None = None
         "INSERT INTO source_versions (id, source_id, fetched_at, content_hash, raw_path) VALUES (?,?,?,?,?)",
         (vid, sid, ts, content_hash, raw_path))
     con.executemany(
-        """INSERT INTO document_blocks (id, version_id, source_id, idx, kind, level, text, page, heading_path)
-           VALUES (?,?,?,?,?,?,?,?,?)""",
-        [(new_id(), vid, sid, i, b.kind, b.level, b.text, b.page, b.heading_path)
-         for i, b in enumerate(doc.blocks)])
+        """INSERT INTO document_blocks (id, version_id, source_id, idx, kind, level, text, page, heading_path, bbox_json, role)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        [(bid, vid, sid, i, b.kind, b.level, b.text, b.page, b.heading_path,
+          json.dumps(b.bbox) if b.bbox else None, b.role)
+         for i, (bid, b) in enumerate(zip(block_ids(vid, doc.blocks), doc.blocks))])
     con.commit()
     run_analysis_async(sid)
     return dict(con.execute("SELECT * FROM sources WHERE id=?", (sid,)).fetchone())
@@ -187,6 +188,8 @@ def get_document(source_id: str):
             raise HTTPException(404, "資料が見つかりません")
         blocks = rows_to_dicts(con.execute(
             "SELECT * FROM document_blocks WHERE version_id=? ORDER BY idx", (version["id"],)))
+        for block in blocks:
+            block["bbox"] = json.loads(block["bbox_json"]) if block["bbox_json"] else None
         translations = {r["block_id"]: r["translated_text"] for r in con.execute(
             "SELECT block_id, translated_text FROM translations WHERE source_id=? AND block_id IS NOT NULL",
             (source_id,))}
