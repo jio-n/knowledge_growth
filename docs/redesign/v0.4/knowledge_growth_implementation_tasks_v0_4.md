@@ -74,14 +74,17 @@
 
 ## T2A-04 Import Preview UI
 
-Backend JSON preview・field除外・commit契約は実装済み。フルUIは未実装。
-- [ ] 対象論文
-- [ ] Brief field差分
-- [ ] Knowledge/Q&A候補
-- [ ] Evidence解決率
-- [ ] unresolved一覧
-- [ ] conflict一覧
-- [ ] field/item単位のImport除外
+Backend JSON preview・field除外・commit契約と確認UIは実装済み。
+[UI実装記録](import_brief_ui.md)を参照。
+
+- [x] 対象論文
+- [x] Brief field差分
+- [x] Knowledge/Q&A候補
+- [x] Evidence解決率
+- [x] unresolved一覧
+- [x] conflict一覧
+- [x] field単位のImport除外
+- [ ] 任意Note/Q&Aのitem選択・既存テーブルへの反映（後続。今回は候補表示・履歴保存のみ）
 
 ## T2A-05 Provenance / conflict policy
 - [x] `chatgpt_import`等のorigin
@@ -243,11 +246,11 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 - [x] scoreにdataset / metric / settingを可能な限り紐付け
 
 ## T2-05 Paper Brief UI
-- [ ] 30秒Brief
-- [ ] Structured Brief折りたたみ
-- [ ] 日本語版で読むCTA
-- [ ] 原文PDFを見るCTA
-- [ ] 各fieldから📍根拠へ戻る
+- [x] 30秒Brief
+- [x] Structured Brief折りたたみ
+- [x] 日本語版で読むCTA（今後対応として無効）
+- [x] 原文PDFを見るCTA
+- [x] 各fieldから📍根拠へ戻る
 
 ## T2-06 Brief再解析
 

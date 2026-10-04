@@ -7,7 +7,8 @@ Phase 0（T0-01 / T0-02、generated PDF fixtures）は実装・検証済み。
 [baseline・テスト結果・残課題](phase0_baseline.md) と
 [DB migration / backup / 復旧手順](../../development/db_migrations.md) を参照。
 Phase 1とPaper Brief / Import Bridge backend foundationは実装済み。
-Phase 0AのAI runtime、Paper Brief高度UI、日本語版Readerは未実装。
+T2A-04のImport確認UIとT2-05のPaper Brief表示UIは実装済み。
+Phase 0AのAI runtime、日本語版Readerは未実装。
 
 This directory is the source-of-truth package for the next reader MVP.
 
@@ -56,4 +57,6 @@ Do not implement the entire roadmap in one Codex task.
 
 - [Paper Brief / Import Bridge foundation](paper_brief_import_foundation.md): T2-01/T2-04、T2A backend、schema v3、API/CLI契約。
 
-Phase 2のAI抽出・高度UI、Phase 3以降とPhase 0AのAI runtimeは未実装。
+- [Import確認UI / Paper Brief表示](import_brief_ui.md): T2A-04/T2-05、browser smoke、Evidence navigationと制約。
+
+Phase 2の実AI抽出、Phase 3以降とPhase 0AのAI runtimeは未実装。

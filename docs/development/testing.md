@@ -35,3 +35,17 @@ Python/ブラウザAnchorの一致、preview/commit、競合、stale、二重imp
 `tests/test_migrations.py`はv2→v3のbackup/rollbackと既存研究データ保全も検証する。
 fixture生成: `.venv/bin/python scripts/generate_kgpack_fixtures.py --output /tmp/kgpack-fixtures`。
 CLI確認: `.venv/bin/python -m app.import_bridge validate /tmp/kgpack-fixtures/valid.kgpack`。
+
+## Import確認UI / Paper Brief browser smoke
+
+```bash
+.venv/bin/pip install playwright  # optional development dependency
+.venv/bin/python scripts/smoke_import_brief_browser.py --chromium /usr/bin/chromium
+```
+
+一時DB・APIキーなしmockの実サーバーをscriptが起動し、generated PDFとkgpackのみで検証する。
+validate、strong/weak/ambiguous/unmatched、手動選択、field除外、user編集保持、Evidence候補の閲覧、
+未解決/ページのみ、duplicate、stale、commit failure/retry、再確認、Brief/status/Key Result、PDF bbox jump、
+再読込、狭幅dialog、入力HTMLを実行しないことを確認する。
+スクリーンショットは`/tmp/kg-import-brief-browser/`。終了時に一時DBを削除し、通常のdata/を使わない。
+[UI契約・既知の制約](../redesign/v0.4/import_brief_ui.md)。
