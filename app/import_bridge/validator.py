@@ -30,6 +30,21 @@ def payload_hash(package: Package) -> str:
     payload = package.model_dump(mode='json')
     for key in ('package_id', 'generated_at'):
         payload['manifest'].pop(key)
+    # Additive provenance defaults must not change hashes of packages already
+    # accepted before Structured Brief generation (paper-brief-0.1 is unchanged).
+    def strip_new_defaults(value):
+        if isinstance(value, dict):
+            provenance = value.get('provenance')
+            if isinstance(provenance, dict):
+                for key in ('runtime', 'source_version', 'schema_version'):
+                    if provenance.get(key) is None:
+                        provenance.pop(key, None)
+            for child in value.values():
+                strip_new_defaults(child)
+        elif isinstance(value, list):
+            for child in value:
+                strip_new_defaults(child)
+    strip_new_defaults(payload)
     return hashlib.sha256(canonical(payload).encode()).hexdigest()
 
 

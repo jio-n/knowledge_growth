@@ -26,7 +26,7 @@
 
 ## 実LLMでの確認
 
-`KG_LLM_PROVIDER=anthropic`(+キー)で 5・6 を再実行し、回答に原文引用と「資料によると/解釈:」の区別が含まれることを確認。
+Codex + ChatGPT planで接続したローカルappで5・6を再実行し、回答の原文引用を確認する。API keyは不要。
 
 ## Paper Brief / Import foundation
 
@@ -63,3 +63,17 @@ validate、strong/weak/ambiguous/unmatched、手動選択、field除外、user�
 
 browser smokeはPlaywright＋Chromiumの任意開発依存が必要です。
 実ChatGPT接続は[manual smoke](../redesign/v0.4/subscription_first_runtime_foundation.md#検証とmanual-smoke)に分離します。
+
+## Structured Brief generation
+
+`tests/test_brief_generation.py`は生成PDFとfake/mock AIRuntimeでT2-02/T2-03/T2-06を検証する。
+実account/API key/実論文PDFは不要。共有schema・Evidence・numeric downgrade・bounded retry・
+user edit保持・stale preview・atomic commit・provenance・no_aiを確認する。
+
+```sh
+.venv/bin/python scripts/smoke_brief_generation_browser.py
+# optional / local real ChatGPT account only, excluded from CI:
+.venv/bin/python scripts/smoke_brief_generation.py --manual --base-url http://127.0.0.1:8300
+```
+
+[詳しい検証範囲・結果・制約](../redesign/v0.4/structured_brief_generation.md)。

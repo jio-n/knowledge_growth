@@ -107,3 +107,11 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 `GET /api/sources/{id}/paper-brief`で取得、
 `PATCH /api/sources/{id}/paper-brief/fields/{name}`でユーザー編集を保存する。
 [request/response・status・競合契約](../redesign/v0.4/paper_brief_import_foundation.md#import-flow--api)を参照。
+
+## Structured Brief generation
+
+- `POST /api/sources/{id}/paper-brief/generate`: 202、background extraction。
+- `GET /api/sources/{id}/paper-brief/generation`: state・safe error・field diff preview。
+- `POST /api/sources/{id}/paper-brief/generation/commit`: `{generation_id,confirmed:true}`。
+
+[bounded context・validation・Evidence・stale/再生成・user保護](../redesign/v0.4/structured_brief_generation.md)。

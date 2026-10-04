@@ -1,6 +1,7 @@
 import { api } from "../api.js";
 import { el } from "../util.js";
 import { FIELD_LABELS, statusBadge, valueView, evidenceView } from "./brieffields.js";
+import { mountGeneration } from "./briefgeneration.js";
 
 let epoch = 0;
 export function unmount() { epoch++; }
@@ -15,12 +16,17 @@ export async function mount(container, sourceId, { onEvidence, onPdf, onImport, 
       el("button", { class: "btn btn--sm", type: "button", disabled: true, title: "日本語版Readerは今後対応" }, "日本語版で読む · 今後対応"),
       el("button", { class: "btn btn--sm", type: "button", onClick: onImport }, "ChatGPTから取り込む"));
     container.replaceChildren(el("h2", {}, "Paper Brief"), actions);
+    const generation = el("section", { class: "brief-generation" });
+    container.append(generation);
+    mountGeneration(generation, sourceId, { brief, isPdf, onImport, onEvidence,
+      isCurrent: () => token === epoch,
+      onSaved: () => mount(container, sourceId, { onEvidence, onPdf, onImport, isPdf }) });
     if (!brief) {
       container.append(el("p", {}, "Paper Briefは未登録です。knowledge_growth用 .kgpack を取り込むと表示できます。"));
       return;
     }
     container.append(el("p", { class: "brief-muted" },
-      "Import由来の解析と原文を区別して確認してください。statusは情報の記載状態で、verification（検証）とは別です。"));
+      "AI生成・Import由来の解析と原文を区別して確認してください。statusは情報の記載状態で、verification（検証）とは別です。"));
     function fieldView(name, compact = false) {
       const f = brief.fields[name];
       const card = el("article", { class: "brief-field", dataset: { field: name } }, el("div", { class: "brief-field-heading" }, el("h4", {}, FIELD_LABELS[name] || name), f ? statusBadge(f.status) : null));
@@ -33,6 +39,7 @@ export async function mount(container, sourceId, { onEvidence, onPdf, onImport, 
         el("p", { class: "brief-provenance" }, `origin: ${f.origin}${f.user_edited ? " · ユーザー編集済み" : ""} · verification: ${f.verification}`),
         el("p", { class: "brief-value" },
           `package: ${f.provenance.package_id ?? "—"} · generator: ${f.provenance.generator_label || f.provenance.generated_by || "—"} · imported: ${f.provenance.imported_at ?? "—"}`),
+        el("p", { class: "brief-value" }, `runtime: ${f.provenance.runtime ?? f.provenance.provider ?? "—"} · model: ${f.provenance.model ?? "—"} · prompt: ${f.provenance.prompt_version ?? "—"} · generated: ${f.provenance.generated_at ?? "—"}`),
         compact ? evidenceView(f.evidence_resolution, { onEvidence }) : null));
       if (compact) {
         const states = [...new Set(f.evidence_resolution.map((e) => e.status))];
@@ -43,7 +50,10 @@ export async function mount(container, sourceId, { onEvidence, onPdf, onImport, 
       return card;
     }
     const quick = ["one_line_summary", "research_objective", "background", "problem", "target_task", "novelty", "key_results"];
-    const model = ["model_family", "base_model", "learning_regimes", "shots", "adaptation_methods", "datasets", "metrics"];
+    const type = brief.fields.paper_type?.value;
+    const model = type === "survey" ? ["paper_type", "target_domain", "model_family", "limitations", "suggested_reading_order"] :
+      ["benchmark", "dataset"].includes(type) ? ["paper_type", "datasets", "evaluation_settings", "metrics", "baselines", "limitations"] :
+      ["paper_type", "model_family", "base_model", "learning_regimes", "shots", "adaptation_methods", "datasets", "metrics"];
     container.append(el("section", { class: "brief-section" }, el("h3", {}, "30秒Brief"), ...quick.map((name) => fieldView(name, true))),
       el("section", { class: "brief-section" }, el("h3", {}, "モデル・学習・評価"), ...model.map((name) => fieldView(name, true))),
       el("details", { class: "brief-structured" }, el("summary", {}, "Structured Brief · 詳細を開く"),

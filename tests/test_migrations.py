@@ -98,11 +98,11 @@ def test_future_versions_apply_in_order(database):
     before = _snapshot(database)
     run_migrations(database)
     future = MIGRATIONS + (
-        Migration(4, "test_extension", "CREATE TABLE test_extension (id TEXT PRIMARY KEY);"),
-        Migration(5, "test_fill", "INSERT INTO test_extension VALUES ('kept');"),
+        Migration(len(MIGRATIONS) + 1, "test_extension", "CREATE TABLE test_extension (id TEXT PRIMARY KEY);"),
+        Migration(len(MIGRATIONS) + 2, "test_fill", "INSERT INTO test_extension VALUES ('kept');"),
     )
     assert run_migrations(database, migrations=future).exists()
-    assert database.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [(1,), (2,), (3,), (4,), (5,)]
+    assert database.execute("SELECT version FROM schema_version ORDER BY version").fetchall() == [(i,) for i in range(1, len(future) + 1)]
     assert database.execute("SELECT * FROM test_extension").fetchall() == [("kept",)]
     assert {k: v for k, v in _snapshot(database).items() if k != "test_extension"} == before
     assert run_migrations(database, migrations=future) is None
@@ -112,8 +112,8 @@ def test_failure_rolls_back_ddl_data_and_entire_pending_history(database):
     _seed_legacy(database)
     before = _snapshot(database)
     future = MIGRATIONS + (
-        Migration(4, "test_change", "CREATE TABLE test_extension (id TEXT); UPDATE knowledge_items SET content='changed';"),
-        Migration(5, "test_failure", "INSERT INTO nonexistent_table VALUES (1);"),
+        Migration(len(MIGRATIONS) + 1, "test_change", "CREATE TABLE test_extension (id TEXT); UPDATE knowledge_items SET content='changed';"),
+        Migration(len(MIGRATIONS) + 2, "test_failure", "INSERT INTO nonexistent_table VALUES (1);"),
     )
     with pytest.raises(sqlite3.OperationalError):
         run_migrations(database, migrations=future)
@@ -180,7 +180,7 @@ def test_startup_adopts_existing_database(tmp_path, monkeypatch):
     init_db()
     with closing(sqlite3.connect(tmp_path / "knowledge.db")) as con:
         assert _snapshot(con) == before
-        assert con.execute("SELECT version FROM schema_version").fetchall() == [(1,), (2,), (3,)]
+        assert con.execute("SELECT version FROM schema_version").fetchall() == [(m.version,) for m in MIGRATIONS]
 
 
 def test_cli_status_and_migration(tmp_path):
@@ -219,7 +219,7 @@ def test_v2_to_v3_backup_preserves_all_existing_rows_and_anchor(database):
     assert backup.exists()
     assert _snapshot(database) == before
     assert database.execute('SELECT bbox_json,role FROM document_blocks').fetchall() == [('generated-bbox', 'para')]
-    assert database.execute('SELECT version FROM schema_version').fetchall() == [(1,), (2,), (3,)]
+    assert database.execute('SELECT version FROM schema_version').fetchall() == [(m.version,) for m in MIGRATIONS]
     for table in ('paper_briefs', 'paper_brief_fields', 'import_packages', 'import_previews'):
         assert database.execute(f'SELECT COUNT(*) FROM {table}').fetchone()[0] == 0
     with closing(sqlite3.connect(backup)) as restored:
@@ -236,7 +236,7 @@ def test_v3_pending_failure_rolls_back_extension_and_preserves_v2(database):
     _seed_legacy(database)
     run_migrations(database, migrations=MIGRATIONS[:2])
     before = _snapshot(database)
-    failing = MIGRATIONS + (Migration(4, 'injected_failure', "UPDATE knowledge_items SET content='lost'; INSERT INTO missing_table VALUES (1);"),)
+    failing = MIGRATIONS + (Migration(len(MIGRATIONS) + 1, 'injected_failure', "UPDATE knowledge_items SET content='lost'; INSERT INTO missing_table VALUES (1);"),)
     with pytest.raises(sqlite3.OperationalError):
         run_migrations(database, migrations=failing)
     assert _snapshot(database) == before
@@ -244,3 +244,22 @@ def test_v3_pending_failure_rolls_back_extension_and_preserves_v2(database):
     assert database.execute("SELECT name FROM sqlite_master WHERE name LIKE 'paper_brief%' OR name LIKE 'import_%'").fetchall() == []
     run_migrations(database)
     assert _snapshot(database) == before
+
+
+def test_v3_to_v4_preserves_brief_and_generations_cascade(database):
+    _seed_legacy(database)
+    run_migrations(database, migrations=MIGRATIONS[:3])
+    database.execute("INSERT INTO paper_briefs(source_id,schema_version,created_at,updated_at) VALUES('s','paper-brief-0.1','old','old')")
+    database.execute("""INSERT INTO paper_brief_fields(source_id,field_name,value_json,status,evidence_json,origin,user_edited,provenance_json,verification,updated_at)
+        VALUES('s','research_objective','\"User objective\"','derived','{"refs":[],"resolutions":[]}','user',1,'{}','verified','old')""")
+    database.commit()
+    before=database.execute('SELECT * FROM paper_brief_fields').fetchall()
+    backup=run_migrations(database)
+    assert backup.exists()
+    assert database.execute('SELECT * FROM paper_brief_fields').fetchall()==before
+    with closing(sqlite3.connect(backup)) as saved:
+        assert saved.execute('SELECT * FROM paper_brief_fields').fetchall()==before
+        assert saved.execute("SELECT name FROM sqlite_master WHERE name='paper_brief_generations'").fetchone() is None
+    database.execute("INSERT INTO paper_brief_generations(id,source_id,state,snapshot_json,created_at,updated_at) VALUES('job','s','failed','{}','old','old')")
+    database.execute("DELETE FROM sources WHERE id='s'")
+    assert database.execute('SELECT * FROM paper_brief_generations').fetchall()==[]

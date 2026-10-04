@@ -105,6 +105,14 @@ export function mountAIStatus(host) {
     } finally { reader?.releaseLock(); smokeAbort = null; activeTurn = null; render(); }
   }
   window.addEventListener("pagehide", () => smokeAbort?.abort());
+  window.addEventListener("kg-ai-connect", async () => {
+    details.open = true;
+    await refresh(true);
+    if (current?.state === "auth_required" && !busy && current.auth.login_state !== "pending") {
+      await action(async () => { const data = await call("login"); authLink = data.authorization_url; });
+    }
+    panel.querySelector("button, a")?.focus();
+  });
   // Polling never starts login or inference; account/read is requested explicitly
   // or after auth notifications. Only changed status re-renders during polling.
   setInterval(() => { if (!busy) refresh(false, true); }, 3000);

@@ -72,7 +72,9 @@ field単位の更新・保護ができるようにflat field名へ正規化し�
 - paper_type: method / benchmark / survey / dataset / analysis / system / position / other。
 - status: confirmed / derived / uncertain / not_reported / not_applicable。
 - 文: one_line_summary、objective、background、problem、proposed_method、architecture_summary、model_size、inference/training_requirements。
-- 文字列配列: target_task/domain、inputs/outputs、model_family/base_model/backbones/modalities、trainable/frozen_parts、learning_regimes、supervision/adaptation_methods/pretraining、datasets/evaluation_settings/metrics/baselines、architecture_components/data_flow、important_figures/tables、novelty/limitations/failure_cases、suggested_reading_order/ablation。
+- 文字列配列: target_task/domain、inputs/outputs、model_family/base_model/backbones/modalities、trainable/frozen_parts、learning_regimes、supervision/adaptation_methods/pretraining、datasets/evaluation_settings/metrics/baselines、architecture_components/data_flow、novelty/limitations/failure_cases、suggested_reading_order/ablation。
+- important_figures/tables: 旧文字列配列または`{label,page,caption,evidence}`の構造化参照配列。nested Evidenceも検証・保存する。
+- provenance: 旧metadataにruntime/source_version/schema_versionをoptional追加。
 - shots: 非負整数またはnull。
 - reproducibility: code / weights / data / compute / license_notesのnullableな文字列。
 - key_results: `id, dataset, task, setting, metric, score, unit, split, comparison, status, evidence`を持つ配列。
@@ -254,3 +256,5 @@ fixture binaryはGitに保存しない。
 | Architecture docs | `docs/architecture/data_model.md`, `api_spec.md`, `source_anchor_spec.md` |
 | Development docs | `docs/development/db_migrations.md`, `testing.md` |
 | v0.4 source-of-truth / implementation record | `docs/redesign/v0.4/README.md`, `knowledge_growth_mvp_spec_v0_4.md`, `knowledge_growth_implementation_tasks_v0_4.md`, `paper_brief_schema_v0_1.md`, `import_bridge_spec_v0_1.md`, `paper_brief_import_foundation.md`, `examples/package.template.json` |
+
+現在の生成機能・schema v4 staging: [Structured Brief生成](structured_brief_generation.md)。共有Brief保存形式は同じ。

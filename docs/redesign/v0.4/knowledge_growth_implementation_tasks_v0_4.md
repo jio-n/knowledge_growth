@@ -217,35 +217,35 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 - [x] evidence referencesを各fieldに保持
 
 ## T2-02 Paper Type分類
-- [ ] method
-- [ ] benchmark
-- [ ] survey
-- [ ] dataset
-- [ ] analysis
-- [ ] system
-- [ ] position
-- [ ] other
+- [x] method
+- [x] benchmark
+- [x] survey
+- [x] dataset
+- [x] analysis
+- [x] system
+- [x] position
+- [x] other
 
 分類でBrief表示項目を少し変える。
 
 ## T2-03 AI/LLM論文向け抽出
 最低限:
-- [ ] objective
-- [ ] background/problem
-- [ ] target_task
-- [ ] target_domain
-- [ ] model_family
-- [ ] base_model
-- [ ] architecture_components
-- [ ] zero/few/one-shot等
-- [ ] fine-tuning / PEFT / prompt tuning / frozen等
-- [ ] datasets
-- [ ] metrics
-- [ ] key scores
-- [ ] baselines
-- [ ] novelty
-- [ ] limitations
-- [ ] important figures/tables
+- [x] objective
+- [x] background/problem
+- [x] target_task
+- [x] target_domain
+- [x] model_family
+- [x] base_model
+- [x] architecture_components
+- [x] zero/few/one-shot等
+- [x] fine-tuning / PEFT / prompt tuning / frozen等
+- [x] datasets
+- [x] metrics
+- [x] key scores
+- [x] baselines
+- [x] novelty
+- [x] limitations
+- [x] important figures/tables
 
 ## T2-04 「推測で埋めない」validator
 - [x] unsupported fieldを検知
@@ -262,11 +262,12 @@ Phase 0A、bbox取得、Paper Brief等はこの作業の対象外。
 
 ## T2-06 Brief再解析
 
-schema/model/provider/prompt metadataの保存・user-corrected保護は実装済み。AI再生成は未実装。
-- [ ] schema version保存
-- [ ] prompt version保存
-- [ ] provider/model保存
-- [ ] user-corrected fieldを自動上書きしない
+AI再生成・preview/confirm/commit・field provenance・user edit保護は実装済み。
+[生成pipeline・検証・制約](structured_brief_generation.md)を参照。
+- [x] schema version保存
+- [x] prompt version保存
+- [x] provider/model保存
+- [x] user-corrected fieldを自動上書きしない
 
 ---
 

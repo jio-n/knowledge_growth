@@ -12,8 +12,9 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import CLIENT_DIR, note_template
 from .ai import create_runtime
-from . import routes_ai
-from .db import init_db
+from . import routes_ai, routes_brief_generation
+from .db import init_db, get_db, now
+from contextlib import closing
 from . import routes_export, routes_import, routes_knowledge, routes_qa, routes_sources
 
 PROMPT_TYPES = [
@@ -30,6 +31,11 @@ PROMPT_TYPES = [
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
     init_db()
+    # This local app owns one runtime/worker. Interrupted jobs cannot resume an
+    # inference turn after process restart; keep the Brief and allow a fresh retry.
+    with closing(get_db()) as con:
+        con.execute("UPDATE paper_brief_generations SET state='failed',error='interrupted',updated_at=? WHERE state='generating'", (now(),))
+        con.commit()
     app.state.ai_runtime.start()
     try:
         yield
@@ -47,6 +53,7 @@ def create_app(runtime=None) -> FastAPI:
     app.include_router(routes_knowledge.router)
     app.include_router(routes_export.router)
     app.include_router(routes_import.router)
+    app.include_router(routes_brief_generation.router)
 
     @app.get("/api/meta")
     def get_meta():

@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from pydantic import Field, model_validator
 from app.paper_brief import (EvidenceIds, Identifier, PaperBrief, Provenance,
-                             StrictModel, Text, brief_fields)
+                             StrictModel, Text, brief_fields, nested_evidence)
 
 KGPACK_VERSION = 'kgpack-0.1'
 REQUIRED_PAYLOADS = {'manifest.json', 'paper_brief.json', 'evidence_refs.json'}
@@ -139,6 +139,7 @@ class Package(StrictModel):
         if any(len(g) != len(set(g)) for g in groups):
             raise ValueError('duplicate ID')
         refs = [f['evidence'] for f in brief_fields(self.paper_brief).values()]
+        refs += [nested_evidence(n, f) for n, f in brief_fields(self.paper_brief).items()]
         refs += [r.evidence for r in results.value or []] if results else []
         refs += [r.evidence for r in (self.knowledge_items or []) + (self.qa_threads or [])]
         if any(set(ref) - set(ids) for ref in refs):

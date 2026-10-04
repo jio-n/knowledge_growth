@@ -609,3 +609,16 @@ def test_valid_json_prefix_cannot_hide_more_pdf_data_in_member(compression):
         assert archive.read('manifest.json') == manifest
     with pytest.raises(PackageError):
         validate_package(bytes(raw))
+
+
+def test_additive_provenance_preserves_pre_generation_package_hash():
+    import hashlib
+    from app.import_bridge.validator import canonical
+    package = validate_package(make_kgpack())
+    old = package.model_dump(mode='json')
+    for key in ('package_id','generated_at'): old['manifest'].pop(key)
+    for f in old['paper_brief'].values():
+        if isinstance(f,dict) and 'provenance' in f:
+            for key in ('runtime','source_version','schema_version'): f['provenance'].pop(key)
+    expected=hashlib.sha256(canonical(old).encode()).hexdigest()
+    assert payload_hash(package)==expected

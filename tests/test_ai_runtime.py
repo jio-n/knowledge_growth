@@ -387,3 +387,14 @@ def test_legacy_mock_uses_runtime_without_api_key_guidance(monkeypatch):
     assert 'APIキーを設定' not in answer.text
     assert provider.complete_json('trusted','source').text == '{}'
     with pytest.raises(LLMError): get_provider(NoAIRuntime()).complete('trusted','source')
+
+
+@pytest.mark.parametrize('mode', ['oversize', 'incomplete'])
+def test_runtime_provider_bounds_output_and_requires_terminal_completion(mode):
+    from app.ai.base import TurnEvent
+    from app.ai.offline import MockRuntime
+    class InvalidTurn(MockRuntime):
+        def send_turn(self, session, text, *, hint=None):
+            yield TurnEvent('delta',session.id,'turn','x'*(1024*1024+1) if mode=='oversize' else '{}')
+    with pytest.raises(LLMError,match='output_too_large' if mode=='oversize' else 'incomplete_turn'):
+        RuntimeProvider(InvalidTurn()).complete_json('trusted','untrusted')

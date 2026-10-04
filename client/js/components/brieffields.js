@@ -34,6 +34,12 @@ export function valueView(name, value, { resolutions = [], onEvidence, target } 
       evidenceView(resolutions.filter((e) => r.evidence.includes(e.evidence_id)), { onEvidence, target }),
     )));
   }
+  if (["important_figures", "important_tables"].includes(name) && Array.isArray(value)) {
+    return el("div", {}, ...value.map((v) => typeof v === "string" ? el("p", {}, v) :
+      el("article", { class: "brief-result" }, el("strong", {}, `${v.label} · p.${v.page ?? "?"}`),
+        el("p", { class: "brief-value" }, v.caption ?? "Caption未報告"),
+        evidenceView(resolutions.filter((e) => v.evidence.includes(e.evidence_id)), { onEvidence, target }))));
+  }
   if (Array.isArray(value)) return value.length
     ? el("ul", { class: "brief-values" }, ...value.map((v) => el("li", {}, v)))
     : el("p", { class: "brief-muted" }, "値なし（空のリスト）");

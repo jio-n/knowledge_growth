@@ -1,14 +1,14 @@
 # SQLite migration・バックアップ・復旧
 
-更新: 2026-10-04 / redesign v0.4 Paper Brief / Import foundation (schema v3)
+更新: 2026-10-04 / redesign v0.4 Structured Brief generation (schema v4)
 
 ## 起動時の移行
 
 FastAPI起動時の `app.db.init_db()` が `app.migrations.run_migrations()` を実行する。
 `KG_DATA_DIR` 未指定なら対象は `data/knowledge.db`。
 
-- 新規DB: `001_baseline.sql` の10テーブルとindexを作成し、v1/v2/v3を登録する。
-- 版管理のない現行DB: v1の列定義・外部キー・indexを検証し、バックアップ後にv1/v2/v3を登録する。
+- 新規DB: `001_baseline.sql` の10テーブルとindexを作成し、v1/v2/v3/v4を登録する。
+- 版管理のない現行DB: v1の列定義・外部キー・indexを検証し、バックアップ後にv1/v2/v3/v4を登録する。
   既存ID、SourceAnchorのJSON、ノート、origin、verification、翻訳修正フラグ等は変更しない。
 - 移行済みDB: 未適用の版のみ順番に実行する。再起動で履歴やバックアップを増やさない。
 - 未知の版、新しい版、履歴の欠落・名前の不一致、現行schemaと異なる未版管理DBは拒否する。
@@ -75,9 +75,14 @@ Python側で `executescript()` を使うと暗黙commitされるためrunnerで�
 既存DBからの移行、繰返し起動、失敗時のデータ・DDL・履歴rollbackをテストし、
 `docs/architecture/data_model.md` を同時に更新する。
 
-現時点の実schemaはv3。`002_pdf_evidence_geometry.sql`は固定したまま、
+現時点の実schemaはv4。`002_pdf_evidence_geometry.sql`は固定したまま、
 `003_paper_brief_import.sql`でpaper_briefs、paper_brief_fields、import_packages、import_previewsを追加する。
 既存Q&A/Note/Translation/Anchor/geometryを移行で変更しない。
 v2の永続DBはbackup後にv3へ移行する。v2 backupはPhase 1コードで復旧可能。
 v2→v3のbackup復元、後続失敗時のDDL/data/history rollbackをgenerated DBでテストする。
 詳細なschemaとimport transactionは[Import foundation](../redesign/v0.4/paper_brief_import_foundation.md)を参照。
+
+`004_paper_brief_generation.sql`はjob lifecycleとpreview用paper_brief_generationsを追加する。
+v1〜v3 SQLや既存Brief/user edit/SourceAnchorは変更しない。
+v3→v4もbackup後に移行する。v3 backupでPR #5のアプリへ復旧できる。
+[生成のtransaction・中断復旧](../redesign/v0.4/structured_brief_generation.md)。
