@@ -11,3 +11,4 @@ beautifulsoup4>=4.12         # HTML -> structured blocks
 lxml>=5.2
 lxml_html_clean>=0.1         # required by readability-lxml with lxml>=5
 pytest>=8.0                  # tests (dev)
+jsonschema>=4.23           # generated app-server request contract tests (dev)

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import Request, APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -18,9 +18,17 @@ from .ingest.web import extract_web, fetch_url
 router = APIRouter(prefix="/api")
 
 
+def _schedule_analysis(source_id, runtime):
+    # Keep the baseline single-argument mock hook used by offline tests/tools.
+    if runtime is None or runtime.status().runtime == "mock":
+        run_analysis_async(source_id)
+    else:
+        run_analysis_async(source_id, runtime)
+
+
 def _insert_source(con, doc: ExtractedDoc, *, type_: str, url: str | None = None,
                    content_hash: str, file_path: str | None = None,
-                   raw_path: str | None = None) -> dict:
+                   raw_path: str | None = None, runtime=None) -> dict:
     sid, vid, ts = new_id(), new_id(), now()
     con.execute(
         """INSERT INTO sources (id, type, title, authors, year, venue, url, canonical_url, doi,
@@ -39,7 +47,7 @@ def _insert_source(con, doc: ExtractedDoc, *, type_: str, url: str | None = None
           json.dumps(b.bbox) if b.bbox else None, b.role)
          for i, (bid, b) in enumerate(zip(block_ids(vid, doc.blocks), doc.blocks))])
     con.commit()
-    run_analysis_async(sid)
+    _schedule_analysis(sid, runtime)
     return dict(con.execute("SELECT * FROM sources WHERE id=?", (sid,)).fetchone())
 
 
@@ -50,7 +58,7 @@ def _dup_response(existing: list[dict]) -> dict:
 
 
 @router.post("/sources/pdf")
-async def register_pdf(file: UploadFile = File(...), force: bool = Form(False)):
+async def register_pdf(request: Request, file: UploadFile = File(...), force: bool = Form(False)):
     data = await file.read()
     if not data[:5] == b"%PDF-":
         raise HTTPException(400, "PDFファイルではありません")
@@ -65,7 +73,7 @@ async def register_pdf(file: UploadFile = File(...), force: bool = Form(False)):
         (FILES_DIR / rel).write_bytes(data)
         if not doc.title or doc.title == "Untitled PDF":
             doc.title = (file.filename or "Untitled PDF").rsplit(".", 1)[0]
-        return {"source": _insert_source(con, doc, type_="pdf", content_hash=h,
+        return {"source": _insert_source(con, doc, runtime=request.app.state.ai_runtime, type_="pdf", content_hash=h,
                                          file_path=rel, raw_path=rel)}
     finally:
         con.close()
@@ -77,7 +85,7 @@ class UrlIn(BaseModel):
 
 
 @router.post("/sources/url")
-def register_url(body: UrlIn):
+def register_url(body: UrlIn, request: Request):
     url = body.url.strip()
     if not url.startswith(("http://", "https://")):
         raise HTTPException(400, "http(s) のURLを指定してください")
@@ -96,7 +104,7 @@ def register_url(body: UrlIn):
             return _dup_response(dups)
         rel = f"{sha256_text(final_url)[:16]}_{now()[:10]}.html"
         (FILES_DIR / rel).write_text(html, encoding="utf-8")
-        return {"source": _insert_source(con, doc, type_="web", url=final_url,
+        return {"source": _insert_source(con, doc, runtime=request.app.state.ai_runtime, type_="web", url=final_url,
                                          content_hash=text_hash, raw_path=rel)}
     finally:
         con.close()
@@ -110,7 +118,7 @@ class TextIn(BaseModel):
 
 
 @router.post("/sources/text")
-def register_text(body: TextIn):
+def register_text(body: TextIn, request: Request):
     if not body.content.strip():
         raise HTTPException(400, "本文が空です")
     doc = extract_text(body.content, filename=body.filename)
@@ -123,7 +131,7 @@ def register_text(body: TextIn):
         if dups and not body.force:
             return _dup_response(dups)
         type_ = "markdown" if (body.filename or "").endswith((".md", ".markdown")) else "text"
-        return {"source": _insert_source(con, doc, type_=type_, content_hash=h)}
+        return {"source": _insert_source(con, doc, runtime=request.app.state.ai_runtime, type_=type_, content_hash=h)}
     finally:
         con.close()
 
@@ -265,7 +273,7 @@ def delete_source(source_id: str):
 
 
 @router.post("/sources/{source_id}/reanalyze")
-def reanalyze(source_id: str):
+def reanalyze(source_id: str, request: Request):
     con = get_db()
     try:
         if not con.execute("SELECT 1 FROM sources WHERE id=?", (source_id,)).fetchone():
@@ -274,5 +282,5 @@ def reanalyze(source_id: str):
         con.commit()
     finally:
         con.close()
-    run_analysis_async(source_id)
+    _schedule_analysis(source_id, request.app.state.ai_runtime)
     return {"ok": True}

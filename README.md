@@ -6,7 +6,7 @@
 - すべての知識・回答は**原文アンカー**で根拠箇所へ戻れる
 - 出所(原文 / AI回答 / AI編集済 / 自分)と情報種別を常に区別
 - 理解ノートはMarkdown / JSONでエクスポート可能(ロックインなし)
-- LLMプロバイダー交換可能(現行MVP: Anthropic / OpenAI互換 / オフラインmock)
+- AI runtime交換可能(Codex app-server + ChatGPT plan / no-AI / オフラインmock、API key不要)
 
 ## Windows: ワンクリック起動
 
@@ -71,6 +71,17 @@ Phase 0（baseline確認・DB migration基盤・生成PDF fixtures）は実装�
 [検証結果と残課題](docs/redesign/v0.4/phase0_baseline.md)、
 [移行・backup・復旧手順](docs/development/db_migrations.md)、
 [生成PDFの使い方](tests/fixtures/README.md) を参照してください。
+
+## AI接続（Phase 0A）
+
+既定はCodex app-server + ChatGPT planです。Codex未インストール・未認証でもアプリは起動し、
+原PDF、kgpack Import、Import済みPaper Brief、Note、Highlight、exportを使えます。
+AI操作にはheaderの「AI」→「ChatGPTで接続」からbrowser認証してください。API keyは不要です。
+認証はCodexのOS keyringを使用し、アプリのSQLite/configへtokenを保存しません。
+keyringが使えない環境ではno-AI/Importを使用できます。
+
+`KG_AI_RUNTIME=no_ai`で明示的なoffline利用、`KG_AI_RUNTIME=mock`で開発用mockに切り替えられます。
+[実装・protocol・tests・manual smoke・制約](docs/redesign/v0.4/subscription_first_runtime_foundation.md)を参照。
 
 ## ドキュメント
 

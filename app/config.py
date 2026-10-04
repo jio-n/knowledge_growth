@@ -6,7 +6,9 @@ without touching code (see docs/architecture/system_architecture.md).
 
 Env overrides:
   KG_DATA_DIR      — data directory (default <repo>/data). Used by tests.
-  KG_LLM_PROVIDER  — force LLM provider (mock/anthropic/openai_compat).
+  KG_AI_RUNTIME    — codex_chatgpt_plan / mock / no_ai.
+  KG_CODEX_EXECUTABLE — native Codex binary path.
+  KG_LLM_PROVIDER  — legacy mock override for tests / CI.
 """
 from __future__ import annotations
 
@@ -73,10 +75,21 @@ def load_config(force: bool = False) -> dict:
     return _config_cache
 
 
+def runtime_config() -> dict:
+    cfg = load_config().get("runtime", {"type": "codex_chatgpt_plan"})
+    # Keep old mock test/dev switch. No legacy API selection can activate billing.
+    kind = os.environ.get("KG_AI_RUNTIME")
+    if not kind and os.environ.get("KG_LLM_PROVIDER") == "mock":
+        kind = "mock"
+    return {**cfg, "type": kind or cfg["type"],
+            "executable": os.environ.get("KG_CODEX_EXECUTABLE", cfg.get("executable", "codex"))}
+
+
 def llm_config() -> dict:
-    cfg = load_config()["llm"]
-    # environment variable overrides provider selection for tests / CI
-    provider = os.environ.get("KG_LLM_PROVIDER", cfg.get("provider", "mock"))
+    # Compatibility metadata for legacy heuristic code; provider selection belongs
+    # to AIRuntime. Legacy metered environment overrides never select API billing.
+    cfg = load_config().get("llm", {})
+    provider = "mock" if runtime_config()["type"] == "mock" else "runtime"
     return {**cfg, "provider": provider}
 
 

@@ -10,7 +10,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .config import CLIENT_DIR, llm_config, note_template
+from .config import CLIENT_DIR, note_template
+from .ai import create_runtime
+from . import routes_ai
 from .db import init_db
 from . import routes_export, routes_import, routes_knowledge, routes_qa, routes_sources
 
@@ -28,12 +30,18 @@ PROMPT_TYPES = [
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
     init_db()
-    yield
+    app.state.ai_runtime.start()
+    try:
+        yield
+    finally:
+        app.state.ai_runtime.close()
 
 
-def create_app() -> FastAPI:
+def create_app(runtime=None) -> FastAPI:
     app = FastAPI(title="Research Reading Workspace", lifespan=_lifespan)
 
+    app.state.ai_runtime = runtime if runtime is not None else create_runtime()
+    app.include_router(routes_ai.router)
     app.include_router(routes_sources.router)
     app.include_router(routes_qa.router)
     app.include_router(routes_knowledge.router)
@@ -42,12 +50,9 @@ def create_app() -> FastAPI:
 
     @app.get("/api/meta")
     def get_meta():
-        # NOTE: reads config directly instead of get_provider() so this endpoint
-        # never raises when an API key is missing (provider is only instantiated
-        # lazily, on first actual LLM call).
-        cfg = llm_config()
-        provider = cfg.get("provider", "mock")
-        model = cfg.get(provider, {}).get("model", provider)
+        runtime = app.state.ai_runtime
+        provider = runtime.status().runtime
+        model = "mock" if provider == "mock" else "runtime-default"
         return {"provider": provider, "model": model, "note_template": note_template(),
                 "prompt_types": PROMPT_TYPES}
 

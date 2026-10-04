@@ -10,36 +10,44 @@
 
 # Phase 0A: AI Runtime Foundation（v0.4追加 / P0）
 
+実装・検証・制約: [Phase 0A記録](subscription_first_runtime_foundation.md)。
+
 ## T0A-01 AIRuntime interface
-- [ ] Paper Brief / translate / question / conversationが同一adapter interfaceを使用
-- [ ] UIやDBからprovider固有処理を分離
-- [ ] runtime capability metadataを返す
+- [x] runtime status / capability / model catalog / session create-resume / turn / streaming / cancel / authenticationを抽象化
+- [x] Paper Brief生成向け接続点、既存translate / question / legacy extractionへのLLMProvider互換層
+- [x] UIやDBからCodex固有処理を分離
+
+ConversationThreadとStructured Brief実AI生成は後続。
 
 ## T0A-02 Codex app-server adapter
-- [ ] child process起動・終了
-- [ ] stdio RPC initialize / thread / turn処理
-- [ ] stream deltaを既存UIへ渡す
-- [ ] interruption / error / retryを正規化
-- [ ] model catalogを表示用に取得する場合、entitlement確定とは扱わない
+- [x] child process起動・終了・再起動・異常終了・timeout・malformed RPC
+- [x] 実binary生成schemaにもとづくstdio initialize / thread / turn処理
+- [x] stream deltaをruntime smoke UIへSSE配信
+- [x] interruption / errorを正規化、再接続導線
+- [x] model catalogはentitlement未確認として返す。model名を固定しない
 
 ## T0A-03 Sign in with ChatGPT / token lifecycle
-- [ ] ChatGPTプラン用OAuth認証導線
-- [ ] tokenをOSに適した安全な保存領域へ保存（平文config/DB/Git不可）
-- [ ] refresh / revoke / sign-out
-- [ ] app-server再起動後のthread resume
-- [ ] 接続状態 / 利用不可状態をUI表示
+- [x] ChatGPT browser認証導線、完了通知、account/read確認、cancel/failure表示
+- [x] CodexのOS keyring credential storageを使用。平文config/DB/Git保存なし
+- [x] refresh / sign-outをCodexに委譲、keyring認証を再起動後に再利用
+- [x] app-server再起動後のsession/thread resume interface
+- [x] 接続状態 / 利用不可状態をUI表示
+
+実ChatGPT/OS keyring OAuthと実Windowsはoptional/manual検証。remote revokeや独自token管理は追加しない。
 
 ## T0A-04 API従量課金を非前提化
-- [ ] README/SetupからAPIキー必須に見える記述を除去
-- [ ] default runtimeを `codex_chatgpt_plan` または未接続状態に変更
-- [ ] API providerはMVP UIから選ばせない
-- [ ] APIキー未設定で全MVPテストが実行可能
+- [x] README/SetupからAPIキー必須に見える記述を除去
+- [x] default runtimeを `codex_chatgpt_plan` に変更。未導入/未認証で正常起動
+- [x] API providerはMVP factory/UIで選択しない。旧classは将来拡張として保持
+- [x] APIキー・実ChatGPT accountなしで自動テスト可能
 
 ## T0A-05 no-AI fallback
-- [ ] 原PDF閲覧
-- [ ] Import済みPaper Brief閲覧
-- [ ] メモ / ハイライト / Visual Clip閲覧
-- [ ] AI依存操作のみ「未接続」と明示
+- [x] 原PDF閲覧
+- [x] kgpack Import / Import済みPaper Brief閲覧
+- [x] Note / Highlight / export
+- [x] AI依存操作のみ「AI未接続」と明示、既存mock testsを維持
+
+Visual Clipは未実装のため今回のfallback対象に含めない。
 
 完了条件: 従量課金APIキーなしでアプリを起動し、Codex app-server接続またはImport Bridgeへ進める。
 

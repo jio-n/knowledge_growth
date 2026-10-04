@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, HTTPException
+from fastapi import Request, APIRouter, HTTPException
 from pydantic import BaseModel
 
 from .config import llm_config, note_template
@@ -80,7 +80,7 @@ class SuggestIn(BaseModel):
 
 
 @router.post("/knowledge/suggest")
-def suggest_save_target(body: SuggestIn):
+def suggest_save_target(body: SuggestIn, request: Request):
     """Heuristic first, LLM refinement second. Must never 5xx (ai_pipeline.md パイプライン4)."""
     section_key, info_type = HEURISTIC_MAP.get(body.prompt_type, DEFAULT_SECTION_INFO)
     first_line = next((l for l in body.content.strip().splitlines() if l.strip()), "")
@@ -95,7 +95,7 @@ def suggest_save_target(body: SuggestIn):
             valid_keys = {s["key"] for s in template}
             prompt = get_prompt("suggest_save_target")
             user_prompt = prompt.render(sections=sections, content=body.content)
-            provider = get_provider()
+            provider = get_provider(request.app.state.ai_runtime)
             res = provider.complete_json(
                 "あなたは研究ノートの整理を支援するアシスタントです。", user_prompt)
             data = json.loads(strip_json_fences(res.text))
