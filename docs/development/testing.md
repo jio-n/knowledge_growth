@@ -49,3 +49,17 @@ validate、strong/weak/ambiguous/unmatched、手動選択、field除外、user�
 再読込、狭幅dialog、入力HTMLを実行しないことを確認する。
 スクリーンショットは`/tmp/kg-import-brief-browser/`。終了時に一時DBを削除し、通常のdata/を使わない。
 [UI契約・既知の制約](../redesign/v0.4/import_brief_ui.md)。
+
+## Phase 0A Runtime
+
+`tests/test_ai_runtime.py`はfake app-serverの実process/stdio、生成JSON schema、mock/no_aiを使い、
+認証・timeout/crash・streaming/cancel・credential/log suppression・no-AI下のPDF/Import/Note等を検証します。
+実Codex binaryやChatGPT account、API keyはCIで要求しません。
+
+```sh
+.venv/bin/python scripts/smoke_ai_runtime.py
+.venv/bin/python scripts/smoke_ai_runtime_browser.py
+```
+
+browser smokeはPlaywright＋Chromiumの任意開発依存が必要です。
+実ChatGPT接続は[manual smoke](../redesign/v0.4/subscription_first_runtime_foundation.md#検証とmanual-smoke)に分離します。

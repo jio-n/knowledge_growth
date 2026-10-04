@@ -37,11 +37,11 @@ INFO_TYPE_FOR_FIELD = {
 }
 
 
-def run_analysis_async(source_id: str) -> None:
-    threading.Thread(target=run_analysis, args=(source_id,), daemon=True).start()
+def run_analysis_async(source_id: str, runtime=None) -> None:
+    threading.Thread(target=run_analysis, args=(source_id, runtime), daemon=True).start()
 
 
-def run_analysis(source_id: str) -> None:
+def run_analysis(source_id: str, runtime=None) -> None:
     con = get_db()
     try:
         con.execute("UPDATE sources SET analysis_status='running', updated_at=? WHERE id=?",
@@ -54,7 +54,7 @@ def run_analysis(source_id: str) -> None:
         provider_name, model = "heuristic", "heuristic"
         try:
             prompt = get_prompt("initial_extraction")
-            provider = get_provider()
+            provider = get_provider(runtime)
             res = provider.complete_json(
                 "あなたは研究資料から構造化情報を抽出するアシスタントです。",
                 prompt.render(title=src["title"], doc_excerpt=excerpt),
@@ -126,5 +126,5 @@ def _heuristic_extraction(con, source_id: str, title: str) -> dict:
         "novelty": None,
         "limitations": None,
         "terms": [],
-        "open_questions": ["(自動抽出はヒューリスティックで実行されました。LLMプロバイダーを設定すると精度が向上します)"],
+        "open_questions": ["(自動抽出はヒューリスティックで実行されました。AI未接続でも原文・ノート・Importを利用できます)"],
     }

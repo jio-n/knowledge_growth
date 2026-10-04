@@ -1,19 +1,12 @@
 {
+  "runtime": {
+    "type": "codex_chatgpt_plan",
+    "executable": "codex",
+    "rpc_timeout_seconds": 10,
+    "turn_timeout_seconds": 120
+  },
   "llm": {
-    "provider": "mock",
-    "_providers_available": ["mock", "anthropic", "openai_compat"],
-    "anthropic": {
-      "model": "claude-sonnet-5",
-      "base_url": "https://api.anthropic.com",
-      "api_key_env": "ANTHROPIC_API_KEY",
-      "max_tokens": 2048
-    },
-    "openai_compat": {
-      "model": "gpt-4o-mini",
-      "base_url": "https://api.openai.com/v1",
-      "api_key_env": "OPENAI_API_KEY",
-      "max_tokens": 2048
-    },
+    "provider": "runtime",
     "timeout_seconds": 120
   },
   "context": {

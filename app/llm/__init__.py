@@ -1,22 +1,18 @@
-"""LLM provider factory. Provider selection via config/app.config.json
-(`llm.provider`) or env var KG_LLM_PROVIDER. See ADR-003."""
-from __future__ import annotations
+"""Legacy complete() boundary, backed by subscription-first AIRuntime.
 
-from ..config import llm_config
+API provider classes are retained as future extensions, never selected by MVP.
+"""
+from ..config import runtime_config
 from .base import LLMProvider, LLMResult
 from .mock import MockProvider
 
 
-def get_provider() -> LLMProvider:
-    cfg = llm_config()
-    name = cfg["provider"]
-    if name == "anthropic":
-        from .anthropic_provider import AnthropicProvider
-        return AnthropicProvider(cfg["anthropic"], timeout=cfg.get("timeout_seconds", 120))
-    if name == "openai_compat":
-        from .openai_compat import OpenAICompatProvider
-        return OpenAICompatProvider(cfg["openai_compat"], timeout=cfg.get("timeout_seconds", 120))
-    return MockProvider()
+def get_provider(runtime=None) -> LLMProvider:
+    if runtime is None and runtime_config()["type"] == "mock":
+        return MockProvider()
+    from ..ai.compat import RuntimeProvider
+    from ..ai.offline import NoAIRuntime
+    return RuntimeProvider(runtime if runtime is not None else NoAIRuntime())
 
 
 __all__ = ["get_provider", "LLMProvider", "LLMResult"]

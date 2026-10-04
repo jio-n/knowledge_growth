@@ -2,6 +2,7 @@
 // Hash router (#/ = library, #/read/<id> = reader) + startup /api/meta + global
 // cross-material search (dropdown in the header, per ui_spec.md).
 
+import { mountAIStatus } from "./components/aistatus.js";
 import { api } from "./api.js";
 import { el, debounce } from "./util.js";
 import { setMeta, setPendingFocus } from "./state.js";
@@ -21,7 +22,7 @@ async function init() {
   try {
     const meta = await api.getMeta();
     setMeta(meta);
-    if (metaEl) metaEl.textContent = `${meta.provider} / ${meta.model}`;
+    if (metaEl) mountAIStatus(metaEl);
   } catch {
     if (metaEl) metaEl.textContent = "";
   }

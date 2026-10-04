@@ -673,3 +673,18 @@ summary { cursor: pointer; }
 .brief-field-heading .brief-status { margin: 0; }
 .brief-section .brief-field { padding: 10px 0; }
 .import-confirmation-fields { margin-top: 16px; }
+
+.ai-status { position: relative; font-size: 12px; }
+.ai-status summary { cursor: pointer; }
+.ai-status__panel { position: absolute; right: 0; top: 24px; z-index: 100; padding: 16px;
+  width: min(360px, 90vw); background: #fff; color: #222; border: 1px solid #ccc;
+  box-shadow: 0 4px 18px #0002; border-radius: 8px; }
+.ai-status__panel button, .ai-status__panel a { margin: 4px; }
+.ai-status__panel p { white-space: normal; }
+.ai-smoke-output { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 160px; overflow: auto; }
+@media (max-width: 600px) {
+  .ai-status__panel { position: fixed; right: 12px; top: 60px;
+    width: min(360px, calc(100vw - 24px)); box-sizing: border-box;
+    max-height: calc(100vh - 84px); overflow-y: auto; }
+  .ai-status summary { max-width: 130px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}

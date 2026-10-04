@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 
-from fastapi import APIRouter, HTTPException
+from fastapi import Request, APIRouter, HTTPException
 from pydantic import BaseModel
 
 from . import context as ctx
@@ -33,7 +33,7 @@ PROMPT_TYPE_PREFIX = {
 
 
 @router.post("/sources/{source_id}/questions")
-def ask_question(source_id: str, body: QuestionIn):
+def ask_question(source_id: str, body: QuestionIn, request: Request):
     con = get_db()
     try:
         src = con.execute("SELECT * FROM sources WHERE id=?", (source_id,)).fetchone()
@@ -59,7 +59,7 @@ def ask_question(source_id: str, body: QuestionIn):
             note_digest=digest, question=question_full)
 
         try:
-            provider = get_provider()
+            provider = get_provider(request.app.state.ai_runtime)
             res = provider.complete(
                 "あなたは研究資料の読解を支援する誠実なアシスタントです。",
                 user_prompt, hint="answer")
@@ -117,7 +117,7 @@ class TranslateIn(BaseModel):
 
 
 @router.post("/translate")
-def translate(body: TranslateIn):
+def translate(body: TranslateIn, request: Request):
     con = get_db()
     try:
         if body.block_id:
@@ -128,7 +128,7 @@ def translate(body: TranslateIn):
                 return {"translation": existing["translated_text"], "cached": True}
         prompt = get_prompt("translate")
         try:
-            res = get_provider().complete(
+            res = get_provider(request.app.state.ai_runtime).complete(
                 "あなたは学術文書の翻訳者です。", prompt.render(selection=body.text),
                 hint="translate")
         except LLMError as e:

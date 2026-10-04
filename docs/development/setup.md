@@ -12,17 +12,27 @@ python run.py                                     # → http://localhost:8300
 
 `.venv` を使わず既存環境に入れても動くが、venv推奨。
 
-## LLMプロバイダー設定
+## AI Runtime設定
 
-既定は `mock`(キー不要、全フロー動作、回答はモックラベル付き)。実LLMを使う場合、`config/app.config.json` の `llm.provider` を変更:
+既定は `runtime.type=codex_chatgpt_plan`。OpenAI/Anthropic等のAPI keyは要求しません。
+Codex CLIをインストールすると、アプリがapp-serverをchild processとして起動します。
+未導入でもPDF・Note・Highlight・Import・Brief・exportを利用できます。
 
-| provider | 必要な環境変数 | 備考 |
-|----------|----------------|------|
-| `anthropic` | `ANTHROPIC_API_KEY` | モデルは `llm.anthropic.model`(既定 claude-sonnet-5) |
-| `openai_compat` | `OPENAI_API_KEY`(ローカルLLMなら不要) | `base_url` 変更で Ollama(`http://localhost:11434/v1`)/LM Studio/vLLM に接続可 |
-| `mock` | なし | 開発・テスト・デモ用 |
+headerのAI状態メニュー → 「ChatGPTで接続」 → browser認証リンクから接続します。
+CodexのOS keyringへ認証を保存します。keyringが使えない場合、平文保存へfallbackせず
+no-AIまたはChatGPT Import Bridgeで利用してください。既存Codexのfile保存認証は自動移行しません。
 
-環境変数 `KG_LLM_PROVIDER` で一時的に上書き可能(設定ファイルより優先)。APIキーを設定ファイルに書かないこと。
+| 設定 | 用途 |
+|---|---|
+| `KG_AI_RUNTIME=codex_chatgpt_plan` | ChatGPT plan runtime（既定） |
+| `KG_AI_RUNTIME=no_ai` | 明示的なoffline利用 |
+| `KG_AI_RUNTIME=mock` | 開発・テスト用、API key/account不要 |
+| `KG_LLM_PROVIDER=mock` | 既存テスト用の互換設定 |
+| `KG_CODEX_EXECUTABLE` | PATHで見つからないnative binaryのパス |
+
+Windowsではnpmのcodex.cmdをshell経由で起動しません。package内のcodex.exeを探索し、
+見つからなければnative binaryのパスを指定してください。
+詳細とoptional実接続確認は[Phase 0A記録](../redesign/v0.4/subscription_first_runtime_foundation.md)を参照。
 
 ## データの場所
 

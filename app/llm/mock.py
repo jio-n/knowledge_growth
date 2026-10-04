@@ -14,10 +14,9 @@ from __future__ import annotations
 from .base import LLMProvider, LLMResult
 
 MOCK_NOTE = (
-    "> ⚠️ **モック回答**: LLMプロバイダーが `mock` に設定されています。"
-    "実際のAI回答を得るには `config/app.config.json` の `llm.provider` を "
-    "`anthropic` または `openai_compat` に変更し、APIキーを設定してください"
-    "(docs/development/setup.md 参照)。\n\n"
+    "> ⚠️ **モック回答**: 開発・テスト用の回答です。"
+    "実際のAI回答を使う場合は、Codexをインストールし、"
+    "AI状態メニューの「ChatGPTで接続」から認証してください。\n\n"
 )
 
 
