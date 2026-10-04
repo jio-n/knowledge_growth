@@ -5,11 +5,14 @@ note → export) must be testable and demoable without any API key or
 network. Answers are clearly labelled as mock output so they can never be
 mistaken for real analysis.
 
-- complete_json returns "{}" — callers fall back to heuristic extraction
+- Legacy complete_json returns "{}" — callers fall back to heuristic extraction
   (app/analysis.py), which doubles as the offline behaviour.
+- Structured Brief prompts return a conservative mock excerpt and local captions.
 - translate-hinted calls return the original text with a mock marker.
 """
 from __future__ import annotations
+
+import json
 
 from .base import LLMProvider, LLMResult
 
@@ -37,6 +40,22 @@ class MockProvider(LLMProvider):
         return LLMResult(text=text, provider=self.name, model="mock")
 
     def complete_json(self, system: str, user: str, *, max_tokens: int | None = None) -> LLMResult:
+        if system.startswith('# paper-brief-extract-0.1 /'):
+            from ..paper_brief import CORE_FIELDS, SCHEMA_VERSION
+            context = json.loads(user)
+            fields = {n: {'value': None, 'status': 'not_reported', 'evidence': []} for n in CORE_FIELDS}
+            body = next((b for b in context['blocks'] if b['kind'] != 'heading' and b['text']), None)
+            if body:
+                fields['paper_type'] = {'value': 'other', 'status': 'uncertain', 'evidence': [body['reference_id']]}
+                fields['one_line_summary'] = {'value': '【モック抽出】' + body['text'][:160], 'status': 'derived', 'evidence': [body['reference_id']]}
+            for name, prefix in (('important_figures', ('Figure', 'Fig.')), ('important_tables', ('Table',))):
+                captions = [b for b in context['blocks'] if b['candidate_label'] and b['candidate_label'].startswith(prefix)]
+                if captions:
+                    fields[name] = {'value': [{'label': b['candidate_label'], 'page': b['page'], 'caption': b['text'],
+                        'evidence': [b['reference_id']]} for b in captions], 'status': 'confirmed',
+                        'evidence': [b['reference_id'] for b in captions]}
+            return LLMResult(text=json.dumps({'paper_brief': {'schema_version': SCHEMA_VERSION, **fields},
+                'section_ids': [], 'evidence_refs': []}, ensure_ascii=False), provider='mock', model='mock')
         return LLMResult(text="{}", provider=self.name, model="mock")
 
 

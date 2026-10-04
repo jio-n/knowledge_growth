@@ -23,6 +23,9 @@ class Provenance(StrictModel):
     provider: Text | None = None
     prompt_version: Text | None = None
     generated_at: Text | None = None
+    runtime: Text | None = None
+    source_version: Text | None = None
+    schema_version: Text | None = None
 
 
 class BriefField(StrictModel, Generic[T]):
@@ -70,6 +73,20 @@ class Reproducibility(StrictModel):
     license_notes: Text | None = None
 
 
+class VisualReference(StrictModel):
+    """Caption evidence, without a Visual Clip asset. Legacy strings remain readable."""
+    label: Annotated[str, Field(min_length=1, max_length=200)]
+    page: Annotated[int, Field(gt=0)] | None
+    caption: Text | None
+    evidence: EvidenceIds
+
+    @model_validator(mode='after')
+    def unique_refs(self):
+        if len(set(self.evidence)) != len(self.evidence):
+            raise ValueError('duplicate evidence reference')
+        return self
+
+
 PaperType = Literal['method', 'benchmark', 'survey', 'dataset', 'analysis', 'system', 'position', 'other']
 CORE_FIELDS = ('paper_type', 'one_line_summary', 'research_objective', 'background',
                'problem', 'target_task', 'target_domain')
@@ -84,6 +101,8 @@ FIELD_TYPES.update({name: BriefField[Text] for name in _TEXT_FIELDS})
 FIELD_TYPES.update(paper_type=BriefField[PaperType], shots=BriefField[Annotated[int, Field(ge=0)]],
                    key_results=BriefField[Annotated[list[KeyResult], Field(max_length=256)]],
                    reproducibility=BriefField[Reproducibility])
+for name in ('important_figures', 'important_tables'):
+    FIELD_TYPES[name] = BriefField[Annotated[list[Text | VisualReference], Field(max_length=256)]]
 PaperBrief = create_model('PaperBrief', __base__=StrictModel,
     schema_version=(Literal['paper-brief-0.1'], ...),
     **{name: (type_, ...) if name in CORE_FIELDS else (type_ | None, None)
@@ -100,3 +119,10 @@ def effective_status(status, refs, resolutions):
     if status == 'confirmed' and (not refs or any(resolutions[e]['status'] != 'resolved' for e in refs)):
         return 'uncertain'
     return status
+
+
+def nested_evidence(name, field):
+    if name in ('key_results', 'important_figures', 'important_tables'):
+        return [ref for item in field['value'] or [] if isinstance(item, dict)
+                for ref in item['evidence']]
+    return []

@@ -116,6 +116,17 @@ export const api = {
   getPaperBrief(sourceId, opts = {}) {
     return request(`/api/sources/${sourceId}/paper-brief`, opts);
   },
+  getBriefGeneration(sourceId) {
+    return request(`/api/sources/${sourceId}/paper-brief/generation`, { silent: true });
+  },
+  generatePaperBrief(sourceId) {
+    return request(`/api/sources/${sourceId}/paper-brief/generate`, { method: "POST", silent: true });
+  },
+  commitBriefGeneration(sourceId, generationId) {
+    return request(`/api/sources/${sourceId}/paper-brief/generation/commit`, {
+      method: "POST", body: { generation_id: generationId, confirmed: true }, silent: true,
+    });
+  },
 
   // --- questions / translation / highlights ---
   askQuestion(sourceId, payload, opts = {}) {

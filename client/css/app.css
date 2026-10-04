@@ -688,3 +688,9 @@ summary { cursor: pointer; }
     max-height: calc(100vh - 84px); overflow-y: auto; }
   .ai-status summary { max-width: 130px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 }
+.brief-generation { border: 1px solid var(--color-border); border-radius: 8px; padding: 12px; margin: 12px 0; }
+.brief-generation-state { font-size: 13px; margin-bottom: 10px; }
+.brief-generation-review { overflow-wrap: anywhere; }
+.brief-generation-review > label { display: flex; align-items: baseline; gap: 8px; margin: 12px 0; }
+.brief-generation-diff { max-height: 480px; overflow: auto; margin-top: 12px; }
+.brief-generation-diff [data-action="preserve_user"] { border-left: 3px solid var(--color-primary); padding-left: 10px; }

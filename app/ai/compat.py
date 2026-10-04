@@ -16,9 +16,17 @@ class RuntimeProvider(LLMProvider):
         try:
             session = self.runtime.create_session(instructions=system)
             parts = []
+            length, completed = 0, False
             for event in self.runtime.send_turn(session, user, hint=hint):
-                if event.kind == "delta": parts.append(event.text)
+                if event.kind == "delta":
+                    length += len(event.text)
+                    if length > 1024 * 1024:
+                        self.runtime.cancel(event.session_id, event.turn_id)
+                        raise AIError("output_too_large")
+                    parts.append(event.text)
                 elif event.kind == "cancelled": raise AIError("cancelled")
+                elif event.kind == "completed": completed = True
+            if not completed: raise AIError("incomplete_turn")
             return LLMResult("".join(parts), self.name, session.model or "runtime-default")
         except AIError as error:
             raise LLMError(str(error)) from None

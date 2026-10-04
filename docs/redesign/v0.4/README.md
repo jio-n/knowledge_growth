@@ -61,4 +61,6 @@ Do not implement the entire roadmap in one Codex task.
 
 - [Subscription-first AI Runtime Foundation](subscription_first_runtime_foundation.md): T0A-01〜T0A-05、現行protocol、認証、no-AI、検証・manual smoke。
 
-Phase 2のStructured Brief実AI抽出とPhase 3以降は未実装。
+T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accountでの推論検証とPhase 3以降は未実施。
+
+- [Structured Paper Brief生成](structured_brief_generation.md): T2-02/T2-03/T2-06、AIRuntime経由、bounded context、Evidence、再生成preview、schema v4、tests・manual smoke。

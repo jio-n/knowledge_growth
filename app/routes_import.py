@@ -6,7 +6,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 from .brief_store import get_brief, write_fields
 from .db import get_db, now
-from .paper_brief import FIELD_TYPES, effective_status
+from .paper_brief import FIELD_TYPES, effective_status, nested_evidence
 from .source_anchor import resolve_portable_evidence
 from .import_bridge.schema import PortableEvidence
 from .import_bridge.service import (ImportConflict, PreviewOptions, commit_preview, stage_preview)
@@ -101,6 +101,7 @@ def edit_field(source_id: str, field_name: str, body: dict):
                     dict(version) if version else {'id': None},
                     source_hash=(e.get('anchor') or {}).get('sourceHash')) for eid, e in refs.items()}
             required = set(field['evidence'])
+            required.update(nested_evidence(field_name, field))
             if field_name == 'key_results':
                 results = field['value'] or []
                 if len({r['id'] for r in results}) != len(results):
@@ -108,7 +109,7 @@ def edit_field(source_id: str, field_name: str, body: dict):
                 required |= {e for r in results for e in r['evidence']}
             if required - refs.keys():
                 raise HTTPException(422, 'user edit may only reuse existing field evidence')
-            field['status'] = effective_status(field['status'], field['evidence'], refs)
+            field['status'] = effective_status(field['status'], list(required), refs)
             if field_name == 'key_results':
                 for result in field['value'] or []:
                     result['status'] = effective_status(result['status'], result['evidence'], refs)

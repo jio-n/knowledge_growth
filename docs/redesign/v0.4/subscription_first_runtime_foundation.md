@@ -215,3 +215,5 @@ Phase 1 scriptは別途起動したdisposable mock serverのURLを`--base-url`�
 - `tests/fixtures/app_server/client_requests.schema.json`
 - `tests/fixtures/app_server/fake_server.py`
 - `tests/test_ai_runtime.py`
+
+T2-02/T2-03/T2-06の接続は[Structured Brief生成](structured_brief_generation.md)で実装済み。上記はPhase 0A時点の記録。

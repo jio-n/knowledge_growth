@@ -83,6 +83,13 @@ keyringが使えない環境ではno-AI/Importを使用できます。
 `KG_AI_RUNTIME=no_ai`で明示的なoffline利用、`KG_AI_RUNTIME=mock`で開発用mockに切り替えられます。
 [実装・protocol・tests・manual smoke・制約](docs/redesign/v0.4/subscription_first_runtime_foundation.md)を参照。
 
+## Paper Brief生成
+
+登録済みPDFを開き、Paper Briefタブの「Paper Briefを生成」から抽出できます。
+ChatGPT接続後に生成結果とEvidenceを確認し、「確認したBriefを保存」で反映します。
+再生成ではユーザー編集を保持します。AI未接続でも既存Brief・PDF・kgpackを利用できます。
+[生成pipeline・tests・manual smoke・制約](docs/redesign/v0.4/structured_brief_generation.md)を参照してください。
+
 ## ドキュメント
 
 | 目的 | 場所 |

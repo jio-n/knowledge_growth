@@ -7,7 +7,7 @@ from typing import Annotated
 from pydantic import Field
 from app.brief_store import get_brief, write_fields
 from app.db import new_id, now
-from app.paper_brief import Identifier, StrictModel, brief_fields, effective_status
+from app.paper_brief import Identifier, StrictModel, brief_fields, effective_status, nested_evidence
 from app.source_anchor import resolve_portable_evidence
 from .matching import local_sources, match_source
 from .schema import Package
@@ -50,7 +50,7 @@ def build_preview(con, package: Package, options: PreviewOptions) -> dict:
     for name, field in fields.items():
         incoming = json.loads(canonical(field))
         requested_status = incoming['status']
-        incoming['status'] = effective_status(incoming['status'], incoming['evidence'], resolutions)
+        incoming['status'] = effective_status(incoming['status'], incoming['evidence'] + nested_evidence(name, incoming), resolutions)
         if name == 'key_results':
             for result in incoming['value'] or []:
                 requested = result['status']
@@ -71,7 +71,7 @@ def build_preview(con, package: Package, options: PreviewOptions) -> dict:
                               'policy': action, 'current': current, 'incoming': incoming})
         preview_fields.append({'name': name, 'action': action, 'incoming': incoming,
             'requested_status': requested_status, 'current': current,
-            'evidence_resolution': [resolutions[e] for e in incoming['evidence']],
+            'evidence_resolution': [resolutions[e] for e in dict.fromkeys(incoming['evidence'] + nested_evidence(name, incoming))],
             'result_evidence': {r['id']: [resolutions[e] for e in r['evidence']]
                                 for r in incoming['value'] or []} if name == 'key_results' else {}})
     duplicates = [dict(r) for r in con.execute('SELECT package_id,source_id FROM import_packages WHERE package_id=? OR payload_hash=?',

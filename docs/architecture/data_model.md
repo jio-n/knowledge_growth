@@ -109,3 +109,11 @@ SQLite Backup APIでバックアップしてから登録する。全未適用mig
 knowledge_itemsとは独立したpaper_briefs / paper_brief_fieldsへ構造化Briefを保存する。
 import_previewsへ確認用snapshot、import_packagesへ二重import防止とprovenanceを保存する。
 既存テーブルは変更しない。[schemaと保護方針](../redesign/v0.4/paper_brief_import_foundation.md#db-schema-v3)を参照。
+
+## Paper Brief generation（v4追加）
+
+paper_brief_generationsに生成状態・safe error・document/Brief digest・preview・時刻を保存する。
+source_idはsourcesへのFKでcascade削除。state=generatingはsourceごとに一意。
+previewは共有Paper Brief field形式のstagingで、accepted Briefの並行保存schemaではない。
+確定時は既存paper_brief_fieldsとjob状態を同じtransactionで保存する。
+[API・保護・復旧契約](../redesign/v0.4/structured_brief_generation.md)。

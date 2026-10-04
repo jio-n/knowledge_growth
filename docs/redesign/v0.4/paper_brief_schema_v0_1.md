@@ -221,3 +221,15 @@ Paper Typeに応じて項目順を変えるが、保存形式はCore Schemaを�
 - 日本語版で読む
 - 原文PDFを見る
 - 推奨箇所から読む
+
+## 9. 互換拡張（Structured Brief生成）
+
+wire versionは`paper-brief-0.1`を維持する。唯一の機械可読な正本は
+`app.paper_brief.PaperBrief.model_json_schema()`。
+important_figures / important_tablesには旧文字列配列に加え、
+`{label, page, caption, evidence:[id]}`の構造化参照を許容する。
+page/captionはnullable。新規生成では構造化参照を要求し、ローカルcaptionへ戻れる。
+provenanceにはruntime/source_version/schema_versionをoptionalとして追加する。
+生成fieldではこれらとgenerated_by/model/prompt_version/generated_atを必ずアプリから設定する。
+既存Import・ユーザー編集にも同じvalidatorとnested Evidence contractを使用する。
+[生成と安全確認の契約](structured_brief_generation.md)。

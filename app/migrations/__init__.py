@@ -24,6 +24,7 @@ MIGRATIONS = (
     Migration(1, "july_2026_baseline", BASELINE_SCHEMA),
     Migration(2, "pdf_evidence_geometry", (Path(__file__).parent / "002_pdf_evidence_geometry.sql").read_text(encoding="utf-8")),
     Migration(3, "paper_brief_import", (Path(__file__).parent / "003_paper_brief_import.sql").read_text(encoding="utf-8")),
+    Migration(4, "paper_brief_generation", (Path(__file__).parent / "004_paper_brief_generation.sql").read_text(encoding="utf-8")),
 )
 
 
