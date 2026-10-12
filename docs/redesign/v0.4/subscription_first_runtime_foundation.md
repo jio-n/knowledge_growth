@@ -91,6 +91,69 @@ authUrlのhost固定も公式browser flow例と非互換だった。
   edu_plus/proは`edu`へnormalize。未知/欠落/不正型は`unknown`。
   email、token、raw account payloadはAPI/UI/logへ渡さない。
 
+### PR #7追加修正: nested MCP disable
+
+追加修正の基点はPR #7 head `7d99d5ad88ff27f4ce74cf33e65e8d5459dc0968`。
+Windows実機から以下の確認結果が報告された。これは追加修正前のadapterの結果である。
+
+| Probe | Windows実機結果 |
+|---|---|
+| startup/auth | PASS。ready / authenticated / prolite / error:null |
+| model/list | PASS、7 entries |
+| minimal thread/start | PASS |
+| 全top-level params、configなし | PASS |
+| web_search config | PASS |
+| features config（再確認も含む） | PASS |
+| legacy dotted MCP disable / full config / full knowledge_growth params | FAIL、rpc_rejected |
+| nested mcp_servers disable | PASS、server-selected modelを取得 |
+
+検出されたMCPはtradingview_mcp / node_repl。
+通常の認証・起動は初回hotfixで実機成功したが、最小接続テストはthread/startで止まっていた。
+原因は`mcp_servers."name".enabled`をthread configへ連結していたoverride生成方式。
+top-level / web_search / featuresを分解した実機probeとnested形式の成功から原因を確認できた。
+
+[現在のCodex temporary structured thread実装](https://github.com/openai/codex/blob/6c372fbef45f730b6d8aa727b0ec8332365588db/codex-rs/tui/src/temporary_structured_request.rs#L107)
+もeffective configを読み、MCP名を収集して次のnested objectをthread configへ設定している。
+現在のmainを再取得し、0.160.1のJSON schema/TSも再生成した。
+thread/start / thread/resumeのconfigは自由なJSON object mapで、request schemaは変更不要。
+旧dotted形式もgeneric schemaを通過するため、source・実機probe・behavioral fakeを根拠に修正する。
+
+```json
+{
+  "web_search": "disabled",
+  "mcp_servers": {
+    "tradingview_mcp": {"enabled": false},
+    "node_repl": {"enabled": false}
+  },
+  "features.shell_tool": false
+}
+```
+
+これはconfigの抜粋。実requestは従来の全DISABLED_FEATURES、developerInstructions、
+baseInstructions、read-only sandbox、approvalPolicy=never、空のcwdも維持する。
+modelを固定せず、server側の選択を利用する。reasoning effortも変更しない。
+
+config/readのMCP名だけからnested mapを作り、属性値のURL/token/env/commandを保持・コピーしない。
+MCPなしでは空map。dot/dash/quoteを含む名前もJSON keyのままで、config pathとして再解釈しない。
+web_search / featuresとnested mapは別のtop-level keyなのでmerge時に衝突しない。
+thread/startとthread/resumeに同じoverrideを使用し、parent/userの通常Codex configは書き換えない。
+
+malformed/rejected config discoveryでは起動をerror/no-AIにしてprocessを回収する。
+session RPCが拒否されてもMCP overrideを外してretryせず、error/no-AIへ移行しprocessを回収する。
+turnは開始しない。PDF/Import/保存済みBrief/Note/Highlight/exportを継続できる。
+fakeも旧dotted形式・不足/不正/有効なままのnested mapを拒否し、正しい全無効mapだけでthread→turnへ進む。
+fakeの特殊なserver名はliteral key handlingの検証用であり、Codexが全合成名を受理する保証ではない。
+
+今回の追加変更ファイルは`app/ai/codex.py`、`tests/test_ai_runtime.py`、
+`tests/fixtures/app_server/fake_server.py`、`tests/fixtures/app_server/README.md`、本書、
+`docs/development/testing.md`。新機能・DB変更は含めない。
+
+Linuxの0.160.1 native binaryでも、隔離temporary config / 未認証のstdio probeで
+旧dotted形式→rpc_rejected、nested形式→thread/start成功を確認した。
+2つの合成MCPに起動markerを設けたが起動せず、parent configは変更されず、process回収も成功。
+実account/tokenは使用せず、login/turnは実行していない。これはnative config互換の確認であり、
+ChatGPTの推論成功を意味しない。
+
 ### 初回Phase 0Aでの検証履歴
 
 2026-10-04、この環境の `/opt/codex/bin/codex`、`codex-cli 0.159.0-alpha.3`を確認。
@@ -113,7 +176,7 @@ codex app-server generate-ts --out /tmp/kg-codex-ts
 | account | `account/read {refreshToken:false}`。account.typeがchatgptのときだけready。planの既知/未知で認証を拒否しない |
 | login | `account/login/start {type:"chatgpt"}` → loginId / authUrl。`account/login/completed`、`account/updated`を受信後にaccount/read |
 | cancel/logout | `account/login/cancel {loginId}` / `account/logout`（paramsなし） |
-| tools | `config/read {includeLayers:false,cwd}`で継承MCP名だけを取得し、各serverのenabledをthread configでfalseにする |
+| tools | `config/read {includeLayers:false,cwd}`で継承MCP名だけを取得し、nested `config.mcp_servers[name]={enabled:false}`をthread/start・resumeへ渡す。MCP dotted leaf keyは使用しない |
 | session | `thread/start` / `thread/resume {threadId,...}`。responseのthread.idとmodelのみを正規化 |
 | inference | `turn/start`のinputは`{type:"text",text,text_elements:[]}` |
 | streaming | `item/agentMessage/delta`のthreadId/turnId/itemId/delta。`turn/completed`のturn.statusで終了判定 |
@@ -220,7 +283,7 @@ Phase 1 scriptは別途起動したdisposable mock serverのURLを`--base-url`�
 これは実ChatGPTの1 turnを消費する。未認証時は接続方法を表示して終了し、token入力や
 自動loginはしない。出力は状態とruntime-okのpass/failのみ。
 
-### hotfixの検証結果（2026-10-12）
+### 初回hotfixの検証結果（2026-10-12、追加MCP修正前）
 
 - baseline: 247 pytest passed。環境の不足していた既存dev依存jsonschemaを導入して実行。
 - 変更後: API keyをunsetして全304 pytest passed、122.21秒。
@@ -242,17 +305,34 @@ hotfixの変更ファイル:
 - Browser smoke: `scripts/smoke_ai_runtime_browser.py`
 - Docs: 本書, `docs/development/setup.md`, `docs/development/testing.md`
 
+### 追加MCP修正の検証結果（2026-10-12）
+
+- 最新PR #7 branchのbaseline: 304 pytest passed、122.60秒。
+- 追加修正後: API keyをunsetして全326 pytest passed、124.28秒。runtime関連127件。
+  既存Starlette/httpx deprecation warningが1件。
+- fake stdio: authenticated/prolite → model/list → full thread/start・resume → nested MCP全無効
+  → turn/start → runtime-ok。MCPなしとdot/dash/quoteのliteral名も成功。
+- malformed/rejected discovery、invalid/incomplete/enabled nested map、server側拒否でfail closed。
+  APIは503/safe error、runtimeはerror、process回収、turnやoverrideを外したretryなし。
+- AI Runtime browser 12、Structured Brief browser 17、Import/Brief browser 34項目passed。
+  Phase 1 PDF Readerの2段組/回転crop、selection、Anchor、Highlight再読込、mock Q&A、
+  quote/bbox/candidates/page-onlyもpassed。全browser smokeでpageerrorsなし。
+- offline runtime-ok: PASS。0.160.1 native config probeとschema/TS照合もPASS（上記参照）。
+- 追加修正後の実Windowsアプリでの最小turn / Brief生成は未実施。次のmanual acceptanceで確認する。
+
 ### Windows実機のmanual acceptance（hotfix後）
 
 1. native Codex CLI 0.160.1以上を準備し、`codex --version`を確認する。
    OS keyring認証を使用し、file authへfallback・独自移行しない。
 2. hotfix branchで`start_knowledge_growth.bat`（またはvenvから`python run.py`）を起動。
    cold-startの待ち時間を含め、UIがerror/rpc_timeoutにならないことを確認する。
-3. 既存keyring認証があれば`● 接続済み`。未認証なら`○ ChatGPT未接続`から
+3. tradingview_mcp / node_repl等の通常Codexの設定済みMCPがある状態で確認する。
+   アプリはthread-localで全無効にし、通常Codexの設定を変更しない。
+   既存keyring認証があれば`● 接続済み`。未認証なら`○ ChatGPT未接続`から
    「ChatGPTで接続」→正規browser URL→ログイン完了で接続済みになることを確認する。
 4. 「状態を確認」および`GET /api/ai/status?refresh=true`後もready/authenticatedを維持することを確認。
    proliteの場合もready。account状態だけを確認し、raw RPC/認証payloadのdumpはしない。
-5. 「最小接続テスト」→`runtime-ok`を確認する。
+5. 「最小接続テスト」→`runtime-ok`を確認する。thread/startでrpc_rejectedにならず、MCPを実行しないことを確認。
 6. 別terminalで`.venv\Scripts\python scripts\smoke_ai_runtime.py --manual`を実行し、
    `runtime-ok: PASS`を確認する。
 7. アプリを起動したまま`.venv\Scripts\python scripts\smoke_brief_generation.py --manual --base-url http://127.0.0.1:8300`を実行。
@@ -271,7 +351,9 @@ readyは推論権限・quotaを保証しないため、最小turnとStructured B
 ## Known limitationsと次の接続点
 
 - Codex app-serverはexperimental。確認version以外の互換性は保証しない。仕様変更はadapter/fixtureを更新する
-- Windowsのnative discoveryはfixtureで検証、Job objectの実行とOS keyring OAuthは実Windows未検証。Linux Cloudでは実ChatGPT loginを実施していない
+- ユーザーのWindows実機ではstartup、keyring認証再利用、prolite/ready、nested MCP disableの直接probeが成功。
+  追加修正後のアプリの最小turn / Structured Brief / Job object回収は実機manualで再確認する。
+  Linux Cloudでは実ChatGPT login・推論を実施していない
 - Codexのread-only設定はOS全体を隔離する仕組みではない。tool無効化と空cwdを併用する。組織側の強制設定と競合した場合はerror/no-AIで運用する
 - keyring保存の既存認証を再利用する。平文auth.jsonの移行やremote OAuth revokeは独自実装しない。logoutはCodexへ委譲する
 - catalogはAPIで提供。model chooserは未実装。利用上限/network/権限によるturn失敗は安全なturn_failedへ集約する

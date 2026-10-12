@@ -65,6 +65,14 @@ initialize / config/read / account/readそれぞれ31秒遅延のfakeは30秒で
 no-AIでのPDF/Import/Brief/Note/Highlight/export、既存Structured Brief / Readerも回帰対象です。
 現在のschema出典・差分は[fixture README](../../tests/fixtures/app_server/README.md)に記録しています。
 
+PR #7の追加修正は、config/readで得た全MCP名をthread-localのnested
+`config.mcp_servers[name] = {enabled:false}`で無効化するcontractを検証します。
+複数MCP、MCPなし、dot/dash/quote入りのliteral名、thread/startとthread/resume、
+web_search/全DISABLED_FEATURES/permissions/instructions維持、full thread→runtime-okを確認します。
+fakeは旧dotted leaf overrideをrpc_rejectedにするため、schemaが許容するJSONでも旧形式は回帰で検出されます。
+malformed/rejected config discoveryやthread isolationの拒否ではturnへ進まず、overrideを外したretryを行いません。
+UI/APIはsafe error、processは回収され、PDF/Import/保存済みBrief/Note/Highlight/exportを継続できます。
+
 ```sh
 .venv/bin/python scripts/smoke_ai_runtime.py
 .venv/bin/python scripts/smoke_ai_runtime_browser.py

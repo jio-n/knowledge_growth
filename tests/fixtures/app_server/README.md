@@ -54,3 +54,50 @@ synthetic marker in pytest tmp_path. No external account or network is required.
 `null_on_force_refresh` models the Windows observation that true returns null
 while false detects the saved account. `rpc_delays` models cold-start/handshake
 latency, `plan` models forward compatibility, and `auth_url` exercises URL checks.
+
+## Nested MCP disable contract (PR #7 additional fix)
+
+Current [Codex temporary structured thread implementation](https://github.com/openai/codex/blob/6c372fbef45f730b6d8aa727b0ec8332365588db/codex-rs/tui/src/temporary_structured_request.rs#L107)
+reads effective config, collects MCP server names, and inserts one nested object:
+
+```json
+{"mcp_servers":{"tradingview_mcp":{"enabled":false},"node_repl":{"enabled":false}}}
+```
+
+The adapter follows that MCP representation for both thread/start and thread/resume.
+The names stay literal JSON keys, including dots/dashes/quotes; they are never
+concatenated into config paths. Only disabled flags are retained, not inherited
+URL/env/token/command values. No parent config write is sent. Existing web_search
+and features overrides remain independent siblings in thread-local config.
+
+0.160.1 JSON schema/TS were regenerated for this additional fix. ThreadStartParams
+and ThreadResumeParams config remain arbitrary JSON object maps and the request
+definitions/ClientRequest hash are unchanged. The generic schema accepts the old
+dotted leaf keys too, so runtime config validation needs the source/Windows evidence
+and behavioral tests. No request-schema modification is needed.
+
+An isolated native 0.160.1 stdio probe also confirmed the contract on Linux:
+startup -> auth_required (no account/API key), legacy override -> rpc_rejected,
+nested override -> thread/start PASS. The temporary config defined two synthetic
+MCP commands with a launch marker. Neither command launched, the parent config
+bytes stayed unchanged, and the owned process was reaped. No turn/login or real
+credentials were used. This validates native config parsing, not ChatGPT inference.
+
+Windows acceptance evidence provided by the user: PR #7 startup/auth PASS,
+model/list PASS (7 entries), minimal thread/start PASS. Full knowledge_growth
+thread/start failed rpc_rejected. Top-level parameters, web_search and features
+passed independently; legacy dotted MCP disable failed; nested MCP disable passed
+and returned the server-selected model. Final runtime-ok / Brief turn acceptance
+after the additional adapter fix remains a Windows manual check.
+
+The fake now exposes multiple configured MCP servers and rejects legacy dotted
+keys, missing/incomplete/invalid nested disable maps, and any enabled server in
+an isolation request. Nested maps disabling every configured server succeed,
+including an empty map when no MCP is configured. It cannot start a turn before
+a successful isolated thread. This is a narrow isolation fixture, not a complete
+Codex parser and not a claim that Codex accepts every synthetic server name.
+
+`mcp_servers`/`effective_config` select discovery fixtures, `config_rejected` and
+`malformed_mcp` test fail-closed discovery, and `mcp_rejected` models a server
+rejecting a structurally correct isolation request. Rejection must stop the owned
+process and leave runtime error/no-AI, with no turn or retry dropping MCP overrides.

@@ -2,7 +2,6 @@
 
 Only account type chatgpt is accepted. Catalog entries are not entitlements.
 """
-import json
 import queue
 import threading
 import time
@@ -98,9 +97,13 @@ class CodexRuntime(AIRuntime):
         # retain raw config, layers, environment values, or tool credentials.
         result = self.transport.request("config/read", {"includeLayers": False, "cwd": self.transport.workdir.name})
         try:
-            servers = result["config"].get("mcp_servers", {})
+            config = result["config"]
+            if not isinstance(config, dict): raise ValueError()
+            servers = config.get("mcp_servers", {})
             if not isinstance(servers, dict): raise ValueError()
-            self._tool_overrides = {f"mcp_servers.{json.dumps(name)}.enabled": False for name in servers}
+            # Names are literal object keys, never dotted config paths. Retain
+            # only disabled flags, not inherited URL/token/env/command values.
+            self._tool_overrides = {"mcp_servers": {name: {"enabled": False} for name in servers}}
         except (KeyError, TypeError, ValueError): raise AIError("malformed_config") from None
 
     def _read_account(self):
@@ -208,15 +211,24 @@ class CodexRuntime(AIRuntime):
             return Session(session_id, model)
         except (KeyError, TypeError, ValueError): raise AIError("malformed_session") from None
 
+    def _request_session(self, method, params):
+        try:
+            return self._session_result(self.transport.request(method, params))
+        except AIError as error:
+            # Never retry a rejected isolation config with MCP overrides removed.
+            self._failure(error.code)
+            self.transport.close()
+            raise
+
     def create_session(self, *, instructions="", model=None):
         self._require_ready()
         params = {**self._session_params(), "baseInstructions": instructions}
         if model is not None: params["model"] = model
-        return self._session_result(self.transport.request("thread/start", params))
+        return self._request_session("thread/start", params)
 
     def resume_session(self, session_id):
         self._require_ready()
-        return self._session_result(self.transport.request("thread/resume", {**self._session_params(), "threadId": session_id}))
+        return self._request_session("thread/resume", {**self._session_params(), "threadId": session_id})
 
     def send_turn(self, session, text, *, hint=None):
         self._require_ready()

@@ -268,11 +268,123 @@ def test_one_turn_and_streaming_trusted_boundary(fake):
     assert turn['input'][0]['text'] == 'untrusted paper text'
     assert turn['sandboxPolicy'] == {'type':'readOnly','networkAccess':False}
     assert thread['approvalPolicy'] == 'never'
-    assert thread['config']['mcp_servers."inherited".enabled'] is False
+    assert thread['config']['mcp_servers'] == {
+        'tradingview_mcp': {'enabled': False}, 'node_repl': {'enabled': False},
+    }
     assert 'SUPER_SECRET' not in json.dumps(messages)
     assert thread['config']['features.plugins'] is False
     assert 'untrusted source data' in thread['developerInstructions']
     assert 'model' not in thread
+
+
+@pytest.mark.parametrize('names', [[], ['tradingview_mcp', 'node_repl'],
+                                    ['normal_server', 'tradingview_mcp', 'node_repl', 'name.with.dot',
+                                     'name-with-dash', 'name"with"quote', "name'with'quote"]])
+def test_nested_mcp_isolation_full_thread_and_runtime_ok(fake, names):
+    from app.ai.process import DISABLED_FEATURES
+    inherited = {name: {'enabled': True, 'url': 'https://fixture.invalid/SUPER_SECRET',
+                        'env': {'Authorization': 'SUPER_SECRET'}, 'command': 'DO_NOT_RUN'} for name in names}
+    runtime = fake(authenticated=True, plan='prolite', mcp_servers=inherited)
+    assert runtime.status().state == 'ready'
+    assert runtime.status().auth.state == 'authenticated'
+    assert runtime.models()[0].entitlement == 'unverified'
+    expected = {name: {'enabled': False} for name in names}
+    assert runtime._tool_overrides == {'mcp_servers': expected}
+    session = runtime.create_session(instructions='trusted instructions')
+    session = runtime.resume_session(session.id)
+    events = list(runtime.send_turn(session, 'Reply with exactly: runtime-ok'))
+    assert ''.join(event.text for event in events) == 'runtime-ok'
+    assert events[-1].kind == 'completed'
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read', 'account/read', 'model/list',
+                                            'thread/start', 'thread/resume', 'turn/start']
+    for request in requests:
+        if request['method'] not in ('thread/start', 'thread/resume'): continue
+        params = request['params']
+        config = params['config']
+        assert config == {'web_search': 'disabled', 'mcp_servers': expected,
+                          **{f'features.{name}': False for name in DISABLED_FEATURES}}
+        assert not any(key.startswith('mcp_servers.') for key in config)
+        assert params['sandbox'] == 'read-only' and params['approvalPolicy'] == 'never'
+        assert params['modelProvider'] == 'openai' and 'model' not in params
+        assert params['cwd'] == runtime.transport.workdir.name
+        assert 'untrusted source data' in params['developerInstructions']
+        if request['method'] == 'thread/start': assert params['baseInstructions'] == 'trusted instructions'
+    assert 'SUPER_SECRET' not in json.dumps(requests) + json.dumps(runtime._tool_overrides)
+    assert 'DO_NOT_RUN' not in json.dumps(requests)
+    assert not any(r['method'].startswith('config/') and r['method'] != 'config/read' for r in requests)
+
+
+def test_fake_rejects_legacy_dotted_mcp_contract(fake):
+    from jsonschema import Draft7Validator
+    runtime = fake(authenticated=True)
+    # The generic schema accepts this JSON; the current config contract rejects it.
+    params = {**runtime._session_params(), 'config': {
+        'mcp_servers."tradingview_mcp".enabled': False,
+        'mcp_servers."node_repl".enabled': False,
+    }}
+    schema = json.loads(Path('tests/fixtures/app_server/client_requests.schema.json').read_text())
+    Draft7Validator(schema).validate({'id': 1, 'method': 'thread/start', 'params': params})
+    with pytest.raises(AIError, match='rpc_rejected'):
+        runtime.transport.request('thread/start', params)
+    with pytest.raises(AIError, match='rpc_rejected'):
+        runtime.transport.request('turn/start', {'threadId': 'thread-1', 'input': []})
+    session = runtime.create_session()
+    assert ''.join(event.text for event in runtime.send_turn(session, 'smoke')) == 'runtime-ok'
+
+
+@pytest.mark.parametrize('effective_config', [None, [], 'SUPER_SECRET', {'mcp_servers': None},
+                                            {'mcp_servers': []}, {'mcp_servers': 'SUPER_SECRET'}])
+def test_malformed_mcp_discovery_fails_closed(fake, effective_config, caplog, capsys):
+    runtime = fake(authenticated=True, effective_config=effective_config)
+    assert runtime.status().state == 'error' and runtime.status().error == 'malformed_config'
+    assert runtime.transport.process is None
+    with pytest.raises(AIError): runtime.create_session()
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read']
+    assert 'SUPER_SECRET' not in json.dumps(runtime.status().public()) + caplog.text + str(capsys.readouterr())
+
+
+def test_mcp_discovery_rejection_fails_closed(fake):
+    runtime = fake('config_rejected', authenticated=True)
+    assert runtime.status().state == 'error' and runtime.status().error == 'rpc_rejected'
+    assert runtime.transport.process is None
+    with pytest.raises(AIError): runtime.create_session()
+    assert 'thread/start' not in runtime.record.read_text()
+
+
+def test_mcp_rejection_api_reports_error_without_starting_turn(fake, monkeypatch, tmp_path):
+    monkeypatch.setenv('KG_DATA_DIR', str(tmp_path / 'data'))
+    runtime = fake('mcp_rejected', authenticated=True, plan='prolite')
+    with TestClient(create_app(runtime)) as client:
+        assert client.get('/api/ai/status').json()['state'] == 'ready'
+        response = client.post('/api/ai/smoke')
+        assert response.status_code == 503 and 'rpc_rejected' in response.text
+        assert 'SUPER_SECRET' not in response.text
+        status = client.get('/api/ai/status?refresh=true').json()
+        assert status['state'] == 'error' and status['error'] == 'rpc_rejected'
+        assert runtime.transport.process is None
+        assert 'turn/start' not in runtime.record.read_text()
+
+
+@pytest.mark.parametrize('resume', [False, True])
+@pytest.mark.parametrize('overrides', [None, {'mcp_servers': []}, {'mcp_servers': {}},
+                                      {'mcp_servers': {'tradingview_mcp': {'enabled': True},
+                                                       'node_repl': {'enabled': False}}}])
+def test_mcp_isolation_rejection_reaps_process_without_unsafe_retry(fake, resume, overrides, caplog, capsys):
+    runtime = fake('mcp_rejected' if overrides is None else 'normal', authenticated=True)
+    if overrides is not None: runtime._tool_overrides = overrides
+    process = runtime.transport.process
+    with pytest.raises(AIError, match='rpc_rejected'):
+        if resume: runtime.resume_session('existing-thread')
+        else: runtime.create_session()
+    assert process.poll() is not None and runtime.transport.process is None
+    assert runtime.status().state == 'error' and runtime.status().error == 'rpc_rejected'
+    with pytest.raises(LLMError): RuntimeProvider(runtime).complete('trusted', 'untrusted')
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read', 'account/read',
+                                            'thread/resume' if resume else 'thread/start']
+    assert 'SUPER_SECRET' not in str(capsys.readouterr()) + caplog.text + json.dumps(runtime.status().public())
 
 
 def test_compatibility_adapter(fake):
@@ -363,7 +475,8 @@ def test_mock_smoke():
     assert ''.join(e.text for e in runtime.send_turn(runtime.create_session(), 'Reply with exactly: runtime-ok')) == 'runtime-ok'
 
 
-@pytest.mark.parametrize('mode', ['missing','auth_required','crash','timeout','malformed','turn_failed','turn_timeout','no_ai'])
+@pytest.mark.parametrize('mode', ['missing','auth_required','crash','timeout','malformed','malformed_mcp',
+                                 'mcp_rejected','turn_failed','turn_timeout','no_ai'])
 def test_no_ai_data_remains_usable(tmp_path, monkeypatch, fake, mode):
     monkeypatch.setenv('KG_DATA_DIR',str(tmp_path/'data'))
     monkeypatch.setenv('KG_AI_RUNTIME','codex_chatgpt_plan')
@@ -374,6 +487,8 @@ def test_no_ai_data_remains_usable(tmp_path, monkeypatch, fake, mode):
     else: ai = fake(mode if mode != 'auth_required' else 'normal', mode != 'auth_required')
     if mode == 'crash':
         with pytest.raises(AIError): ai.models()
+    elif mode == 'mcp_rejected':
+        with pytest.raises(AIError, match='rpc_rejected'): ai.create_session()
     elif mode in ('turn_failed','turn_timeout'):
         with pytest.raises(AIError): list(ai.send_turn(ai.create_session(), 'smoke'))
     with TestClient(create_app(ai)) as client:
