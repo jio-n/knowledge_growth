@@ -14,6 +14,11 @@ mode = CONFIG.get('mode', 'normal')
 active = None
 login_count = 0
 turn_count = 0
+thread_started = False
+mcp_servers = CONFIG.get('mcp_servers', {
+    'tradingview_mcp': {'enabled': True, 'url': 'https://fixture.invalid/SUPER_SECRET'},
+    'node_repl': {'enabled': False, 'env': {'accessToken': 'SUPER_SECRET'}},
+})
 
 def emit(message):
     print(json.dumps(message), flush=True)
@@ -31,6 +36,7 @@ for line in sys.stdin:
     if CONFIG.get('record'):
         with open(CONFIG['record'], 'a') as file: file.write(json.dumps(request) + '\n')
     result = {}
+    time.sleep(CONFIG.get('rpc_delays', {}).get(method, 0))
     if method == 'initialize':
         if mode == 'malformed': print('not-json', flush=True); continue
         if mode == 'timeout': time.sleep(5); continue
@@ -38,12 +44,17 @@ for line in sys.stdin:
         if mode == 'oversize': print('x' * (2*1024*1024+1), flush=True); continue
         if mode == 'stderr':
             sys.stderr.write('Authorization: Bearer SUPER_SECRET\n{"accessToken":"SUPER_SECRET"}\n'); sys.stderr.flush()
-        result = {'userAgent': 'fake/0.159.0-alpha.3'}
+        result = {'userAgent': 'fake/0.160.1'}
     elif method == 'config/read':
-        result = {'config':{'mcp_servers':{'inherited':{'env':{'accessToken':'SUPER_SECRET'}}}}}
+        if mode == 'config_rejected':
+            emit({'id': request['id'], 'error': {'code': -32602, 'message': 'SUPER_SECRET'}}); continue
+        result = {'config': CONFIG.get('effective_config', {'mcp_servers': mcp_servers})}
+        if mode == 'malformed_mcp': result = {'config': {'mcp_servers': ['SUPER_SECRET']}}
     elif method == 'account/read':
-        result = {'account': {'type': 'chatgpt', 'planType': 'plus', 'email': 'not-public', 'accessToken': 'SUPER_SECRET'} if signed_in else None,
+        result = {'account': {'type': 'chatgpt', 'planType': CONFIG.get('plan', 'plus'), 'email': 'not-public', 'accessToken': 'SUPER_SECRET'} if signed_in else None,
                   'requiresOpenaiAuth': True}
+        if CONFIG.get('null_on_force_refresh') and params.get('refreshToken') is True:
+            result['account'] = None
         if mode == 'api_auth': result['account'] = {'type': 'apiKey'}
         if mode == 'bad_account': result = {'account': 'bad'}
     elif method == 'account/login/start':
@@ -51,6 +62,7 @@ for line in sys.stdin:
         if mode == 'login_rejected':
             emit({'id': request['id'], 'error': {'code': 400, 'message': 'SUPER_SECRET'}}); continue
         result = {'type': 'chatgpt', 'loginId': 'login-1', 'authUrl': 'https://auth.openai.com/oauth/authorize?state=fixture', 'accessToken': 'SUPER_SECRET'}
+        if 'auth_url' in CONFIG: result['authUrl'] = CONFIG['auth_url']
         if mode == 'unsafe_url': result['authUrl'] = 'javascript:alert(1)'
         if mode == 'token_url': result['authUrl'] = 'https://auth.openai.com/authorize?access_token=SUPER_SECRET'
     elif method == 'account/login/cancel':
@@ -65,8 +77,19 @@ for line in sys.stdin:
             emit({'id': request['id'], 'error': {'code': 500, 'message': 'Authorization: Bearer SUPER_SECRET'}}); continue
         result = {'data': [{'id': 'catalog-id', 'model': 'catalog-model', 'displayName': 'Catalog model'}], 'nextCursor': None}
     elif method in ('thread/start', 'thread/resume'):
+        # Model just the isolation contract, not Codex's config parser. The old
+        # dotted MCP leaf keys were accepted by this fake but rejected on Windows.
+        config = params.get('config', {})
+        expected = {name: {'enabled': False} for name in mcp_servers}
+        if (not isinstance(config, dict) or any(key.startswith('mcp_servers.') for key in config)
+                or config.get('mcp_servers') != expected or mode == 'mcp_rejected'):
+            emit({'id': request['id'], 'error': {'code': -32602, 'message': 'MCP override rejected SUPER_SECRET'}}); continue
+        thread_started = True
         result = {'thread': {'id': 'thread-1'}, 'model': 'server-default'}
-    elif method == 'turn/start': result = {'turn': {'id': 'turn-1', 'status': 'inProgress'}}
+    elif method == 'turn/start':
+        if not thread_started:
+            emit({'id': request['id'], 'error': {'code': -32602, 'message': 'No isolated thread'}}); continue
+        result = {'turn': {'id': 'turn-1', 'status': 'inProgress'}}
     elif method == 'turn/interrupt': pass
     else:
         emit({'id': request['id'], 'error': {'code': -32601, 'message': 'Unknown method'}}); continue

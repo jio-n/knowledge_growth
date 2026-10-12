@@ -1,8 +1,7 @@
-"""Codex-specific mapping, verified against CLI 0.159.0-alpha.3 schema.
+"""Codex-specific mapping, verified against CLI 0.160.1 schema.
 
 Only account type chatgpt is accepted. Catalog entries are not entitlements.
 """
-import json
 import queue
 import threading
 import time
@@ -12,9 +11,26 @@ from .process import AppServerProcess, DISABLED_FEATURES
 from ..prompts import get_prompt
 
 
+# Display metadata only: authentication depends on account.type, never the plan.
+# Keep vendor additions/invalid values out of public status, including nested data.
+PLAN_LABELS = {name: name for name in (
+    "free", "go", "plus", "pro", "prolite", "promax", "team", "business",
+    "enterprise", "edu", "unknown",
+)} | {
+    "self_serve_business_prolite": "business",
+    "self_serve_business_usage_based": "business",
+    "ent26": "enterprise",
+    "enterprise_cbp_automation": "enterprise",
+    "enterprise_cbp_usage_based": "enterprise",
+    "edu_plus": "edu",
+    "edu_pro": "edu",
+}
+LOGIN_HOSTS = frozenset({"auth.openai.com", "chatgpt.com"})
+
+
 class CodexRuntime(AIRuntime):
     name = "codex_chatgpt_plan"
-    def __init__(self, executable="codex", *, timeout=10, turn_timeout=120):
+    def __init__(self, executable="codex", *, timeout=30, turn_timeout=120):
         self.transport = AppServerProcess(executable, timeout=timeout,
                                           on_notification=self._notification, on_failure=self._failure)
         self.turn_timeout = turn_timeout
@@ -81,21 +97,26 @@ class CodexRuntime(AIRuntime):
         # retain raw config, layers, environment values, or tool credentials.
         result = self.transport.request("config/read", {"includeLayers": False, "cwd": self.transport.workdir.name})
         try:
-            servers = result["config"].get("mcp_servers", {})
+            config = result["config"]
+            if not isinstance(config, dict): raise ValueError()
+            servers = config.get("mcp_servers", {})
             if not isinstance(servers, dict): raise ValueError()
-            self._tool_overrides = {f"mcp_servers.{json.dumps(name)}.enabled": False for name in servers}
+            # Names are literal object keys, never dotted config paths. Retain
+            # only disabled flags, not inherited URL/token/env/command values.
+            self._tool_overrides = {"mcp_servers": {name: {"enabled": False} for name in servers}}
         except (KeyError, TypeError, ValueError): raise AIError("malformed_config") from None
 
     def _read_account(self):
         revision = self._auth_revision
-        result = self.transport.request("account/read", {"refreshToken": True})
+        # Reread account state without proactively refreshing OAuth tokens.
+        # UI/API refresh, notifications and restart all share this contract.
+        result = self.transport.request("account/read", {"refreshToken": False})
         if "account" not in result: raise AIError("malformed_account")
         account = result["account"]
         if account is not None and not isinstance(account, dict): raise AIError("malformed_account")
         authenticated = bool(account and account.get("type") == "chatgpt")
         plan = account.get("planType") if authenticated else None
-        # whitelist values: never expose arbitrary vendor strings / added fields.
-        plan = plan if plan in ("free", "go", "plus", "pro", "team", "business", "enterprise", "edu", "unknown") else None
+        plan = (PLAN_LABELS.get(plan, "unknown") if isinstance(plan, str) else "unknown") if authenticated else None
         self._auth = AuthState("authenticated" if authenticated else "signed_out", plan, self._login_state)
         self._state = "ready" if authenticated else "auth_required"
         self._error = None
@@ -127,12 +148,16 @@ class CodexRuntime(AIRuntime):
             try:
                 result = self.transport.request("account/login/start", {"type": "chatgpt"})
                 url = result.get("authUrl", "")
+                if not isinstance(url, str) or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in url) or "\\" in url:
+                    raise AIError("malformed_login")
                 parsed = urlsplit(url)
-                sensitive_query = {"access_token", "id_token", "refresh_token", "authorization"}
+                query_keys = {key.lower().replace("_", "").replace("-", "") for key in parse_qs(parsed.query, keep_blank_values=True)}
+                sensitive_query = {"authorization", "apikey", "clientsecret", "password", "code"}
                 if (result.get("type") != "chatgpt" or not isinstance(result.get("loginId"), str)
-                        or parsed.scheme != "https" or parsed.hostname != "auth.openai.com" or parsed.username or parsed.password
-                        or parsed.port not in (None, 443) or parsed.fragment
-                        or sensitive_query.intersection(parse_qs(parsed.query))):
+                        or parsed.scheme != "https" or parsed.hostname not in LOGIN_HOSTS
+                        or parsed.username is not None or parsed.password is not None
+                        or parsed.port not in (None, 443) or "#" in url
+                        or sensitive_query.intersection(query_keys) or any(key.endswith("token") for key in query_keys)):
                     raise AIError("malformed_login")
                 self._login_id = result["loginId"]
                 if self._early_login_result and self._early_login_result[0] == self._login_id:
@@ -186,15 +211,24 @@ class CodexRuntime(AIRuntime):
             return Session(session_id, model)
         except (KeyError, TypeError, ValueError): raise AIError("malformed_session") from None
 
+    def _request_session(self, method, params):
+        try:
+            return self._session_result(self.transport.request(method, params))
+        except AIError as error:
+            # Never retry a rejected isolation config with MCP overrides removed.
+            self._failure(error.code)
+            self.transport.close()
+            raise
+
     def create_session(self, *, instructions="", model=None):
         self._require_ready()
         params = {**self._session_params(), "baseInstructions": instructions}
         if model is not None: params["model"] = model
-        return self._session_result(self.transport.request("thread/start", params))
+        return self._request_session("thread/start", params)
 
     def resume_session(self, session_id):
         self._require_ready()
-        return self._session_result(self.transport.request("thread/resume", {**self._session_params(), "threadId": session_id}))
+        return self._request_session("thread/resume", {**self._session_params(), "threadId": session_id})
 
     def send_turn(self, session, text, *, hint=None):
         self._require_ready()

@@ -26,13 +26,15 @@ import hashlib
 @pytest.fixture
 def fake(tmp_path):
     runtimes = []
-    def build(mode='normal', authenticated=False, timeout=.5):
+    def build(mode='normal', authenticated=False, timeout=.5, **config):
         exe = tmp_path / f'codex-{len(runtimes)}'
         record = tmp_path / f'record-{len(runtimes)}.jsonl'
         body = Path('tests/fixtures/app_server/fake_server.py').read_text()
-        exe.write_text(f'#!{sys.executable}\nCONFIG = {dict(mode=mode, authenticated=authenticated, record=str(record))!r}\n' + body)
+        exe.write_text(f'#!{sys.executable}\nCONFIG = {dict(mode=mode, authenticated=authenticated, record=str(record), **config)!r}\n' + body)
         exe.chmod(0o700)
-        runtime = CodexRuntime(str(exe), timeout=timeout, turn_timeout=.4)
+        options = {'turn_timeout': .4}
+        if timeout is not None: options['timeout'] = timeout
+        runtime = CodexRuntime(str(exe), **options)
         runtime.record = record
         runtimes.append(runtime)
         runtime.start()
@@ -63,6 +65,7 @@ def test_start_initialize_auth_required(fake):
     assert messages[0]['method'] == 'initialize'
     assert messages[1]['method'] == 'config/read'
     assert messages[2]['method'] == 'account/read'
+    assert messages[2]['params'] == {'refreshToken': False}
     assert runtime.capabilities().authentication
     with pytest.raises(AIError, match='auth_required'): runtime.create_session()
 
@@ -85,7 +88,7 @@ def test_spawn_failure(monkeypatch):
 
 
 def test_login_success_restart_auth_reuse_resume_logout(fake):
-    runtime = fake('login_success')
+    runtime = fake('login_success', null_on_force_refresh=True)
     assert runtime.login() == {'authorization_url': 'https://auth.openai.com/oauth/authorize?state=fixture'}
     eventually(lambda: runtime.status().state == 'ready')
     assert runtime.status().auth.login_state == 'completed'
@@ -99,6 +102,125 @@ def test_login_success_restart_auth_reuse_resume_logout(fake):
     assert runtime.status().state == 'auth_required'
     runtime.restart()
     assert runtime.status().state == 'auth_required'
+    reads = [json.loads(line) for line in runtime.record.read_text().splitlines()
+             if json.loads(line)['method'] == 'account/read']
+    assert len(reads) >= 5
+    assert all(request['params'] == {'refreshToken': False} for request in reads)
+
+
+def test_account_refresh_means_reread_without_force_refresh(fake):
+    runtime = fake(authenticated=True, null_on_force_refresh=True)
+    assert runtime.status().state == 'ready'
+    before = len(runtime.record.read_text().splitlines())
+    assert runtime.status(refresh=True).state == 'ready'
+    assert len(runtime.record.read_text().splitlines()) == before + 1
+    # An account/updated notification is a reason to reread, not an auth result.
+    runtime._notification('account/updated', {'authMode': None, 'planType': None})
+    assert runtime.status().state == 'ready'
+    assert len(runtime.record.read_text().splitlines()) == before + 2
+    reads = [json.loads(line) for line in runtime.record.read_text().splitlines()
+             if json.loads(line)['method'] == 'account/read']
+    assert all(request['params'] == {'refreshToken': False} for request in reads)
+    # Prove the fake models the Windows probe, without using this in normal flow.
+    assert runtime.transport.request('account/read', {'refreshToken': True})['account'] is None
+    assert runtime.status(refresh=True).state == 'ready'
+
+
+@pytest.mark.parametrize('plan,label', [
+    ('plus', 'plus'), ('prolite', 'prolite'), ('promax', 'promax'),
+    ('self_serve_business_prolite', 'business'), ('self_serve_business_usage_based', 'business'),
+    ('enterprise_cbp_automation', 'enterprise'), ('enterprise_cbp_usage_based', 'enterprise'),
+    ('ent26', 'enterprise'), ('edu_plus', 'edu'), ('edu_pro', 'edu'),
+    ('future-plan-SUPER_SECRET', 'unknown'), ('<script>SUPER_SECRET</script>', 'unknown'),
+    (None, 'unknown'), (['SUPER_SECRET'], 'unknown'), ({'token': 'SUPER_SECRET'}, 'unknown'),
+])
+def test_plan_is_safe_metadata_and_never_authentication(fake, plan, label):
+    runtime = fake(authenticated=True, plan=plan)
+    status = runtime.status(refresh=True)
+    assert status.state == 'ready'
+    assert status.auth.state == 'authenticated'
+    assert status.auth.plan == label
+    assert 'SUPER_SECRET' not in json.dumps(status.public())
+    events = list(runtime.send_turn(runtime.create_session(), 'Reply with exactly: runtime-ok'))
+    assert ''.join(event.text for event in events) == 'runtime-ok'
+    assert events[-1].kind == 'completed'
+
+
+def test_default_timeout_configuration():
+    from app.config import load_config
+    config = load_config()['runtime']
+    configured = create_runtime(config)
+    default = create_runtime({'type': 'codex_chatgpt_plan'})
+    assert config['rpc_timeout_seconds'] == configured.transport.timeout == default.transport.timeout == 30
+    assert configured.turn_timeout == default.turn_timeout == 120
+
+
+def test_windows_slow_initialize_succeeds_with_default_budget(fake):
+    # Real elapsed time, not a mocked transport: near the former 10s ceiling.
+    runtime = fake(authenticated=True, timeout=None, rpc_delays={'initialize': 9.5},
+                   plan='prolite', null_on_force_refresh=True)
+    assert runtime.transport.timeout == 30
+    assert runtime.status(refresh=True).state == 'ready'
+    events = list(runtime.send_turn(runtime.create_session(), 'Reply with exactly: runtime-ok'))
+    assert ''.join(event.text for event in events) == 'runtime-ok'
+    assert events[-1].kind == 'completed'
+
+
+@pytest.mark.parametrize('method', ['initialize', 'config/read', 'account/read'])
+def test_handshake_exceeding_default_budget_is_bounded_and_reaped(fake, method):
+    started = time.monotonic()
+    runtime = fake(authenticated=True, timeout=None, rpc_delays={method: 31})
+    assert 30 <= time.monotonic() - started < 36
+    assert runtime.status().state == 'error'
+    assert runtime.status().error == 'rpc_timeout'
+    assert runtime.transport.process is None
+    assert runtime.transport.workdir is None
+
+
+@pytest.mark.parametrize('host', ['chatgpt.com', 'auth.openai.com'])
+def test_current_official_browser_login_hosts(fake, host):
+    from jsonschema import Draft7Validator
+    url = (f'https://{host}/oauth/authorize?response_type=code&client_id=fixture&state=fixture'
+           '&code_challenge=fixture&code_challenge_method=S256&id_token_add_organizations=true'
+           '&redirect_uri=http%3A%2F%2Flocalhost%3A1455%2Fauth%2Fcallback')
+    response_schema = json.loads(Path('tests/fixtures/app_server/LoginAccountResponse.schema.json').read_text())
+    Draft7Validator(response_schema).validate({'type': 'chatgpt', 'loginId': 'fixture', 'authUrl': url})
+    assert fake(auth_url=url).login() == {'authorization_url': url}
+
+
+def test_current_account_schema_plan_values_match_safe_normalization():
+    from jsonschema import Draft7Validator
+    from app.ai.codex import PLAN_LABELS
+    schema = json.loads(Path('tests/fixtures/app_server/GetAccountResponse.schema.json').read_text())
+    assert set(schema['definitions']['PlanType']['enum']) == set(PLAN_LABELS)
+    for plan in PLAN_LABELS:
+        Draft7Validator(schema).validate({'account': {'type': 'chatgpt', 'email': None, 'planType': plan},
+                                         'requiresOpenaiAuth': True})
+
+
+@pytest.mark.parametrize('url', [
+    'http://chatgpt.com/oauth/authorize', 'javascript:alert(1)',
+    'https://example.com/', 'https://chatgpt.com.evil.example/',
+    'https://evil.chatgpt.com/', 'https://auth.openai.com.evil.example/',
+    'https://evil.openai.com/', 'https://chatgpt.com@evil.example/',
+    'https://user:password@chatgpt.com/', 'https://@chatgpt.com/',
+    'https://chatgpt.com:444/', 'https://chatgpt.com:invalid/',
+    'https://chatgpt.com/#access_token=SUPER_SECRET', 'https://chatgpt.com/#',
+    'https://chatgpt.com/?access_token=SUPER_SECRET',
+    'https://auth.openai.com/?refresh_token=SUPER_SECRET',
+    'https://chatgpt.com/?id_token=SUPER_SECRET',
+    'https://chatgpt.com/?access_token=', 'https://chatgpt.com/?access%5Ftoken=SUPER_SECRET',
+    'https://chatgpt.com/?AccessToken=SUPER_SECRET', 'https://chatgpt.com/?TOKEN=SUPER_SECRET',
+    'https://chatgpt.com/?authorization=SUPER_SECRET', 'https://chatgpt.com/?client_secret=SUPER_SECRET',
+    'https://chatgpt.com/?api_key=SUPER_SECRET', 'https://chatgpt.com/?code=SUPER_SECRET',
+    'https://chatgpt.com\\@evil.example/', 'https://chatgpt.com/\n',
+    'https://chatgpt.com/\t', ' https://chatgpt.com/', None, ['https://chatgpt.com/'],
+])
+def test_malicious_browser_login_urls_are_rejected(fake, url, caplog, capsys):
+    runtime = fake(auth_url=url)
+    with pytest.raises(AIError, match='malformed_login'): runtime.login()
+    assert runtime.status().auth.login_state == 'failed'
+    assert 'SUPER_SECRET' not in json.dumps(runtime.status().public()) + caplog.text + str(capsys.readouterr())
 
 
 @pytest.mark.parametrize('mode', ['login_failure','login_rejected','unsafe_url','token_url'])
@@ -146,11 +268,123 @@ def test_one_turn_and_streaming_trusted_boundary(fake):
     assert turn['input'][0]['text'] == 'untrusted paper text'
     assert turn['sandboxPolicy'] == {'type':'readOnly','networkAccess':False}
     assert thread['approvalPolicy'] == 'never'
-    assert thread['config']['mcp_servers."inherited".enabled'] is False
+    assert thread['config']['mcp_servers'] == {
+        'tradingview_mcp': {'enabled': False}, 'node_repl': {'enabled': False},
+    }
     assert 'SUPER_SECRET' not in json.dumps(messages)
     assert thread['config']['features.plugins'] is False
     assert 'untrusted source data' in thread['developerInstructions']
     assert 'model' not in thread
+
+
+@pytest.mark.parametrize('names', [[], ['tradingview_mcp', 'node_repl'],
+                                    ['normal_server', 'tradingview_mcp', 'node_repl', 'name.with.dot',
+                                     'name-with-dash', 'name"with"quote', "name'with'quote"]])
+def test_nested_mcp_isolation_full_thread_and_runtime_ok(fake, names):
+    from app.ai.process import DISABLED_FEATURES
+    inherited = {name: {'enabled': True, 'url': 'https://fixture.invalid/SUPER_SECRET',
+                        'env': {'Authorization': 'SUPER_SECRET'}, 'command': 'DO_NOT_RUN'} for name in names}
+    runtime = fake(authenticated=True, plan='prolite', mcp_servers=inherited)
+    assert runtime.status().state == 'ready'
+    assert runtime.status().auth.state == 'authenticated'
+    assert runtime.models()[0].entitlement == 'unverified'
+    expected = {name: {'enabled': False} for name in names}
+    assert runtime._tool_overrides == {'mcp_servers': expected}
+    session = runtime.create_session(instructions='trusted instructions')
+    session = runtime.resume_session(session.id)
+    events = list(runtime.send_turn(session, 'Reply with exactly: runtime-ok'))
+    assert ''.join(event.text for event in events) == 'runtime-ok'
+    assert events[-1].kind == 'completed'
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read', 'account/read', 'model/list',
+                                            'thread/start', 'thread/resume', 'turn/start']
+    for request in requests:
+        if request['method'] not in ('thread/start', 'thread/resume'): continue
+        params = request['params']
+        config = params['config']
+        assert config == {'web_search': 'disabled', 'mcp_servers': expected,
+                          **{f'features.{name}': False for name in DISABLED_FEATURES}}
+        assert not any(key.startswith('mcp_servers.') for key in config)
+        assert params['sandbox'] == 'read-only' and params['approvalPolicy'] == 'never'
+        assert params['modelProvider'] == 'openai' and 'model' not in params
+        assert params['cwd'] == runtime.transport.workdir.name
+        assert 'untrusted source data' in params['developerInstructions']
+        if request['method'] == 'thread/start': assert params['baseInstructions'] == 'trusted instructions'
+    assert 'SUPER_SECRET' not in json.dumps(requests) + json.dumps(runtime._tool_overrides)
+    assert 'DO_NOT_RUN' not in json.dumps(requests)
+    assert not any(r['method'].startswith('config/') and r['method'] != 'config/read' for r in requests)
+
+
+def test_fake_rejects_legacy_dotted_mcp_contract(fake):
+    from jsonschema import Draft7Validator
+    runtime = fake(authenticated=True)
+    # The generic schema accepts this JSON; the current config contract rejects it.
+    params = {**runtime._session_params(), 'config': {
+        'mcp_servers."tradingview_mcp".enabled': False,
+        'mcp_servers."node_repl".enabled': False,
+    }}
+    schema = json.loads(Path('tests/fixtures/app_server/client_requests.schema.json').read_text())
+    Draft7Validator(schema).validate({'id': 1, 'method': 'thread/start', 'params': params})
+    with pytest.raises(AIError, match='rpc_rejected'):
+        runtime.transport.request('thread/start', params)
+    with pytest.raises(AIError, match='rpc_rejected'):
+        runtime.transport.request('turn/start', {'threadId': 'thread-1', 'input': []})
+    session = runtime.create_session()
+    assert ''.join(event.text for event in runtime.send_turn(session, 'smoke')) == 'runtime-ok'
+
+
+@pytest.mark.parametrize('effective_config', [None, [], 'SUPER_SECRET', {'mcp_servers': None},
+                                            {'mcp_servers': []}, {'mcp_servers': 'SUPER_SECRET'}])
+def test_malformed_mcp_discovery_fails_closed(fake, effective_config, caplog, capsys):
+    runtime = fake(authenticated=True, effective_config=effective_config)
+    assert runtime.status().state == 'error' and runtime.status().error == 'malformed_config'
+    assert runtime.transport.process is None
+    with pytest.raises(AIError): runtime.create_session()
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read']
+    assert 'SUPER_SECRET' not in json.dumps(runtime.status().public()) + caplog.text + str(capsys.readouterr())
+
+
+def test_mcp_discovery_rejection_fails_closed(fake):
+    runtime = fake('config_rejected', authenticated=True)
+    assert runtime.status().state == 'error' and runtime.status().error == 'rpc_rejected'
+    assert runtime.transport.process is None
+    with pytest.raises(AIError): runtime.create_session()
+    assert 'thread/start' not in runtime.record.read_text()
+
+
+def test_mcp_rejection_api_reports_error_without_starting_turn(fake, monkeypatch, tmp_path):
+    monkeypatch.setenv('KG_DATA_DIR', str(tmp_path / 'data'))
+    runtime = fake('mcp_rejected', authenticated=True, plan='prolite')
+    with TestClient(create_app(runtime)) as client:
+        assert client.get('/api/ai/status').json()['state'] == 'ready'
+        response = client.post('/api/ai/smoke')
+        assert response.status_code == 503 and 'rpc_rejected' in response.text
+        assert 'SUPER_SECRET' not in response.text
+        status = client.get('/api/ai/status?refresh=true').json()
+        assert status['state'] == 'error' and status['error'] == 'rpc_rejected'
+        assert runtime.transport.process is None
+        assert 'turn/start' not in runtime.record.read_text()
+
+
+@pytest.mark.parametrize('resume', [False, True])
+@pytest.mark.parametrize('overrides', [None, {'mcp_servers': []}, {'mcp_servers': {}},
+                                      {'mcp_servers': {'tradingview_mcp': {'enabled': True},
+                                                       'node_repl': {'enabled': False}}}])
+def test_mcp_isolation_rejection_reaps_process_without_unsafe_retry(fake, resume, overrides, caplog, capsys):
+    runtime = fake('mcp_rejected' if overrides is None else 'normal', authenticated=True)
+    if overrides is not None: runtime._tool_overrides = overrides
+    process = runtime.transport.process
+    with pytest.raises(AIError, match='rpc_rejected'):
+        if resume: runtime.resume_session('existing-thread')
+        else: runtime.create_session()
+    assert process.poll() is not None and runtime.transport.process is None
+    assert runtime.status().state == 'error' and runtime.status().error == 'rpc_rejected'
+    with pytest.raises(LLMError): RuntimeProvider(runtime).complete('trusted', 'untrusted')
+    requests = [json.loads(line) for line in runtime.record.read_text().splitlines()]
+    assert [r['method'] for r in requests] == ['initialize', 'config/read', 'account/read',
+                                            'thread/resume' if resume else 'thread/start']
+    assert 'SUPER_SECRET' not in str(capsys.readouterr()) + caplog.text + json.dumps(runtime.status().public())
 
 
 def test_compatibility_adapter(fake):
@@ -241,7 +475,8 @@ def test_mock_smoke():
     assert ''.join(e.text for e in runtime.send_turn(runtime.create_session(), 'Reply with exactly: runtime-ok')) == 'runtime-ok'
 
 
-@pytest.mark.parametrize('mode', ['missing','auth_required','crash','turn_failed','turn_timeout','no_ai'])
+@pytest.mark.parametrize('mode', ['missing','auth_required','crash','timeout','malformed','malformed_mcp',
+                                 'mcp_rejected','turn_failed','turn_timeout','no_ai'])
 def test_no_ai_data_remains_usable(tmp_path, monkeypatch, fake, mode):
     monkeypatch.setenv('KG_DATA_DIR',str(tmp_path/'data'))
     monkeypatch.setenv('KG_AI_RUNTIME','codex_chatgpt_plan')
@@ -252,6 +487,8 @@ def test_no_ai_data_remains_usable(tmp_path, monkeypatch, fake, mode):
     else: ai = fake(mode if mode != 'auth_required' else 'normal', mode != 'auth_required')
     if mode == 'crash':
         with pytest.raises(AIError): ai.models()
+    elif mode == 'mcp_rejected':
+        with pytest.raises(AIError, match='rpc_rejected'): ai.create_session()
     elif mode in ('turn_failed','turn_timeout'):
         with pytest.raises(AIError): list(ai.send_turn(ai.create_session(), 'smoke'))
     with TestClient(create_app(ai)) as client:
@@ -277,7 +514,7 @@ def test_no_ai_data_remains_usable(tmp_path, monkeypatch, fake, mode):
 
 def test_runtime_api_stream_and_auth(fake, monkeypatch, tmp_path):
     monkeypatch.setenv('KG_DATA_DIR',str(tmp_path/'data'))
-    ai = fake('login_success')
+    ai = fake('login_success', plan='prolite', null_on_force_refresh=True)
     with TestClient(create_app(ai)) as client:
         assert client.post('/api/ai/login').status_code == 200
         eventually(lambda: client.get('/api/ai/status').json()['state'] == 'ready')
@@ -285,7 +522,13 @@ def test_runtime_api_stream_and_auth(fake, monkeypatch, tmp_path):
         assert response.status_code == 200
         assert 'runtime-' in response.text and '"kind": "completed"' in response.text
         assert client.get('/api/ai/models').json()['models'][0]['entitlement'] == 'unverified'
-        assert 'SUPER_SECRET' not in client.get('/api/ai/status?refresh=true').text
+        status = client.get('/api/ai/status?refresh=true')
+        assert 'SUPER_SECRET' not in status.text
+        assert status.json()['state'] == 'ready'
+        assert status.json()['auth']['plan'] == 'prolite'
+        reads = [json.loads(line) for line in ai.record.read_text().splitlines()
+                 if json.loads(line)['method'] == 'account/read']
+        assert all(request['params'] == {'refreshToken': False} for request in reads)
         assert client.post('/api/ai/restart').json()['state'] == 'ready'
         assert client.post('/api/ai/logout').json()['state'] == 'auth_required'
 

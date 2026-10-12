@@ -12,7 +12,7 @@ def create_runtime(config=None) -> AIRuntime:
     if kind == "mock": return MockRuntime()
     if kind == "no_ai": return NoAIRuntime()
     if kind == "codex_chatgpt_plan":
-        return CodexRuntime(config.get("executable", "codex"), timeout=config.get("rpc_timeout_seconds", 10),
+        return CodexRuntime(config.get("executable", "codex"), timeout=config.get("rpc_timeout_seconds", 30),
                             turn_timeout=config.get("turn_timeout_seconds", 120))
     # Old API provider selection cannot accidentally activate metered billing.
     return NoAIRuntime()

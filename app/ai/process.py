@@ -45,7 +45,7 @@ def child_environment():
 
 
 class AppServerProcess:
-    def __init__(self, executable="codex", *, timeout=10, on_notification=None, on_failure=None):
+    def __init__(self, executable="codex", *, timeout=30, on_notification=None, on_failure=None):
         self.executable = executable
         self.timeout = timeout
         self.on_notification = on_notification or (lambda method, params: None)

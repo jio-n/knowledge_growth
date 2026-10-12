@@ -2,7 +2,7 @@
   "runtime": {
     "type": "codex_chatgpt_plan",
     "executable": "codex",
-    "rpc_timeout_seconds": 10,
+    "rpc_timeout_seconds": 30,
     "turn_timeout_seconds": 120
   },
   "llm": {

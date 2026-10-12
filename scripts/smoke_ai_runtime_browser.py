@@ -25,7 +25,9 @@ def main():
     cases = []
     with tempfile.TemporaryDirectory(prefix='kg-fake-codex-') as directory:
         executable = Path(directory)/'codex'
-        executable.write_text(f'#!{sys.executable}\nCONFIG = {{"mode":"browser"}}\n' +
+        executable.write_text(f'#!{sys.executable}\nCONFIG = {{"mode":"browser", "plan":"prolite", '
+                              '"null_on_force_refresh":True, '
+                              '"auth_url":"https://chatgpt.com/oauth/authorize?state=fixture"}\n' +
                               (ROOT/'tests/fixtures/app_server/fake_server.py').read_text())
         executable.chmod(0o700)
         with patch.dict('os.environ',{'KG_AI_RUNTIME':'codex_chatgpt_plan','KG_CODEX_EXECUTABLE':str(executable)}), mock_server() as base:
@@ -42,7 +44,7 @@ def main():
                 expect(panel.locator('input')).to_have_count(0)
                 page.get_by_role('button',name='ChatGPTで接続',exact=True).click()
                 link = page.get_by_role('link',name='ブラウザで認証を開く ↗',exact=True)
-                expect(link).to_have_attribute('href','https://auth.openai.com/oauth/authorize?state=fixture')
+                expect(link).to_have_attribute('href','https://chatgpt.com/oauth/authorize?state=fixture')
                 expect(link).to_have_attribute('rel','noopener noreferrer')
                 page.screenshot(path=str(args.output_dir/'auth-pending.png'))
                 cases += ['subscription-first status', 'no API-key inputs', 'login pending and safe browser link']
@@ -53,6 +55,11 @@ def main():
                 page.get_by_role('button',name='ChatGPTで接続',exact=True).click()
                 expect(page.locator('.ai-status summary')).to_contain_text('接続済み')
                 expect(link).to_have_count(0)
+                page.get_by_role('button',name='状態を確認',exact=True).click()
+                expect(page.locator('.ai-status summary')).to_contain_text('接続済み')
+                status = page.request.get(base + '/api/ai/status?refresh=true').json()
+                assert status['state'] == 'ready' and status['auth']['plan'] == 'prolite'
+                cases.append('status refresh keeps prolite keyring account ready')
                 page.get_by_role('button',name='最小接続テスト',exact=True).click()
                 expect(page.locator('.ai-smoke-output')).to_have_text('runtime-ok')
                 expect(page.get_by_role('button',name='最小接続テスト',exact=True)).to_be_enabled()

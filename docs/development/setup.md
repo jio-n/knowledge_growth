@@ -16,6 +16,10 @@ python run.py                                     # → http://localhost:8300
 
 既定は `runtime.type=codex_chatgpt_plan`。OpenAI/Anthropic等のAPI keyは要求しません。
 Codex CLIをインストールすると、アプリがapp-serverをchild processとして起動します。
+Windowsでは0.160.1以上を推奨します。Phase 0A hotfixのcontractは0.160.1の生成schema/TSと
+現在の公式仕様に照合済みです。通常のaccount確認は`refreshToken=false`を使用し、
+UI/APIの「状態を確認」はOAuth tokenの強制refreshを要求しません。
+RPC timeoutは起動・認証確認・通常RPC共通で30秒、turn待ちは120秒です。
 未導入でもPDF・Note・Highlight・Import・Brief・exportを利用できます。
 
 headerのAI状態メニュー → 「ChatGPTで接続」 → browser認証リンクから接続します。
@@ -33,6 +37,7 @@ no-AIまたはChatGPT Import Bridgeで利用してください。既存Codexのf
 Windowsではnpmのcodex.cmdをshell経由で起動しません。package内のcodex.exeを探索し、
 見つからなければnative binaryのパスを指定してください。
 詳細とoptional実接続確認は[Phase 0A記録](../redesign/v0.4/subscription_first_runtime_foundation.md)を参照。
+実機の再確認は[Windows manual acceptance](../redesign/v0.4/subscription_first_runtime_foundation.md#windows実機のmanual-acceptancehotfix後)に従ってください。
 
 ## データの場所
 
