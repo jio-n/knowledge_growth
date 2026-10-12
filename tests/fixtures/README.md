@@ -46,3 +46,12 @@ user conflict / duplicate importは同一packageと対応する生成DB状態で
 `scripts/smoke_import_brief_browser.py`はこの生成PDF/kgpack factoryから追加のUI受入用packageを
 メモリ上に構築する。全status、解決済み/候補/未解決/ページのみのEvidence、任意Note/Q&A、
 競合・更新・HTML文字列の表示を含む。独立した一時mock DBのみを使用する。
+
+## 原文Reader改善用fixture
+
+- `reader_detail`: Figure／Caption、数式、6ptの13行Tableと小数6桁の合成数字。
+- `long_reader`: 60ページ、ページ幅の混在、10ページごとの90度回転。
+
+`scripts/smoke_reader_browser.py`で高DPI、ズーム、TextLayer／Evidence、全幅・位置復元、
+canvasの保持数・内部pixel数、描画キャンセル・画面遷移を検証する。
+実論文やPDFバイナリをGitへ追加せず、PyMuPDFでメモリ内に生成する。

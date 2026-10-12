@@ -16,7 +16,7 @@ def test_generated_pdf_is_reproducible_and_extractable(name):
     data = make_pdf(name)
     assert data == make_pdf(name)
     with fitz.open(stream=data, filetype="pdf") as pdf:
-        assert len(pdf) == 2
+        assert len(pdf) == (60 if name == "long_reader" else 2)
         text = "\n".join(page.get_text() for page in pdf)
         if name == "two_column":
             assert "LEFT paragraph 1" in text and "RIGHT paragraph 8" in text
@@ -27,7 +27,7 @@ def test_generated_pdf_is_reproducible_and_extractable(name):
     doc = extract_pdf(data)
     assert doc.title == f"Synthetic Research Fixture: {name}"
     assert doc.authors == ["Fixture Author A", "Fixture Author B"]
-    assert {b.page for b in doc.blocks} == {1, 2}
+    assert {b.page for b in doc.blocks} == set(range(1, 61) if name == "long_reader" else (1, 2))
     assert any(b.kind == "heading" for b in doc.blocks)
     assert all(b.heading_path for b in doc.blocks)
 

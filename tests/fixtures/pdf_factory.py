@@ -2,7 +2,7 @@
 import fitz
 
 
-FIXTURE_NAMES = ("simple", "two_column", "visual_evidence", "column_bands", "duplicate_evidence", "image_evidence")
+FIXTURE_NAMES = ("simple", "two_column", "visual_evidence", "column_bands", "duplicate_evidence", "image_evidence", "reader_detail", "long_reader")
 
 
 def _text(page, rect, text, *, size=11, bold=False):
@@ -73,16 +73,18 @@ def make_pdf(name: str = "simple", *, shift: float = 0, rotation: int = 0, crop:
                   "Shared evidence phrase appears on both pages.")
         second = doc.new_page(width=595, height=842)
         _text(second, (40, 40, 555, 80), "2 Results", size=16, bold=True)
-        if name == "visual_evidence":
+        if name in ("visual_evidence", "reader_detail", "long_reader"):
             _text(second, (40, 100, 555, 135), "Table 1. Synthetic benchmark scores (invented test values).")
             rows = ["Dataset | Metric | Setting | Baseline | Proposed"] + [
-                f"Synthetic-{i:02d} | Accuracy | few-shot | {60 + i}.0 | {62 + i}.0"
+                (f"Synthetic-{i:02d} | Accuracy | few-shot | {60 + i}.012345 | {62 + i}.987654"
+                 if name in ("reader_detail", "long_reader") else
+                 f"Synthetic-{i:02d} | Accuracy | few-shot | {60 + i}.0 | {62 + i}.0")
                 for i in range(12)
             ]
             for i, text in enumerate(rows):
                 y = 145 + i * 32
                 second.draw_rect(fitz.Rect(40, y, 555, y + 32), color=(0.4, 0.4, 0.4))
-                _text(second, (48, y + 7, 548, y + 31), text, size=10)
+                _text(second, (48, y + 7, 548, y + 31), text, size=6 if name in ("reader_detail", "long_reader") else 10)
             _text(second, (40, 595, 555, 655),
                   "Table 1 contains invented scores for test use only.\n"
                   "Shared evidence phrase appears on both pages.")
@@ -93,6 +95,15 @@ def make_pdf(name: str = "simple", *, shift: float = 0, rotation: int = 0, crop:
                   "No real benchmark performance is claimed.")
         _text(second, (40, 715, 555, 755), "3 Conclusion", size=16, bold=True)
         _text(second, (40, 765, 555, 815), "This fixture is for offline regression testing only.")
+        if name == "long_reader":
+            for num in range(3, 61):
+                page = doc.new_page(width=595 if num % 3 else 660, height=842)
+                _text(page, (40, 40, 550, 100), f"Long fixture page {num}", size=16, bold=True)
+                for i in range(10):
+                    _text(page, (40, 130 + i * 55, 550, 170 + i * 55),
+                          f"Page {num} paragraph {i + 1}. Synthetic evidence for delayed rendering.")
+                if num % 10 == 0:
+                    page.set_rotation(90)
         first = doc[0]  # new_page invalidates earlier Page handles
         if crop:
             first.set_cropbox(fitz.Rect(20, 20, 575, 822))

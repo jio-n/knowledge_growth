@@ -64,3 +64,5 @@ Do not implement the entire roadmap in one Codex task.
 T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accountでの推論検証とPhase 3以降は未実施。
 
 - [Structured Paper Brief生成](structured_brief_generation.md): T2-02/T2-03/T2-06、AIRuntime経由、bounded context、Evidence、再生成preview、schema v4、tests・manual smoke。
+
+- [原文PDF Reader高DPI・ズーム・全幅表示](reader_hidpi_zoom.md): T3-04、T10-03のPDF状態復元、生成fixtureとbrowser回帰、Windows確認手順。

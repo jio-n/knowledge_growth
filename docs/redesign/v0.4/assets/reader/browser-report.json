@@ -1,0 +1,165 @@
+{
+  "passed": 21,
+  "cases": [
+    "DPR2 raster/CSS separation",
+    "6MP/8192px bounds",
+    "75–250% inputs and +/- rerender",
+    "zoom relative position",
+    "zoomed tiny-table TextLayer -> saved Highlight provenance",
+    "Evidence bbox and marker rescale",
+    "full-width and tab preserved",
+    "reload zoom/pane/page/fraction restore",
+    "split resize follows fit-width",
+    "fit-width panel toggle position",
+    "fit-page whole page",
+    "Highlight/text-mode reload and PDF return",
+    "normal and two-column PDF",
+    "90/180/270-degree CropBox TextLayer round trip",
+    "60-page shells, at most 5 rasters, eviction and rerender",
+    "far rotated-page Evidence navigation",
+    "rapid page/zoom cancellation with 300ms delayed completions",
+    "hidden PDF releases rasters",
+    "route teardown isolates late renders",
+    "DPR1/3/8 and extreme-density bound",
+    "latest-main DPR2 comparison (old raster ratio 1, new 2)"
+  ],
+  "metrics": [
+    {
+      "dpr": 2,
+      "rasters": [
+        {
+          "width": 1456,
+          "height": 2060,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        },
+        {
+          "width": 1456,
+          "height": 2060,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "rasters": [
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1983.33,
+          "cssHeight": 2806.67
+        },
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1983.33,
+          "cssHeight": 2806.67
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "rasters": [
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1190,
+          "cssHeight": 1684
+        },
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1190,
+          "cssHeight": 1684
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "rasters": [
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1190,
+          "cssHeight": 1684
+        },
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 1190,
+          "cssHeight": 1684
+        }
+      ]
+    },
+    {
+      "dpr": 2,
+      "rasters": [
+        {
+          "width": 1456,
+          "height": 2060,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        },
+        {
+          "width": 1456,
+          "height": 2060,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        }
+      ]
+    },
+    {
+      "dpr": 1,
+      "rasters": [
+        {
+          "width": 728,
+          "height": 1030,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        },
+        {
+          "width": 728,
+          "height": 1030,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        }
+      ]
+    },
+    {
+      "dpr": 3,
+      "rasters": [
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        },
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        }
+      ]
+    },
+    {
+      "dpr": 8,
+      "rasters": [
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        },
+        {
+          "width": 2059,
+          "height": 2913,
+          "cssWidth": 728,
+          "cssHeight": 1030.21
+        }
+      ]
+    }
+  ],
+  "pageerrors": []
+}
