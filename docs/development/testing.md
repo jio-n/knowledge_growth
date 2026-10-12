@@ -56,6 +56,15 @@ validate、strong/weak/ambiguous/unmatched、手動選択、field除外、user�
 認証・timeout/crash・streaming/cancel・credential/log suppression・no-AI下のPDF/Import/Note等を検証します。
 実Codex binaryやChatGPT account、API keyはCIで要求しません。
 
+Windows互換hotfixの回帰は通常account/readの`refreshToken=false`（起動・状態再読込・
+通知後・login完了・restart）、force refresh時だけaccount:nullになるfake、
+prolite / business / enterprise / 未知planのreadyと安全表示、正規2 hostのbrowser login、
+悪意あるURL拒否を検証します。実stdioでinitializeに9.5秒かけても起動とruntime-okが成功し、
+initialize / config/read / account/readそれぞれ31秒遅延のfakeは30秒でbounded errorとなりprocessを回収します。
+このため全pytestは通常約2分かかります。短い上限でのtimeout、crash、malformed RPC、
+no-AIでのPDF/Import/Brief/Note/Highlight/export、既存Structured Brief / Readerも回帰対象です。
+現在のschema出典・差分は[fixture README](../../tests/fixtures/app_server/README.md)に記録しています。
+
 ```sh
 .venv/bin/python scripts/smoke_ai_runtime.py
 .venv/bin/python scripts/smoke_ai_runtime_browser.py
@@ -63,6 +72,8 @@ validate、strong/weak/ambiguous/unmatched、手動選択、field除外、user�
 
 browser smokeはPlaywright＋Chromiumの任意開発依存が必要です。
 実ChatGPT接続は[manual smoke](../redesign/v0.4/subscription_first_runtime_foundation.md#検証とmanual-smoke)に分離します。
+Windows実機では[hotfix manual acceptance](../redesign/v0.4/subscription_first_runtime_foundation.md#windows実機のmanual-acceptancehotfix後)を実施し、
+token/email/raw auth payloadは記録しません。
 
 ## Structured Brief generation
 

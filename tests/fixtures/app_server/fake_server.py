@@ -31,6 +31,7 @@ for line in sys.stdin:
     if CONFIG.get('record'):
         with open(CONFIG['record'], 'a') as file: file.write(json.dumps(request) + '\n')
     result = {}
+    time.sleep(CONFIG.get('rpc_delays', {}).get(method, 0))
     if method == 'initialize':
         if mode == 'malformed': print('not-json', flush=True); continue
         if mode == 'timeout': time.sleep(5); continue
@@ -38,12 +39,14 @@ for line in sys.stdin:
         if mode == 'oversize': print('x' * (2*1024*1024+1), flush=True); continue
         if mode == 'stderr':
             sys.stderr.write('Authorization: Bearer SUPER_SECRET\n{"accessToken":"SUPER_SECRET"}\n'); sys.stderr.flush()
-        result = {'userAgent': 'fake/0.159.0-alpha.3'}
+        result = {'userAgent': 'fake/0.160.1'}
     elif method == 'config/read':
         result = {'config':{'mcp_servers':{'inherited':{'env':{'accessToken':'SUPER_SECRET'}}}}}
     elif method == 'account/read':
-        result = {'account': {'type': 'chatgpt', 'planType': 'plus', 'email': 'not-public', 'accessToken': 'SUPER_SECRET'} if signed_in else None,
+        result = {'account': {'type': 'chatgpt', 'planType': CONFIG.get('plan', 'plus'), 'email': 'not-public', 'accessToken': 'SUPER_SECRET'} if signed_in else None,
                   'requiresOpenaiAuth': True}
+        if CONFIG.get('null_on_force_refresh') and params.get('refreshToken') is True:
+            result['account'] = None
         if mode == 'api_auth': result['account'] = {'type': 'apiKey'}
         if mode == 'bad_account': result = {'account': 'bad'}
     elif method == 'account/login/start':
@@ -51,6 +54,7 @@ for line in sys.stdin:
         if mode == 'login_rejected':
             emit({'id': request['id'], 'error': {'code': 400, 'message': 'SUPER_SECRET'}}); continue
         result = {'type': 'chatgpt', 'loginId': 'login-1', 'authUrl': 'https://auth.openai.com/oauth/authorize?state=fixture', 'accessToken': 'SUPER_SECRET'}
+        if 'auth_url' in CONFIG: result['authUrl'] = CONFIG['auth_url']
         if mode == 'unsafe_url': result['authUrl'] = 'javascript:alert(1)'
         if mode == 'token_url': result['authUrl'] = 'https://auth.openai.com/authorize?access_token=SUPER_SECRET'
     elif method == 'account/login/cancel':
