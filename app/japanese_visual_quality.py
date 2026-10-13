@@ -12,7 +12,7 @@ from .japanese_translation import PDFError
 
 DPI=200
 MAX_VISUAL_PIXELS=16_000_000
-VISUAL_QUALITY_VERSION='native-2'
+VISUAL_QUALITY_VERSION='native-3'
 PIXEL_LIMIT=.2  # unchanged; never waived by a matching text string
 KINDS=frozenset({'original_text','figure','table','equation'})
 
@@ -151,6 +151,59 @@ def paths(page,clip):
     return result
 
 
+def clipped_paths(page,clip):
+    """Conservative proof for original_text, not a raster-only exception.
+
+    get_drawings() returns paint commands inside *all* imported Forms, including
+    those hidden by another asset's Form BBox. Extended drawing levels/scissors
+    let us prove those commands cannot paint this asset. Scissors are only outer
+    bounds: an intersecting non-rectangular clip or transparency group is NOT
+    interpreted as a rectangle. Unsupported visible scopes fail closed.
+
+    Retain the complete geometry/style of every potentially visible path. In
+    particular a boundary-crossing line is never shortened, rasterized or
+    discarded just because its centreline/bounding box is outside the crop.
+    """
+    result=[]; scopes=[]; ignored=0
+    paint_bounds=page.get_bboxlog()
+    for path in page.get_drawings(extended=True):
+        level=path['level']
+        while scopes and scopes[-1]['level']>=level: scopes.pop()
+        if path['type'] in ('clip','group'):
+            scopes.append(path)
+            continue
+        effective=fitz.Rect(clip) & page.rect
+        for scope in scopes:
+            if scope['type']=='clip': effective &= fitz.Rect(scope['scissor'])
+        # The scissor is a conservative bound even for curves or nested Forms.
+        # Empty intersection is proof of invisibility, independent of paint.
+        if effective.is_empty:
+            ignored+=1
+            continue
+        r=fitz.Rect(path['rect']); margin=max((path.get('width') or 0)/2,.001)
+        r=fitz.Rect(r.x0-margin,r.y0-margin,r.x1+margin,r.y1+margin)
+        # Include MuPDF's paint bounds, not only the path centreline: acute
+        # miter joins and caps can paint beyond half the stroke width. For fs,
+        # fill/stroke can occupy consecutive paint sequence entries.
+        seq=path['seqno']
+        for index in (seq,seq+1) if path['type']=='fs' else (seq,):
+            if index<len(paint_bounds) and paint_bounds[index][0] in ('fill-path','stroke-path'):
+                r |= fitz.Rect(paint_bounds[index][1])
+        if not r.intersects(clip): continue
+        for scope in scopes:
+            if scope['type']=='group': return None,ignored
+            items=scope['items']
+            if len(items)!=1 or items[0][0]!='re': return None,ignored
+        # Compare both native paint and its effective visible rectangular clip.
+        signature=(relative(path['items'],clip),path['type'],path.get('closePath'),
+                   path.get('width'),path.get('dashes'),path.get('lineCap'),path.get('lineJoin'),
+                   tuple(c*1000 for c in (path.get('color') or ())),
+                   tuple(c*1000 for c in (path.get('fill') or ())),
+                   (path.get('stroke_opacity') or 0)*1000,(path.get('fill_opacity') or 0)*1000,path.get('even_odd'))
+        result.append((signature,relative(effective,clip)))
+    return result,ignored
+
+
 def images(page,clip):
     return [(i['digest'],i['width'],i['height'],relative(fitz.Rect(i['bbox']),clip))
             for i in page.get_image_info(hashes=True) if fitz.Rect(i['bbox']).intersects(clip)]
@@ -219,6 +272,19 @@ def inspect_visual(source,output,asset):
             report['images_preserved']=close_values(si,di[:-1]) if len(di)==len(si)+1 else False
             report['annotation_raster_verified']=(asset.get('annotation_raster_verified',False) and
                 len(di)==len(si)+1 and di[-1][0]==asset.get('_annotation_digest'))
+        sv,signored=clipped_paths(content_page,clip);dv,dignored=clipped_paths(dest,target)
+        available=sv is not None and dv is not None
+        visible_same=available and close_values(sv,dv)
+        report.update(visible_drawings_verified=available,visible_drawings_preserved=visible_same,
+                      source_invisible_drawing_count=signored,output_invisible_drawing_count=dignored)
+        drawings_valid=report['drawings_preserved'] and visible_same
+        if asset['kind']=='original_text':
+            # A full-structure mismatch can be waived ONLY with a clip proof,
+            # strict image/content checks below and byte-identical rendered RGB.
+            # The scientific_visual policy continues to require full structure.
+            report.update(exact_pixels_preserved=mean==0,
+                          nonvisible_drawing_difference_proven=(not report['drawings_preserved'] and visible_same and mean==0))
+            drawings_valid=visible_same and (report['drawings_preserved'] or mean==0)
         if not report['native_size_preserved'] or mean is None:
             report.update(error='visual_geometry_changed',classification='clip_geometry')
         elif not report['crop_no_hidden_text']:
@@ -231,14 +297,18 @@ def inspect_visual(source,output,asset):
             report.update(error='visual_text_changed',classification='text_missing_or_changed')
         elif not report['glyphs_preserved']:
             report.update(error='visual_content_changed',classification='glyph_geometry_changed')
-        elif not report['drawings_preserved'] or not report['images_preserved']:
-            report.update(error='visual_content_changed',classification='drawing_or_image_changed')
+        elif not drawings_valid or not report['images_preserved']:
+            classification=('drawing_and_image_changed' if not drawings_valid and not report['images_preserved']
+                            else 'drawing_changed' if not drawings_valid else 'image_changed')
+            report.update(error='visual_content_changed',classification=classification)
         elif raster and not report['annotation_raster_verified']:
             report.update(error='visual_content_changed',classification='annotation_appearance_changed')
         elif mean>PIXEL_LIMIT:
             report.update(error='visual_content_changed',classification='rendered_content_changed')
         else:
-            report.update(status='passed',error=None,classification='raster_alignment' if raw is None or raw>PIXEL_LIMIT else 'native_content_preserved')
+            classification=('nonvisible_drawing_commands' if report.get('nonvisible_drawing_difference_proven')
+                            else 'raster_alignment' if raw is None or raw>PIXEL_LIMIT else 'native_content_preserved')
+            report.update(status='passed',error=None,classification=classification)
     except PDFError as error:
         report.update(error=str(error),classification='validation_limit' if str(error)=='visual_too_large_for_validation' else 'validation_unavailable')
     except Exception:

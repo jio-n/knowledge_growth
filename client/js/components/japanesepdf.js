@@ -37,6 +37,8 @@ const VISUAL_CLASSES = {raster_alignment:"描画位相差を補正・内容一�
   clip_geometry:"clip／寸法不一致",unexpected_text:"不要な文字の混入",text_missing_or_changed:"文字の欠落・変更",
   glyph_geometry_changed:"文字配置・描画属性不一致",
   font_resource_changed:"フォント資源不一致",drawing_or_image_changed:"線・図形・画像不一致",
+  drawing_changed:"線・図形不一致",image_changed:"画像不一致",drawing_and_image_changed:"線・図形と画像不一致",
+  nonvisible_drawing_commands:"非表示の描画命令差・可視内容完全一致",
   annotation_appearance_changed:"注釈の表示不一致",rendered_content_changed:"表示内容不一致",
   validation_limit:"検査上限",validation_unavailable:"検査不能",crop_unavailable:"原物の切り出し不能"};
 
@@ -93,7 +95,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     else if (current?.state === "preview_ready") {
       const r = current.report;
       status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · 翻訳対象 ${r.counts.translated || 0}/${r.text_blocks}本文・Caption（${Math.round(r.translated_ratio * 100)}%） · 原物保持 ${(r.counts.skipped_protected || 0)+(r.counts.skipped_unsafe || 0)}領域 · 未翻訳 ${r.counts.failed || 0}ブロック · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
-      if (r.visual_quality_version !== "native-2") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
+      if (r.visual_quality_version !== "native-3") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     const d = current?.report?.diagnostics;
     diagnostics.hidden = !d;
@@ -116,6 +118,11 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
           `${VISUAL_KINDS[q.annotations_present ? "annotated_page" : q.asset_kind] || "原物"} · ${q.asset_id} · 原文p.${q.source_page ?? "?"} · ${q.status === "failed" ? "検証失敗" : "内容照合済み"} · ${VISUAL_CLASSES[q.classification] || "原物検証"} · ` +
           `原物寸法 ${(q.source_size_pt || []).join("×")}pt · 比較 ${(q.source_image_size_px || []).join("×")} / ${(q.output_image_size_px || []).join("×")}px · ` +
           `平均pixel差 ${q.mean_pixel_difference ?? "未測定"}（補正前 ${q.raw_mean_pixel_difference ?? "未測定"}） · 文字一致 ${q.source_text_preserved ? "はい" : "未確認／不一致"} · ${q.vector_preserved === false ? "画像化（200dpi）" : q.vector_preserved === true ? "ベクター保持" : "未配置／未確認"}`));
+        const check = (value) => value === true ? "一致" : value === false ? "不一致" : "未検査";
+        reportBody.append(el("p", {class:"japanese-pdf-visual-structure"},
+          `描画命令：${check(q.drawings_preserved)} · 画像：${check(q.images_preserved)} · glyph：${check(q.glyphs_preserved)} · font：${check(q.fonts_preserved)}` +
+          (q.quality_policy === "original_text" ? ` · 可視clip内描画：${check(q.visible_drawings_preserved)} · 非表示命令数 原文${q.source_invisible_drawing_count ?? "?"}／日本語${q.output_invisible_drawing_count ?? "?"}` : " · 図表・数式の完全構造照合") +
+          (q.nonvisible_drawing_difference_proven ? " · clip外の命令差を証明済み（pixel完全一致）" : "")));
       }
       reportBody.append(el("p", {}, `日本語を含む生成ページ: ${current.report.translated_pages?.join(", ") || "なし"}。選択した原文ページ相当のみを収録します。図表・数式と未翻訳の内容は原物を保持します。`));
       for (const asset of current.report.assets || []) {

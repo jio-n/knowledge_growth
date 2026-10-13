@@ -329,6 +329,6 @@ def test_old_quality_artifact_is_preserved_but_not_returned_as_current_generatio
         report=old['report'];report.pop('visual_quality_version')
         con.execute('UPDATE japanese_pdf_generations SET report_json=? WHERE id=?',(json.dumps(report),old['generation_id']));con.commit()
     fresh,_=generate(client,sid,[1])
-    assert fresh['generation_id']!=old['generation_id'] and fresh['report']['visual_quality_version']=='native-2'
+    assert fresh['generation_id']!=old['generation_id'] and fresh['report']['visual_quality_version']=='native-3'
     assert fresh['report']['diagnostics']['cached_translations']==6
     assert client.get(f'/api/sources/{sid}/japanese-pdf/{old["generation_id"]}/file').content==original_file.content

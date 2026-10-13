@@ -6,6 +6,7 @@ Cloudで使ったのは独自の生成PDFと決定的mock訳のみ。
 本修正後のWindows実機・MMAD・実ChatGPT翻訳品質は未確認で、merge前に確認する。
 Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再試行](japanese_translation_failures.md)を追加した。
 その後のvisual_content_changedに対し、[原物検証・safe asset診断](japanese_visual_quality.md)を追加した。
+さらにpixel差0のoriginal_text不一致に対し、[native-3のclip検証](japanese_clip_quality.md)を追加した。
 
 ## 方針と画面
 

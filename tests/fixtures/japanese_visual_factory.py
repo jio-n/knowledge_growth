@@ -68,3 +68,41 @@ class VisualFaultRuntime(MockRuntime):
             rows.append({'block_id':b['block_id'],'translated_text':translated or '', 'status':'translated' if translated else 'uncertain'})
         yield TurnEvent('delta',session.id,'fixture-turn',json.dumps({'blocks':rows},ensure_ascii=False))
         yield TurnEvent('completed',session.id,'fixture-turn')
+
+
+def add_hidden_form(output,asset):
+    """Test-only foreign Form: its path crosses the asset, its clip does not.
+
+    Mirrors full-page resources retained by another original crop on the same
+    output page. There is no additional visible paint, text or duplicated asset.
+    """
+    target=fitz.Rect(asset['japanese_bbox']['rect'])
+    with fitz.open() as foreign:
+        p=foreign.new_page(width=600,height=800)
+        p.draw_line((0,25),(target.width,25),width=.1)
+        output[asset['japanese_page']-1].show_pdf_page(
+            fitz.Rect(target.x0,target.y0-20,target.x1,target.y0-10),foreign,0,
+            clip=fitz.Rect(0,0,target.width,10))
+
+
+def make_tiny_original_crop():
+    """Native two-crop reflow reproducer, 1098x48 pixels at 200dpi."""
+    from app.japanese_visual_quality import cropped_visual
+    source=fitz.open();p=source.new_page(width=595,height=842)
+    p.insert_font(fontname='Embedded',fontbuffer=fitz.Font('cjk').buffer)
+    p.insert_text((40,48),'Synthetic Large English Title',fontsize=26,fontname='Embedded')
+    p.insert_text((40,85),'Synthetic Authors 1 2',fontsize=12,fontname='Embedded')
+    p.insert_text((190,81),'1',fontsize=7,fontname='Embedded')
+    p.draw_line((20,88),(550,88),width=.1)
+    p.draw_rect((20,20,550,300),width=.1)
+    clip=fitz.Rect(36,72,431.157,89.215)
+    output=fitz.open();output.new_page();q=output.new_page()
+    target=fitz.Rect(72,144,72+clip.width,144+clip.height)
+    with cropped_visual(p,clip) as visual:q.show_pdf_page(target,visual,0)
+    # A nearby title crop keeps the original page's full path resources, but
+    # its Form clip hides the large frame within the authors' destination crop.
+    with cropped_visual(p,fitz.Rect(35,20,550,52)) as neighbor:
+        q.show_pdf_page(fitz.Rect(72,90,587,122),neighbor,0)
+    asset={'id':'tiny-original','kind':'original_text','source_page':1,'source_bbox':list(clip),
+           'japanese_page':2,'japanese_bbox':{'rect':list(target)},'vector_preserved':True}
+    return source,output,asset

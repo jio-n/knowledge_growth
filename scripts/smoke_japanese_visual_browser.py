@@ -10,17 +10,18 @@ import subprocess
 import sys
 import tempfile
 import time
+import types
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 import fitz
 from PIL import Image,ImageDraw
 from playwright.sync_api import sync_playwright,expect
-from tests.fixtures.japanese_visual_factory import make_visual_fixture,BODY
+from tests.fixtures.japanese_visual_factory import make_visual_fixture,make_tiny_original_crop,BODY
 from tests.fixtures.pdf_factory import _text
 
 
 @contextmanager
-def server(baseline_ref):
+def server(baseline_ref,clip_repro=False):
     with tempfile.TemporaryDirectory(prefix='kg-visual-browser-') as directory:
         with socket.socket() as sock:
             sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
@@ -32,27 +33,35 @@ import types,subprocess
 import uvicorn
 from app.main import create_app
 from app import japanese_pdf as engine,routes_japanese_pdf as routes
-from tests.fixtures.japanese_visual_factory import VisualFaultRuntime
+from tests.fixtures.japanese_visual_factory import VisualFaultRuntime,add_hidden_form
 runtime=VisualFaultRuntime()
 app=create_app(runtime=runtime)
 new_generate=engine.generate_pdf
 visual=engine.Reflow.visual
 state={'mode':'after'}
 before_metrics=[]
-def corrupt(self,asset):
-    visual(self,asset)
-    if state['mode']=='damaged' and asset['kind'] in ('figure','table','equation'):
-        from fitz import Rect
-        r=Rect(asset['japanese_bbox']['rect'])
-        self.output[asset['japanese_page']-1].draw_line((r.x0+2,r.y0+2),(r.x0+12,r.y0+2),width=.1)
-engine.Reflow.visual=corrupt
+'''
+        program+=f'clip_repro={clip_repro!r}\n'
+        program+='''def with_faults(native):
+    def place(self,asset):
+        native(self,asset)
+        if clip_repro and asset['kind']=='original_text' and sum(a['kind']=='original_text' for a in self.assets)==1:
+            add_hidden_form(self.output,asset)
+        if state['mode']=='damaged' and asset['kind'] in ('figure','table','equation'):
+            from fitz import Rect
+            r=Rect(asset['japanese_bbox']['rect'])
+            self.output[asset['japanese_page']-1].draw_line((r.x0+2,r.y0+2),(r.x0+12,r.y0+2),width=.1)
+    return place
+engine.Reflow.visual=with_faults(visual)
 '''
         if baseline_ref:
             program+=f"legacy=types.ModuleType('app._legacy_visual_engine');legacy.__package__='app'\nexec(subprocess.check_output(['git','show',{baseline_ref!r}+':app/japanese_pdf.py'],text=True),legacy.__dict__)\n"
+            if clip_repro:
+                program+=f"legacy_q=types.ModuleType('app._legacy_visual_quality');legacy_q.__package__='app'\nexec(subprocess.check_output(['git','show',{baseline_ref!r}+':app/japanese_visual_quality.py'],text=True),legacy_q.__dict__)\nlegacy_q.VisualQualityError=engine.VisualQualityError\nlegacy.visual_quality=legacy_q.visual_quality\nlegacy.Reflow.visual=with_faults(legacy.Reflow.visual)\n"
             program+='''from app.japanese_visual_quality import inspect_visual
 legacy_quality=legacy.visual_quality
 def before_quality(source,output,asset):
-    before_metrics.append(inspect_visual(source,output,asset))
+    before_metrics.append((legacy_q.inspect_visual if clip_repro else inspect_visual)(source,output,asset))
     return legacy_quality(source,output,asset)
 legacy.visual_quality=before_quality
 '''
@@ -91,7 +100,31 @@ def render(data,path):
     return result
 
 
-def run(base,chromium,output,baseline):
+def tiny_clip_evidence(output,baseline_ref):
+    from app.japanese_visual_quality import canonical_pixmap,inspect_visual
+    source,pdf,asset=make_tiny_original_crop()
+    with source,pdf:
+        after=inspect_visual(source,pdf,asset);before=None
+        if baseline_ref:
+            legacy=types.ModuleType('app._clip_before');legacy.__package__='app'
+            exec(subprocess.check_output(['git','show',baseline_ref+':app/japanese_visual_quality.py'],text=True),legacy.__dict__)
+            before=legacy.inspect_visual(source,pdf,asset)
+            assert before['status']=='failed' and before['mean_pixel_difference']==before['raw_mean_pixel_difference']==0
+        assert after['status']=='passed' and after['nonvisible_drawing_difference_proven']
+        a=canonical_pixmap(source[0],fitz.Rect(asset['source_bbox']))
+        b=canonical_pixmap(pdf[1],fitz.Rect(asset['japanese_bbox']['rect']))
+        pair=Image.new('RGB',(max(a.width,b.width)+24,a.height+b.height+80),'white')
+        draw=ImageDraw.Draw(pair)
+        draw.text((12,8),'Source: 395.157 x 17.215 pt / 1098 x 48 px',fill='black')
+        pair.paste(Image.frombytes('RGB',(a.width,a.height),a.samples),(12,28))
+        draw.text((12,a.height+40),'Native crop on another page: identical pixels / hidden Form commands excluded by proof',fill='black')
+        pair.paste(Image.frombytes('RGB',(b.width,b.height),b.samples),(12,a.height+60))
+        pair.save(output/'tiny-clip-comparison.png')
+        source.save(output/'tiny-original.pdf');pdf.save(output/'tiny-reflow.pdf')
+    (output/'tiny-clip-report.json').write_text(json.dumps({'before':before,'after':after},ensure_ascii=False,indent=2),encoding='utf-8')
+
+
+def run(base,chromium,output,baseline,clip_repro=False):
     cases=[];errors=[];data=make_visual_fixture()
     with sync_playwright() as p:
         browser=p.chromium.launch(executable_path=chromium,headless=True,args=['--no-sandbox'])
@@ -111,7 +144,13 @@ def run(base,chromium,output,baseline):
             old=status();assert old['report']['diagnostics']['ai_translation_succeeded']==6
             old['baseline_asset_metrics']=req.get(base+'/test/baseline-quality').json()
             assert old['baseline_asset_metrics'][0]['asset_kind']=='original_text'
-            assert old['baseline_asset_metrics'][0]['raw_mean_pixel_difference']>.2
+            if clip_repro:
+                assert old['report']['quality']['failed_visuals']==1
+                failed=[q for q in old['baseline_asset_metrics'] if q['status']=='failed']
+                assert len(failed)==1 and failed[0]['asset_kind']=='original_text'
+                assert failed[0]['mean_pixel_difference']==0 and not failed[0]['drawings_preserved']
+                assert failed[0]['images_preserved'] and failed[0]['source_text_preserved']
+            else:assert old['baseline_asset_metrics'][0]['raw_mean_pixel_difference']>.2
             page.screenshot(path=str(output/'before-rejected.png'))
             cases.append('old committed engine reproduces visual_content_changed with six successful AI units')
         mode('after');c.get_by_role('checkbox').check()
@@ -121,7 +160,7 @@ def run(base,chromium,output,baseline):
         assert d['translation_candidates']==8 and d['translation_succeeded']==d['pdf_placement_succeeded']==6
         assert d['translation_failures']=={'ai_uncertain':1,'japanese_required':1} and d['protected_units']==26
         if baseline:assert d['cached_translations']==6
-        assert report['visual_quality_version']=='native-2'
+        assert report['visual_quality_version']=='native-3'
         assert all(q['status']=='passed' and q['mean_pixel_difference']==0 for q in report['quality']['visuals'])
         c.get_by_role('button',name='日本語PDF（試作）',exact=True).click();page.wait_for_selector('.pdf-page--ready .textLayer span')
         page.locator('.pdf-scroll').evaluate('s=>{s.scrollTop=0}')
@@ -131,6 +170,12 @@ def run(base,chromium,output,baseline):
         expect(c.locator('.japanese-pdf-report')).to_contain_text('未翻訳本文')
         expect(c.locator('.japanese-pdf-report')).to_contain_text('平均pixel差 0')
         expect(c.locator('.japanese-pdf-report')).to_contain_text('ベクター保持')
+        expect(c.locator('.japanese-pdf-report')).to_contain_text('画像：一致')
+        if clip_repro:
+            expect(c.locator('.japanese-pdf-report')).to_contain_text('clip外の命令差を証明済み（pixel完全一致）')
+            proof=[q for q in report['quality']['visuals'] if q.get('nonvisible_drawing_difference_proven')]
+            assert len(proof)==1 and proof[0]['asset_kind']=='original_text'
+            cases.append('original_text hidden Form difference proven with exact pixels; drawings and images separately diagnosed')
         c.screenshot(path=str(output/'asset-quality-diagnostics.png'))
         c.get_by_text('原文との対応・原物保持・未解決の理由',exact=True).click()
         cases.append('per-asset kind, geometry, fidelity, text and vector diagnostics visible')
@@ -149,7 +194,7 @@ def run(base,chromium,output,baseline):
         expect(c.locator('.japanese-pdf-diagnostics')).to_contain_text('原物検証失敗（Figure）：2件')
         damaged=status();assert damaged['report']['quality']['failed_visuals']==4
         c.get_by_text('原文との対応・原物保持・未解決の理由',exact=True).click()
-        expect(c.locator('.japanese-pdf-report')).to_contain_text('線・図形・画像不一致')
+        expect(c.locator('.japanese-pdf-report')).to_contain_text('線・図形不一致')
         page.screenshot(path=str(output/'damaged-rejected.png'))
         assert req.get(base+f'/api/sources/{sid}/japanese-pdf/{damaged["generation_id"]}/file').status==404
         cases.append('actual four-asset damage rejected with all causes and no published file')
@@ -200,6 +245,7 @@ def run(base,chromium,output,baseline):
     # only the evaluated jobs' diagnostics, never the whole artifact history.
     result={'passed':len(cases),'cases':cases,'pageerrors':errors,'before':job_summary(old),'after':job_summary(partial),'damaged':job_summary(damaged),'recovered':job_summary(fixed)}
     (output/'browser-report.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+    if clip_repro:tiny_clip_evidence(output,baseline)
     print(json.dumps({'passed':len(cases),'cases':cases,'pageerrors':errors,'diagnostics':d,'japanese_pages':report['japanese_page_count']},ensure_ascii=False))
 
 
@@ -207,5 +253,6 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--chromium',default=shutil.which('chromium'))
     parser.add_argument('--output',type=Path,default=Path(tempfile.gettempdir())/'kg-visual-browser')
     parser.add_argument('--baseline-ref',help='Optional committed old engine, e.g. 9e1993e')
+    parser.add_argument('--clip-repro',action='store_true',help='Foreign clipped Form reproducer (baseline 4296ff5)')
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
-    with server(args.baseline_ref) as base:run(base,args.chromium,args.output,bool(args.baseline_ref))
+    with server(args.baseline_ref,args.clip_repro) as base:run(base,args.chromium,args.output,args.baseline_ref,args.clip_repro)

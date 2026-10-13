@@ -1,5 +1,9 @@
 # 日本語再組版PDFの原物検証 — Draft PR #9追加修正
 
+最新の`native-3`では、original_textの不可視Form命令を別に検証する。
+[pixel差0のclip構造不一致への追加修正](japanese_clip_quality.md)を参照。
+以下はnative-2導入時の原因・検証記録。
+
 更新: 2026-10-13。T3-01 / T3-03 PoC。追加migrationなし、schema v5 / reflow-1を維持。
 WindowsのMMAD原文p.1で、候補8・AI成功6・ai_uncertain1・japanese_required1・保護26、
 PDF品質検証で`visual_content_changed`という結果が報告された。

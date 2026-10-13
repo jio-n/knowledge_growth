@@ -72,3 +72,5 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [日本語PDF翻訳の失敗診断・部分成功](japanese_translation_failures.md): Windows p.1の失敗を受けた分離retry・safe code・実機再試行。
 
 - [日本語PDFの原物品質検証](japanese_visual_quality.md): 埋め込みfont/位相差の再現、原資源保持、asset診断と破損検出、Windows再生成。
+
+- [original_textのclip検証](japanese_clip_quality.md): pixel差0で失敗する不可視Form命令、kind別ポリシー、native-3とWindows再検証。
