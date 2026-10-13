@@ -6,26 +6,23 @@ geometry, reading order and cropped visual fidelity, not original-page pixels.
 """
 from collections import Counter
 import html
-import io
 import math
 from pathlib import Path
 import re
 import tempfile
-from types import SimpleNamespace
 import fitz
-from PIL import Image, ImageChops
 from .config import ROOT
 from .japanese_content import detect_units
 from .japanese_translation import PDFError
+from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQualityError,
+    canonical_pixmap, safe_visual_metadata, VISUAL_QUALITY_VERSION, DPI, MAX_VISUAL_PIXELS)
 
 LAYOUT_VERSION='reflow-1'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
 CAPTION_SIZE=10.
-DPI=200
 MAX_PAGES=64
-MAX_VISUAL_PIXELS=16_000_000
 
 
 def norm(text): return re.sub(r'\s+','',text)
@@ -56,37 +53,6 @@ def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT
         if number>=MAX_PAGES: raise PDFError('output_page_limit')
         return fitz.Rect(0,0,width,height),fitz.Rect(MARGIN,first_y if number==0 else MARGIN,width-MARGIN,height-MARGIN),None
     return story.write_with_links(rectfn)
-
-
-def cropped_visual(source,clip):
-    # A show_pdf_page clip alone retains an entire source-page Form XObject.
-    # PDF.js extracts text outside that clip. Replay only intersecting display-list
-    # operations into a new vector PDF before placement, so no hidden body/caption
-    # survives in the copied resource. The original document is never changed.
-    stream=io.BytesIO();writer=fitz.DocumentWriter(stream)
-    rect=fitz.Rect(0,0,clip.width,clip.height)
-    device=writer.begin_page(rect)
-    # PyMuPDF device wrappers differ across supported versions; DisplayList.run
-    # expects .device while DocumentWriter may return a .this wrapper.
-    adapter=device if hasattr(device,'device') else SimpleNamespace(device=device.this)
-    source.get_displaylist(annots=False).run(adapter,fitz.Matrix(1,0,0,1,-clip.x0,-clip.y0),rect)
-    writer.end_page();writer.close()
-    cropped=fitz.open(stream=stream.getvalue(),filetype='pdf')
-    page=cropped[0]
-    # One text-paint operation can span both inside and outside the clip. Remove
-    # those outside glyphs from this disposable crop, never from the source PDF.
-    spans=[s for b in page.get_text('dict',clip=fitz.INFINITE_RECT())['blocks'] if b['type']==0
-           for line in b['lines'] for s in line['spans']]
-    if any(not rect.contains(fitz.Rect(s['bbox'])) for s in spans):
-        outer=fitz.Rect(rect)
-        for s in spans: outer |= fitz.Rect(s['bbox'])
-        outer=fitz.Rect(outer.x0-2,outer.y0-2,outer.x1+2,outer.y1+2)
-        outside=[fitz.Rect(outer.x0,outer.y0,0,outer.y1),fitz.Rect(rect.x1,outer.y0,outer.x1,outer.y1),
-                 fitz.Rect(outer.x0,outer.y0,outer.x1,0),fitz.Rect(outer.x0,rect.y1,outer.x1,outer.y1)]
-        for area in outside:
-            if not area.is_empty: page.add_redact_annot(area,fill=False,cross_out=False)
-        page.apply_redactions(images=0,graphics=0,text=0)
-    return cropped
 
 
 class Reflow:
@@ -178,13 +144,32 @@ class Reflow:
         x=clip.x0+math.ceil((MARGIN-clip.x0)*scale)/scale
         y=clip.y0+math.ceil((self.y-clip.y0)*scale)/scale
         target=fitz.Rect(x,y,x+clip.width,y+clip.height)
-        with cropped_visual(source,clip) as visual_pdf:
-            self.page.show_pdf_page(target,visual_pdf,0)
+        try:
+            with cropped_visual(source,clip) as visual_pdf:
+                if asset.get('rasterize_annotations'):
+                    with fitz.open() as annotation_free:
+                        annotation_free.insert_pdf(self.original,from_page=source.number,to_page=source.number,annots=False)
+                        expected=norm(annotation_free[0].get_text('text',clip=clip))
+                else: expected=norm(source.get_text('text',clip=clip))
+                asset['crop_text_complete']=expected==norm(visual_pdf[0].get_text('text'))
+                asset['crop_no_hidden_text']=expected==norm(visual_pdf[0].get_text('text',clip=fitz.INFINITE_RECT()))
+                self.page.show_pdf_page(target,visual_pdf,0)
+        except PDFError:
+            diagnostic=safe_visual_metadata(asset)
+            diagnostic.update(error='visual_crop_failed',classification='crop_unavailable')
+            raise VisualQualityError([diagnostic]) from None
         if asset.get('rasterize_annotations'):
             # show_pdf_page excludes annotations. Overlay the original rendered
             # appearance while retaining the same vector text for selection.
-            raster=source.get_pixmap(clip=clip,dpi=DPI,colorspace=fitz.csRGB,alpha=False,annots=True)
-            self.page.insert_image(target,stream=raster.tobytes('png'),keep_proportion=False)
+            raster=canonical_pixmap(source,clip)
+            encoded=raster.tobytes('png')
+            decoded=fitz.Pixmap(encoded)
+            asset['annotation_raster_verified']=(decoded.width,decoded.height,decoded.samples)==(raster.width,raster.height,raster.samples)
+            asset['_annotation_digest']=decoded.digest  # in memory only, excluded from public assets
+            # One source raster pixel per output validation pixel. Do not squeeze
+            # a rounded pixel rectangle into a fractional point rectangle.
+            raster_target=fitz.Rect(target.x0,target.y0,target.x0+raster.width/scale,target.y0+raster.height/scale)
+            self.page.insert_image(raster_target,stream=encoded,keep_proportion=False)
         asset.update(japanese_page=self.page.number+1,japanese_bbox=geometry(self.page,target),vector_preserved=not asset.get('rasterize_annotations'))
         for bid in asset['original_block_ids']: self.record(self.by_id[bid],self.page,target)
         self.flow.append({'kind':'visual','asset_id':asset['id'],'block_ids':asset['original_block_ids'],
@@ -204,25 +189,6 @@ class Reflow:
         self.y+=10
         self.assets.append(asset)
         if dedicated: self.new_page()
-
-
-def visual_quality(source,output,asset):
-    page=source[asset['source_page']-1]; page.set_rotation(0)
-    clip=fitz.Rect(asset['source_bbox']); target=fitz.Rect(asset['japanese_bbox']['rect'])
-    if clip.width*clip.height*(DPI/72)**2>MAX_VISUAL_PIXELS: raise PDFError('visual_too_large_for_validation')
-    a=page.get_pixmap(clip=clip,dpi=DPI,colorspace=fitz.csRGB,alpha=False,annots=True)
-    b=output[asset['japanese_page']-1].get_pixmap(clip=target,dpi=DPI,colorspace=fitz.csRGB,alpha=False,annots=True)
-    if (a.width,a.height)!=(b.width,b.height): raise PDFError('visual_geometry_changed')
-    ia=Image.frombytes('RGB',(a.width,a.height),a.samples); ib=Image.frombytes('RGB',(b.width,b.height),b.samples)
-    diff=ImageChops.difference(ia,ib)
-    hist=diff.histogram(); mean=sum((i%256)*count for i,count in enumerate(hist))/(a.width*a.height*3)
-    if mean>0.2: raise PDFError('visual_content_changed')
-    # Text drawn inside vectors remains searchable with the same numerical/model
-    # contents. This supplements pixel fidelity; no table/VLM rewriting is used.
-    if norm(page.get_text('text',clip=clip))!=norm(output[asset['japanese_page']-1].get_text('text',clip=target)):
-        raise PDFError('visual_text_changed')
-    return {'asset_id':asset['id'],'dpi':DPI,'mean_pixel_difference':round(mean,6),
-            'source_text_preserved':True,'native_size_preserved':True}
 
 
 def validate_output(original,pdf,units,assets,flow):
@@ -248,9 +214,14 @@ def validate_output(original,pdf,units,assets,flow):
         for bid in asset['caption_block_ids']:
             unit=next(u for u in units if u['block']['id']==bid)
             if any(p['japanese_page']!=asset['japanese_page'] for p in unit['placements']): raise PDFError('caption_group_split')
-    quality=[visual_quality(original,pdf,a) for a in assets]
+    quality=[]
+    for asset in assets:
+        try: quality.append(visual_quality(original,pdf,asset))
+        except VisualQualityError as error: quality.extend(error.quality['visuals'])
+    if any(q['status']=='failed' for q in quality): raise VisualQualityError(quality)
     return {'text_blocks_validated':text_count,'missing_or_duplicate':0,'overlaps':0,
-            'outside_page':0,'reading_order_preserved':True,'visuals':quality}
+            'outside_page':0,'reading_order_preserved':True,'visuals':quality,
+            'visual_quality_version':VISUAL_QUALITY_VERSION,'failed_visuals':0,'passed_visuals':len(quality)}
 
 
 def generate_pdf(original,units,output_path):
@@ -301,13 +272,14 @@ def generate_pdf(original,units,output_path):
         quality=validate_output(source,completed,units,layout.assets,layout.flow)
         translated=[u for u in units if u['status']=='translated']
         text_blocks=sum(bool(u['block']['text'].strip()) and u['kind']!='visual' for u in units)
-        return {'layout_version':LAYOUT_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
+        return {'layout_version':LAYOUT_VERSION,'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
                 'japanese_page_count':len(completed),'original_page_count':len(source),
                 'counts':dict(Counter(u['status'] for u in units)),'text_blocks':text_blocks,
                 'source_text_blocks':sum(bool(u['block']['text'].strip()) for u in units),
                 'translated_ratio':len(translated)/text_blocks if text_blocks else 0,
                 'translated_pages':sorted({p['japanese_page'] for u in translated for p in u['placements']}),
-                'quality':quality,'assets':layout.assets,'reading_order':[bid for item in layout.flow for bid in item['block_ids']],
+                'quality':quality,'assets':[{k:v for k,v in a.items() if not k.startswith('_')} for a in layout.assets],
+                'reading_order':[bid for item in layout.flow for bid in item['block_ids']],
                 'units':[{'block_id':u['block']['id'],'translation_id':u.get('translation_id'),
                           'page':u['block']['page'],'bbox':u['block'].get('bbox'),
                           'section':u.get('section',u['block'].get('heading_path','')),'kind':u['kind'],'asset_id':u['asset_id'],

@@ -127,3 +127,5 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 日本語生成方式はreflow-1に更新した。pagesは原文ページ番号で、指定した最大3ページ相当のみを収録する。派生PDFのページ数・段組は原文と異なる。reportにlayout_version、japanese_page_count、units[].placements、assets[]、qualityを返す。旧固定bbox成果物もsource/hashが一致する限り取得できるが、新生成のcacheとして返さない。
 
 成功・失敗reportに任意の`diagnostics`を追加した。翻訳候補/今回のAI成功/保存済み訳再利用、最終コード別件数、公開PDFへの配置成功、原物保持、failure_stage、試行/分割/時間上限を区別する。本文・訳・raw responseは診断へ含めない。schema v5のreport_jsonを再利用し、旧reportの取得契約も維持する。[分類とWindows再試行](../redesign/v0.4/japanese_translation_failures.md)。
+
+原物品質は`visual_quality_version=native-2`。成功・失敗reportの`quality.visuals[]`へkind/page/寸法/通常・共通原点pixel差/文字・glyph・font・線・画像の照合/vector状態/固定分類を返す。原物データやdigestは返さない。旧成果物は取得可能だが、新基準の生成cacheには使わない。[契約とWindows確認](../redesign/v0.4/japanese_visual_quality.md)。

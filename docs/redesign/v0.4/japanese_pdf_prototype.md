@@ -5,6 +5,7 @@
 Cloudで使ったのは独自の生成PDFと決定的mock訳のみ。
 本修正後のWindows実機・MMAD・実ChatGPT翻訳品質は未確認で、merge前に確認する。
 Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再試行](japanese_translation_failures.md)を追加した。
+その後のvisual_content_changedに対し、[原物検証・safe asset診断](japanese_visual_quality.md)を追加した。
 
 ## 方針と画面
 
@@ -92,8 +93,8 @@ Section情報は原物内部のモデル名等を見出しとして使わず、�
 段落が複数ページになる場合は同じ原文block_idに複数のplacementsを保持する。
 本文が元のbboxに収まらないという理由で翻訳を諦めない。
 
-原物はsource clipと交差するdisplay-list操作を新しいvector PDFへ描き出し、
-`show_pdf_page`でベクターと画像をコピーする。表示clipだけに頼るとPDF.jsが領域外の
+原物は使い捨ての原ページcopyから、原フォント・ベクター・画像資源を保持して
+`show_pdf_page`でsource clipをコピーする。DocumentWriterによる文字描画命令の再生成を廃止した。表示clipだけに頼るとPDF.jsが領域外の
 非表示原文まで抽出するため、不要な原文をコピー先のresourceに残さない。1つのtext描画操作が領域内外にまたがる場合は、
 切り出した一時PDFの領域外glyphだけをtext-onlyで除去する。原文PDFにはこの処理を行わない。
 元のpointサイズを保つ。本文領域に対して大きな表・図は専用ページに置き、
@@ -152,7 +153,7 @@ Paper Brief・Note・Q&A・HighlightからのEvidenceは必ず原文へ切り替
 - 全配置が用紙の内側にあり、item同士が重ならず、元の本文/Section順序で流れる。
 - 図表とCaptionが同じページにあり、対応する原文IDsを持つ。
 - 図表/数式の数値・文字を元clipと照合し、元サイズとvectorを保持する。
-- 原物のclipを200dpiでrenderし、移動後clipと比較する。native raster phaseを揃え、
+- 原物のclipを200dpiの共通local原点でrenderし、移動後clipと比較する。原フォント/glyph/線/画像も照合し、
   平均pixel差が0.2/255を超える原物は公開しない。本文の再組版領域はこの比較対象にしない。
 - AI JSONの不正、欠落/重複/架空ID、数値改変を拒否し、失敗/retry/cache/user edit保持を確認する。
 - 旧固定bbox成果物、stale/corrupt file、atomic失敗、再起動、SourceAnchorの回帰を確認する。
@@ -167,7 +168,7 @@ Paper Brief・Note・Q&A・HighlightからのEvidenceは必ず原文へ切り替
 Caption継続、対応の曖昧な2つの図、罫線なし表、接近/重複、CropBox＋90/180/270度回転、
 注釈の表示保持、欠字、文字なしPDFも検証する。
 
-固定bbox版baseline pytestは**376 passed**。再組版時点のpytestは**390 passed**。翻訳診断追加後は**449 passed**。既存Starlette/httpx非推奨通知1件。
+固定bbox版baseline pytestは**376 passed**。再組版時点のpytestは**390 passed**。翻訳診断追加後は**449 passed**、原物検証追加後は**480 passed**。既存Starlette/httpx非推奨通知1件。
 Chromiumの新再組版browserは**17項目成功**、Reader回帰20、Import/Brief34、Structured Brief17項目成功。
 各suiteのpageerrorは0件。日本語検索、選択、原文p.2→日本語p.1の対応、Evidenceの原文p.3への復帰、
 artifact別の位置復元、download、長文改ページ、連続20回切替を確認した。

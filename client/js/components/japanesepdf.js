@@ -32,6 +32,13 @@ const TRANSLATION_ERRORS = {
 };
 Object.assign(REASONS, TRANSLATION_ERRORS);
 const STAGES = {source_validation:"原文確認",content_detection:"翻訳候補検出",translation:"AI翻訳・応答検証",pdf_layout:"PDF再組版・品質検証",publication:"PDF保存"};
+const VISUAL_KINDS = {original_text:"未翻訳本文",figure:"Figure",table:"Table",equation:"Equation",annotated_page:"注釈付き原ページ"};
+const VISUAL_CLASSES = {raster_alignment:"描画位相差を補正・内容一致",native_content_preserved:"原物の内容一致",
+  clip_geometry:"clip／寸法不一致",unexpected_text:"不要な文字の混入",text_missing_or_changed:"文字の欠落・変更",
+  glyph_geometry_changed:"文字配置・描画属性不一致",
+  font_resource_changed:"フォント資源不一致",drawing_or_image_changed:"線・図形・画像不一致",
+  annotation_appearance_changed:"注釈の表示不一致",rendered_content_changed:"表示内容不一致",
+  validation_limit:"検査上限",validation_unavailable:"検査不能",crop_unavailable:"原物の切り出し不能"};
 
 export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) {
   let disposed = false, timer, current = null, busy = false, language = "original";
@@ -86,6 +93,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     else if (current?.state === "preview_ready") {
       const r = current.report;
       status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · 翻訳対象 ${r.counts.translated || 0}/${r.text_blocks}本文・Caption（${Math.round(r.translated_ratio * 100)}%） · 原物保持 ${(r.counts.skipped_protected || 0)+(r.counts.skipped_unsafe || 0)}領域 · 未翻訳 ${r.counts.failed || 0}ブロック · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
+      if (r.visual_quality_version !== "native-2") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     const d = current?.report?.diagnostics;
     diagnostics.hidden = !d;
@@ -96,15 +104,22 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       ...Object.entries(d.translation_failures || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"}（${Object.hasOwn(TRANSLATION_ERRORS,code) ? code : "translation_validation_error"}）：${count}件`),
       `PDF配置成功：${d.pdf_placement_succeeded}件`, `図表・数式保護：${d.protected_units}件`,
       `領域未解決：${d.unsafe_units}件`,
+      ...Object.entries(d.visual_failures || {}).map(([kind,count])=>`原物検証失敗（${VISUAL_KINDS[kind] || "原物"}）：${count}件`),
       ...(d.stopped_by ? [`${TRANSLATION_ERRORS[d.stopped_by] || "再試行上限"}で停止`] : []),
     ].join(" · ") : "";
     reportBody.textContent = "";
     if (current?.report) {
       if (d) reportBody.append(el("p", {}, `AI呼出し：${d.runtime_calls || 0}回 · バッチ分割：${d.split_batches || 0}回。再試行中の検出件数（最終失敗数とは別）：` +
         Object.entries(d.attempt_errors || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"} ${count}件`).join("、")));
+      for (const q of current.report.quality?.visuals || []) {
+        reportBody.append(el("p", {class:"japanese-pdf-visual-quality"},
+          `${VISUAL_KINDS[q.annotations_present ? "annotated_page" : q.asset_kind] || "原物"} · ${q.asset_id} · 原文p.${q.source_page ?? "?"} · ${q.status === "failed" ? "検証失敗" : "内容照合済み"} · ${VISUAL_CLASSES[q.classification] || "原物検証"} · ` +
+          `原物寸法 ${(q.source_size_pt || []).join("×")}pt · 比較 ${(q.source_image_size_px || []).join("×")} / ${(q.output_image_size_px || []).join("×")}px · ` +
+          `平均pixel差 ${q.mean_pixel_difference ?? "未測定"}（補正前 ${q.raw_mean_pixel_difference ?? "未測定"}） · 文字一致 ${q.source_text_preserved ? "はい" : "未確認／不一致"} · ${q.vector_preserved === false ? "画像化（200dpi）" : q.vector_preserved === true ? "ベクター保持" : "未配置／未確認"}`));
+      }
       reportBody.append(el("p", {}, `日本語を含む生成ページ: ${current.report.translated_pages?.join(", ") || "なし"}。選択した原文ページ相当のみを収録します。図表・数式と未翻訳の内容は原物を保持します。`));
       for (const asset of current.report.assets || []) {
-        reportBody.append(el("p", {}, `${asset.kind} · ${asset.status === "unresolved" ? "未解決・原物保持" : asset.kind === "equation" ? "数式の原物保持" : asset.caption_status === "untranslated" ? "Caption対応済み・未翻訳" : "Caption対応済み"} · 原文p.${asset.source_page} → 日本語p.${asset.japanese_page} · ${REASONS[asset.reason] || (asset.vector_preserved ? "ベクター原物を保持" : "原物の表示内容を保持")}`,
+        reportBody.append(el("p", {}, `${asset.kind} · ${asset.status === "unresolved" ? "未解決・原物保持" : asset.kind === "equation" ? "数式の原物保持" : asset.caption_status === "untranslated" ? "Caption対応済み・未翻訳" : "Caption対応済み"} · 原文p.${asset.source_page} → 日本語p.${asset.japanese_page} · ${REASONS[asset.reason] || (asset.vector_preserved ? "ベクター原物を保持" : "原物の表示内容を保持")} · ${asset.vector_preserved === false ? "画像化（200dpi・内容照合済み）" : "ベクター保持"}`,
           el("button", { type:"button", class:"btn btn--sm", onClick:()=>onSwitch("original",current,asset.original_block_ids[0]) }, "原文図表を見る")));
       }
       for (const unit of current.report.units) {

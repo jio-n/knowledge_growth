@@ -15,6 +15,7 @@ from .db import get_db, new_id, now
 from .import_bridge.validator import canonical
 from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
+from .japanese_visual_quality import VisualQualityError, VISUAL_QUALITY_VERSION
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -119,6 +120,11 @@ def run_generation(token, runtime):
                 report = {'counts': dict(Counter(u['status'] for u in units)), 'units': [{'block_id': u['block']['id'], 'page': u['block']['page'],
                           'status': u['status'], 'reason': u['reason']} for u in units]}
                 report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
+                if isinstance(error, VisualQualityError):
+                    report['quality'] = error.quality
+                    report['diagnostics']['visual_failures'] = dict(Counter(
+                        'annotated_page' if row['annotations_present'] else row['asset_kind']
+                        for row in error.quality['visuals'] if row['status']=='failed'))
                 con.execute("UPDATE japanese_pdf_generations SET state='failed',error=?,report_json=?,updated_at=? WHERE id=? AND state='generating'",
                             (code, canonical(report), now(), token))
                 con.commit()
@@ -150,7 +156,9 @@ def start(source_id: str, body: GenerateIn, request: Request, tasks: BackgroundT
             if not body.retry_failed:
                 for row in ready:
                     path = output_path(row['id'])
-                    if json.loads(row['report_json'] or '{}').get('layout_version') == LAYOUT_VERSION and matches(row, saved) and path.is_file() and digest(path.read_bytes()) == row['file_hash']:
+                    report = json.loads(row['report_json'] or '{}')
+                    if (report.get('layout_version') == LAYOUT_VERSION and report.get('visual_quality_version') == VISUAL_QUALITY_VERSION
+                            and matches(row, saved) and path.is_file() and digest(path.read_bytes()) == row['file_hash']):
                         return public(row)
             runtime = request.app.state.ai_runtime
             if runtime.status().state != 'ready' or not runtime.capabilities().inference:
