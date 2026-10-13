@@ -111,42 +111,30 @@ def test_clip_boundary_line_is_kept_and_visible_extra_stroke_is_rejected():
         assert q['mean_pixel_difference']<PIXEL_LIMIT
 
 
-def test_failed_old_structure_check_recovers_one_original_asset_and_reuses_six_translations(client,monkeypatch):
+def test_normal_fallback_is_text_and_never_enters_original_crop_validation(client,monkeypatch):
     import app.japanese_pdf as engine
-    from app.japanese_visual_quality import VisualQualityError
-    native=engine.Reflow.visual;quality=engine.visual_quality
-    def reflow_with_foreign_form(self,asset):
-        native(self,asset)
-        if asset['kind']=='original_text' and sum(a['kind']=='original_text' for a in self.assets)==1:
-            add_hidden_form(self.output,asset)
-    def previous_policy(source,output,asset):
-        q=inspect_visual(source,output,asset)
-        if not q['drawings_preserved']:
-            q.update(status='failed',error='visual_content_changed',classification='drawing_or_image_changed')
-            raise VisualQualityError([q])
-        return q
-    monkeypatch.setattr(engine.Reflow,'visual',reflow_with_foreign_form)
-    monkeypatch.setattr(engine,'visual_quality',previous_policy)
+    quality=engine.visual_quality;inspected=[]
+    def scientific_only(source,output,asset):
+        inspected.append(asset['kind'])
+        assert asset['kind']!='original_text'
+        return quality(source,output,asset)
+    monkeypatch.setattr(engine,'visual_quality',scientific_only)
     runtime=VisualFaultRuntime();client.app.state.ai_runtime=runtime
     data=make_visual_fixture();sid=upload(client,data)
-    failed,_=generate(client,sid,[1])
-    assert failed['state']=='failed' and failed['error']=='visual_content_changed'
-    assert failed['report']['quality']['failed_visuals']==1
-    diag=next(q for q in failed['report']['quality']['visuals'] if q['status']=='failed')
-    assert diag['asset_kind']=='original_text' and diag['mean_pixel_difference']==0
-    assert diag['source_text_preserved'] and diag['images_preserved']
-    monkeypatch.setattr(engine,'visual_quality',quality)
+    first,pdf=generate(client,sid,[1])
+    assert first['state']=='preview_ready' and pdf.status_code==200
+    assert set(inspected)=={'figure','table','equation'}
     calls=len(runtime.inputs)
-    recovered,pdf=generate(client,sid,[1],retry_failed=True)
-    assert recovered['state']=='preview_ready' and pdf.status_code==200
+    recovered,_=generate(client,sid,[1],retry_failed=True)
+    assert recovered['state']=='preview_ready'
     d=recovered['report']['diagnostics']
-    assert d['cached_translations']==d['pdf_placement_succeeded']==6
+    assert d['cached_translations']==d['pdf_placement_succeeded']==5
     assert d['translation_failures']=={'ai_uncertain':1,'japanese_required':1}
     retried={b['text'] for batch in runtime.inputs[calls:] for b in batch}
     from tests.fixtures.japanese_visual_factory import TITLE,UNCERTAIN
     assert retried=={TITLE,UNCERTAIN}
     assert recovered['report']['quality']['failed_visuals']==0
-    assert any(q['nonvisible_drawing_difference_proven'] for q in recovered['report']['quality']['visuals'] if q['asset_kind']=='original_text')
+    assert not any(a['kind']=='original_text' for a in recovered['report']['assets'])
     assert client.get(f'/api/sources/{sid}/file').content==data
 
 

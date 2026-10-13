@@ -16,6 +16,8 @@ const REASONS = {
   ambiguous_caption: "図表とCaptionの対応が曖昧・原ページを保持",
   caption_inside_visual: "Captionを安全に分離できず原ページを保持",
   caption_without_visual: "対応図表が未解決・原ページを保持",
+  metadata_preserved:"本文と分けて原文情報を保持",title_assembly_ambiguous:"タイトル構造を確認できず全文を原文で保持",
+  block_too_long:"翻訳単位の入力上限・原文を文章として保持",
   visual_without_caption: "Captionとの対応未解決・原物を保持",
   table_detection_failed: "表領域を確認できない", text_extraction_mismatch: "文字抽出を確認できない",
 };
@@ -29,6 +31,7 @@ const TRANSLATION_ERRORS = {
   japanese_required: "日本語未生成", ai_uncertain: "AI uncertain応答",
   translation_validation_error: "その他の翻訳検証エラー", output_too_large: "AI応答サイズ上限",
   translation_attempt_limit: "翻訳回数上限", translation_time_limit: "翻訳時間上限",
+  assembled_user_edit_review:"構成blockにユーザー編集あり・全文確認が必要",
 };
 Object.assign(REASONS, TRANSLATION_ERRORS);
 const STAGES = {source_validation:"原文確認",content_detection:"翻訳候補検出",translation:"AI翻訳・応答検証",pdf_layout:"PDF再組版・品質検証",publication:"PDF保存"};
@@ -94,8 +97,12 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     if (current?.state === "generating") status.textContent = "指定ページを翻訳・生成中です。原文PDFは引き続き閲覧できます。";
     else if (current?.state === "preview_ready") {
       const r = current.report;
-      status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · 翻訳対象 ${r.counts.translated || 0}/${r.text_blocks}本文・Caption（${Math.round(r.translated_ratio * 100)}%） · 原物保持 ${(r.counts.skipped_protected || 0)+(r.counts.skipped_unsafe || 0)}領域 · 未翻訳 ${r.counts.failed || 0}ブロック · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
+      const percent=(value)=>value == null ? "対象なし" : `${Math.round(value*100)}%`;
+      const c=r.coverage;
+      const coverage=c ? `本文の日本語カバレッジ ${percent(c.body.ratio)}（原文文字数 ${c.body.translated_source_chars}/${c.body.source_chars}） · 要旨 ${percent(c.abstract.ratio)} · タイトル ${!c.title.units ? "対象なし" : c.title.translated && c.title.complete ? "全文を日本語化" : "全文を原文保持・確認対象"}` : `旧指標：翻訳block件数 ${r.counts.translated || 0}/${r.text_blocks}（${Math.round(r.translated_ratio*100)}%・本文カバレッジとは異なります）`;
+      status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · ${coverage} · 未翻訳 ${r.counts.failed || 0}意味単位 · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · AI翻訳・原文確認推奨`;
       if (r.visual_quality_version !== "native-3") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
+      if (r.assembly_version !== "semantic-1") status.textContent += " · 文章構造の再構成は未実施（再生成できます）";
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     const d = current?.report?.diagnostics;
     diagnostics.hidden = !d;
@@ -113,6 +120,12 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     if (current?.report) {
       if (d) reportBody.append(el("p", {}, `AI呼出し：${d.runtime_calls || 0}回 · バッチ分割：${d.split_batches || 0}回。再試行中の検出件数（最終失敗数とは別）：` +
         Object.entries(d.attempt_errors || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"} ${count}件`).join("、")));
+      if (current.report.coverage) reportBody.append(el("p", {},
+        `本文の読み順を意味単位で構成。本文として識別した原物保持：${current.report.coverage.body_preserved_in_visuals}件（境界確認） · 周辺情報：${d?.metadata_units || 0}単位 · 元blockの対応重複：${current.report.quality?.source_mapping_duplicates ?? "未検査"}`));
+      const semanticRoles={paper_title:"論文タイトル",abstract_heading:"要旨見出し",abstract_body:"要旨本文",paragraph:"段落",section_heading:"Section見出し",caption:"Caption",authors:"著者",affiliations:"所属",contact:"連絡先",bibliographic:"書誌情報",marginal_metadata:"周辺識別情報",running_header:"Running header",footer:"原文footer",scientific_visual:"図表・数式"};
+      for (const group of current.report.semantic_units || []) reportBody.append(el("p",{class:"japanese-pdf-semantic-unit"},
+        `${semanticRoles[group.role] || "意味単位"} · 構成block ${group.original_block_ids.length}件 · ${group.status} · ${REASONS[group.reason] || group.reason || "翻訳済み"}`,
+        el("button",{type:"button",class:"btn btn--sm",onClick:()=>onSwitch("original",current,group.original_block_ids[0])},"原文の意味単位を見る")));
       for (const q of current.report.quality?.visuals || []) {
         reportBody.append(el("p", {class:"japanese-pdf-visual-quality"},
           `${VISUAL_KINDS[q.annotations_present ? "annotated_page" : q.asset_kind] || "原物"} · ${q.asset_id} · 原文p.${q.source_page ?? "?"} · ${q.status === "failed" ? "検証失敗" : "内容照合済み"} · ${VISUAL_CLASSES[q.classification] || "原物検証"} · ` +
@@ -146,7 +159,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = artifacts.find(a => a.generation_id === rememberedId) || artifacts[0] || result;
       const ready = artifacts.filter(a => a.state === "preview_ready");
       history.textContent = "";
-      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.layout_version ? "再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
+      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.assembly_version === "semantic-1" ? "文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
       history.hidden = !ready.length;
       update();
       if (current.state === "generating") timer = setTimeout(refresh, 1500);

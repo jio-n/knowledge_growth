@@ -141,7 +141,7 @@ def run(base,chromium,output,baseline,clip_repro=False):
         if baseline:
             mode('before');c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
             expect(c.locator('.japanese-pdf-status')).to_contain_text('visual_content_changed',timeout=30000)
-            old=status();assert old['report']['diagnostics']['ai_translation_succeeded']==6
+            old=status();assert old['report']['diagnostics']['ai_translation_succeeded']==5
             old['baseline_asset_metrics']=req.get(base+'/test/baseline-quality').json()
             assert old['baseline_asset_metrics'][0]['asset_kind']=='original_text'
             if clip_repro:
@@ -152,30 +152,30 @@ def run(base,chromium,output,baseline,clip_repro=False):
                 assert failed[0]['images_preserved'] and failed[0]['source_text_preserved']
             else:assert old['baseline_asset_metrics'][0]['raw_mean_pixel_difference']>.2
             page.screenshot(path=str(output/'before-rejected.png'))
-            cases.append('old committed engine reproduces visual_content_changed with six successful AI units')
+            cases.append('old committed engine reproduces visual_content_changed with five successful AI units')
         mode('after');c.get_by_role('checkbox').check()
         c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(c.locator('.japanese-pdf-status')).to_contain_text('日本語再組版',timeout=30000)
         partial=status();report=partial['report'];d=report['diagnostics']
-        assert d['translation_candidates']==8 and d['translation_succeeded']==d['pdf_placement_succeeded']==6
-        assert d['translation_failures']=={'ai_uncertain':1,'japanese_required':1} and d['protected_units']==26
-        if baseline:assert d['cached_translations']==6
+        assert d['translation_candidates']==7 and d['translation_succeeded']==d['pdf_placement_succeeded']==5
+        assert d['translation_failures']=={'ai_uncertain':1,'japanese_required':1} and d['protected_units']==24 and d['metadata_units']==2
+        if baseline:assert d['cached_translations']==5
         assert report['visual_quality_version']=='native-3'
         assert all(q['status']=='passed' and q['mean_pixel_difference']==0 for q in report['quality']['visuals'])
         c.get_by_role('button',name='日本語PDF（試作）',exact=True).click();page.wait_for_selector('.pdf-page--ready .textLayer span')
         page.locator('.pdf-scroll').evaluate('s=>{s.scrollTop=0}')
         page.screenshot(path=str(output/'after-partial-ready.png'))
-        cases+=['partial eight-candidate PDF publishes six translations and two safe originals','preserves 26 protected units and original font/vector resources']
+        cases+=['metadata separated: seven candidates, five translations and two readable originals','preserves 24 protected units and two metadata groups']
         c.get_by_text('原文との対応・原物保持・未解決の理由',exact=True).click()
-        expect(c.locator('.japanese-pdf-report')).to_contain_text('未翻訳本文')
+        expect(c.locator('.japanese-pdf-report')).to_contain_text('論文タイトル')
         expect(c.locator('.japanese-pdf-report')).to_contain_text('平均pixel差 0')
         expect(c.locator('.japanese-pdf-report')).to_contain_text('ベクター保持')
         expect(c.locator('.japanese-pdf-report')).to_contain_text('画像：一致')
         if clip_repro:
-            expect(c.locator('.japanese-pdf-report')).to_contain_text('clip外の命令差を証明済み（pixel完全一致）')
+            expect(c.locator('.japanese-pdf-report')).to_contain_text('論文タイトル')
             proof=[q for q in report['quality']['visuals'] if q.get('nonvisible_drawing_difference_proven')]
-            assert len(proof)==1 and proof[0]['asset_kind']=='original_text'
-            cases.append('original_text hidden Form difference proven with exact pixels; drawings and images separately diagnosed')
+            assert not proof and not any(a['kind']=='original_text' for a in report['assets'])
+            cases.append('ordinary fallback avoids original-text crop validation; legacy clip proof retained separately')
         c.screenshot(path=str(output/'asset-quality-diagnostics.png'))
         c.get_by_text('原文との対応・原物保持・未解決の理由',exact=True).click()
         cases.append('per-asset kind, geometry, fidelity, text and vector diagnostics visible')
@@ -191,19 +191,19 @@ def run(base,chromium,output,baseline,clip_repro=False):
         c.get_by_role('textbox',name='翻訳対象の原文ページ').fill('1');c.get_by_role('checkbox').check()
         c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(c.locator('.japanese-pdf-status')).to_contain_text('visual_content_changed',timeout=30000)
-        expect(c.locator('.japanese-pdf-diagnostics')).to_contain_text('原物検証失敗（Figure）：2件')
-        damaged=status();assert damaged['report']['quality']['failed_visuals']==4
+        expect(c.locator('.japanese-pdf-diagnostics')).to_contain_text('原物検証失敗（Figure）：1件')
+        damaged=status();assert damaged['report']['quality']['failed_visuals']==3
         c.get_by_text('原文との対応・原物保持・未解決の理由',exact=True).click()
         expect(c.locator('.japanese-pdf-report')).to_contain_text('線・図形不一致')
         page.screenshot(path=str(output/'damaged-rejected.png'))
         assert req.get(base+f'/api/sources/{sid}/japanese-pdf/{damaged["generation_id"]}/file').status==404
-        cases.append('actual four-asset damage rejected with all causes and no published file')
+        cases.append('actual three-asset damage rejected with all causes and no published file')
         mode('translated');c.get_by_role('checkbox').check();c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(c.locator('.japanese-pdf-diagnostics')).to_contain_text('AI翻訳成功：2件',timeout=30000)
-        fixed=status();assert fixed['report']['diagnostics']['cached_translations']==6
+        fixed=status();assert fixed['report']['diagnostics']['cached_translations']==5
         assert fixed['report']['diagnostics']['runtime_calls']==1
         assert req.get(base+f'/api/sources/{sid}/file').body()==data
-        cases.append('regeneration reuses six saved successes and requests only two failed IDs')
+        cases.append('regeneration reuses five saved successes and requests only two failed IDs')
         # A page with FreeText annotations is retained once as an explicitly
         # verified 200dpi appearance; another source page supplies Japanese text.
         mode('after')

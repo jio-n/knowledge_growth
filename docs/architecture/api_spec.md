@@ -124,7 +124,7 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 
 詳細とWindows操作は[日本語PDF試作](../redesign/v0.4/japanese_pdf_prototype.md)。
 
-日本語生成方式はreflow-1に更新した。pagesは原文ページ番号で、指定した最大3ページ相当のみを収録する。派生PDFのページ数・段組は原文と異なる。reportにlayout_version、japanese_page_count、units[].placements、assets[]、qualityを返す。旧固定bbox成果物もsource/hashが一致する限り取得できるが、新生成のcacheとして返さない。
+日本語生成方式はreflow-2 / semantic-1。pagesは原文ページ番号で、指定した最大3ページ相当のみを収録する。派生PDFのページ数・段組は原文と異なる。reportにlayout_version、assembly_version、japanese_page_count、units[].placements、semantic_units[]、coverage、assets[]、qualityを返す。semantic_unitsは全original_block_ids、role、group hash/version、translation_idと配置を保持し、unitsのblock_id/bboxは実原文blockを参照する。translated_ratioは本文原文文字数ベースのcoverage.body.ratioと一致する。タイトル/Abstract/Captionとmetadataを区別する。既存translationsに結合単位の専用IDで保存し、追加migrationはない。旧成果物もsource/hashが一致する限り取得できるが、新生成のcacheとして返さない。[設計とWindows確認](../redesign/v0.4/japanese_semantic_reflow.md)。
 
 成功・失敗reportに任意の`diagnostics`を追加した。翻訳候補/今回のAI成功/保存済み訳再利用、最終コード別件数、公開PDFへの配置成功、原物保持、failure_stage、試行/分割/時間上限を区別する。本文・訳・raw responseは診断へ含めない。schema v5のreport_jsonを再利用し、旧reportの取得契約も維持する。[分類とWindows再試行](../redesign/v0.4/japanese_translation_failures.md)。
 

@@ -3,6 +3,7 @@ from hashlib import sha256
 import re
 import fitz
 from .japanese_translation import MAX_BLOCK_CHARS, MAX_UNITS, PDFError
+from .japanese_semantics import classify_page,assemble_page,FRONT_ROLES
 
 MATH = re.compile(r'[=∑∫√∞±×÷≤≥≠∂∇²³α-ωΑ-Ω]|[\^_{}]|\\(?:frac|sum|begin)')
 CAPTIONS = ('figure_caption', 'table_caption')
@@ -29,7 +30,9 @@ def plan_page(page, blocks):
     bounds = fitz.Rect(0, 0, page.cropbox.width, page.cropbox.height)
     units = [dict(block=b, status='pending', reason=None, kind='text', asset_id=None) for b in blocks]
     raw = page.get_text('dict', flags=fitz.TEXTFLAGS_DICT & ~fitz.TEXT_PRESERVE_IMAGES)
-    lines = [line for b in raw['blocks'] if b['type']==0 for line in b['lines']]
+    nonbody=[padded(b['bbox']['rect'],bounds,.2) for b in blocks if b.get('bbox') and b.get('semantic_role') in FRONT_ROLES]
+    lines = [line for b in raw['blocks'] if b['type']==0 for line in b['lines']
+             if not any(r.contains(fitz.Rect(line['bbox'])) for r in nonbody)]
     regions = [padded(i['bbox'],bounds) for i in page.get_image_info()]
     regions += [padded(d['rect'],bounds) for d in page.get_drawings()]
     regions += [padded(b['bbox']['rect'],bounds) for b in blocks if b.get('bbox') and b.get('role') in
@@ -61,8 +64,9 @@ def plan_page(page, blocks):
         if not b.get('bbox'): warning = 'missing_geometry'; continue
         rect=fitz.Rect(b['bbox']['rect'])
         if not bounds.contains(rect) or rect.is_empty: warning='invalid_geometry'; continue
+        if b.get('semantic_role') in FRONT_ROLES:continue
         if MATH.search(b['text']) or any(rect.intersects(fitz.Rect(line['bbox'])) and
-                (tuple(line['dir'])!=(1.,0.) or any((s['flags'] & 1) or re.search(r'math|symbol|dingbat|cmmi|cmsy|cmex',s['font'],re.I) for s in line['spans'])) for line in lines):
+                (tuple(line['dir'])!=(1.,0.) or any(re.search(r'math|symbol|dingbat|cmmi|cmsy|cmex',s['font'],re.I) for s in line['spans'])) for line in lines):
             regions.append(padded(rect,bounds))
         for other in blocks:
             if other['id']!=b['id'] and other.get('bbox') and b['text'] and other['text'] and rect.intersects(fitz.Rect(other['bbox']['rect'])):
@@ -103,7 +107,8 @@ def plan_page(page, blocks):
         previous=attached[0]['block']
         while not previous['text'].rstrip().endswith(('.', '?', '!')):
             following=next((u for u in units if u['block']['idx']==previous['idx']+1),None)
-            if not following or following['block']['kind']!='para' or following['block'].get('role'): break
+            if not following or following['block']['kind'] not in ('para','heading') or following['block'].get('role'): break
+            if abs(following['block'].get('_font_size',11)-previous.get('_font_size',11))>.5:break
             a=fitz.Rect(previous['bbox']['rect']); b=fitz.Rect(following['block']['bbox']['rect'])
             if abs(a.x0-b.x0)>8 or not 0<=b.y0-a.y1<8: break
             attached.append(following);previous=following['block']
@@ -145,19 +150,20 @@ def plan_page(page, blocks):
 
 def detect_units(document,blocks,pages):
     units=[]; order=0
+    if sum(b['page'] in pages for b in blocks)>MAX_UNITS:raise PDFError('too_many_blocks_select_fewer_pages')
     for number in sorted(pages):
-        page_units,items=plan_page(document[number-1],[b for b in blocks if b['page']==number])
-        # Keep the ordered plan on exactly one unit per item. Translation/save
-        # continue to receive the same list of original-block TranslationUnits.
-        mapping={u['block']['id']:u for u in page_units}
-        for item in items:
-            if item['kind']=='text': owner=item['unit']
-            else:
-                ids=item['asset']['original_block_ids']+item['asset']['caption_block_ids']
-                owner=next((mapping[bid] for bid in ids),None)
-            if owner:
-                owner['layout_item']={k:v for k,v in item.items() if k!='unit'}
-                owner['layout_item']['order']=order; order+=1
+        tagged=classify_page(document[number-1],[b for b in blocks if b['page']==number])
+        page_units,items=plan_page(document[number-1],tagged)
+        for unit in page_units:
+            b=unit['block']
+            if (unit['kind']=='visual' and b.get('semantic_role') in ('paragraph','abstract_body','section_heading')
+                    and b.get('_font_size',11)<=11 and len(b['text'])<80
+                    and not b['text'].rstrip().endswith(('.', '?', '!'))):
+                b['semantic_role']='scientific_visual'
+        page_units=assemble_page(document[number-1],page_units,items)
+        owners=sorted((u for u in page_units if 'layout_item' in u),key=lambda u:u['layout_item']['order'])
+        for owner in owners:
+            owner['layout_item']['order']=order;order+=1
         units+=page_units
     if len(units)>MAX_UNITS: raise PDFError('too_many_blocks_select_fewer_pages')
     return units

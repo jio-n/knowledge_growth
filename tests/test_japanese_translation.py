@@ -1,6 +1,7 @@
 """Independent validation, bounded isolation and safe diagnostics with fake AI."""
 from contextlib import closing
 import json
+import re
 import time
 import fitz
 import pytest
@@ -140,7 +141,7 @@ def test_partial_success_produces_pdf_and_distinct_ai_layout_diagnostics(client)
     assert d['translation_failures']=={'numbers_changed':1} and d['protected_units']==3
     with fitz.open(stream=response.content,filetype='pdf') as doc:
         text=''.join(p.get_text() for p in doc)
-        assert TRANSLATIONS[TITLE] in text and '91.012345' in text and 'y = W x + b (1)' in text
+    assert re.sub(r'\s+','',TRANSLATIONS[TITLE]) in re.sub(r'\s+','',text) and '91.012345' in text and 'y = W x + b (1)' in text
     # Retry keeps successes and requests only the formerly bad original paragraph.
     runtime.mode='valid'
     status,_=generate(client,sid,[1],retry_failed=True)

@@ -16,6 +16,7 @@ from .import_bridge.validator import canonical
 from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
 from .japanese_visual_quality import VisualQualityError, VISUAL_QUALITY_VERSION
+from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -101,7 +102,8 @@ def run_generation(token, runtime):
             if not current or current['state'] != 'generating' or not matches(job, snapshot(con, source['id'])):
                 raise PDFError('source_changed')
             for unit in units: save_unit(con, source, version, unit)
-            for row, unit in zip(report['units'], units): row['translation_id'] = unit['translation_id']
+            report['units']=report_units(units)
+            report['semantic_units']=semantic_report(units)
             report['diagnostics'] = translation_diagnostics(units, translation_stats, published=True)
             os.replace(temporary, final)  # same filesystem; DB never exposes a partial PDF
             con.execute("UPDATE japanese_pdf_generations SET state='preview_ready',file_hash=?,report_json=?,updated_at=? WHERE id=?",
@@ -119,8 +121,8 @@ def run_generation(token, runtime):
                         if unit['status'] in ('pending', 'translated'):
                             unit.update(status='failed', reason=code)
                         save_unit(con, source, version, unit)
-                report = {'counts': dict(Counter(u['status'] for u in units)), 'units': [{'block_id': u['block']['id'], 'page': u['block']['page'],
-                          'status': u['status'], 'reason': u['reason']} for u in units]}
+                report = {'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
+                          'units':report_units(units),'semantic_units':semantic_report(units)}
                 report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
                 if isinstance(error, VisualQualityError):
                     report['quality'] = error.quality
@@ -159,7 +161,7 @@ def start(source_id: str, body: GenerateIn, request: Request, tasks: BackgroundT
                 for row in ready:
                     path = output_path(row['id'])
                     report = json.loads(row['report_json'] or '{}')
-                    if (report.get('layout_version') == LAYOUT_VERSION and report.get('visual_quality_version') == VISUAL_QUALITY_VERSION
+                    if (report.get('layout_version') == LAYOUT_VERSION and report.get('assembly_version') == ASSEMBLY_VERSION and report.get('visual_quality_version') == VISUAL_QUALITY_VERSION
                             and matches(row, saved) and path.is_file() and digest(path.read_bytes()) == row['file_hash']):
                         return public(row)
             runtime = request.app.state.ai_runtime

@@ -51,6 +51,12 @@ export function originalSelection(report,page,bbox) {
   }
   const text=report.units.filter(u=>u.kind!=="visual" && u.placements.some(p=>p.japanese_page===page&&contains(rectOf(p.japanese_bbox),r)));
   if (text.length===1) return {blockId:text[0].block_id,page:text[0].page,bbox:text[0].bbox};
+  if (text.length>1 && text[0].semantic_unit_id && text.every(u=>u.semantic_unit_id===text[0].semantic_unit_id)) {
+    // The selection identifies a whole assembled paragraph/title. Its first
+    // real source block is the group entry point; never save Japanese geometry.
+    const first=text.find(u=>u.block_id===u.original_block_ids?.[0]) || text[0];
+    return {blockId:first.block_id,page:first.page,bbox:first.bbox};
+  }
   const assets=report.assets.filter(a=>a.japanese_page===page&&contains(rectOf(a.japanese_bbox),r));
   if (assets.length!==1) return null;
   const a=assets[0], box=rectOf(a.japanese_bbox), source=a.source_bbox;

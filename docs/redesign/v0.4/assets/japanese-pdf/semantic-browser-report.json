@@ -1,0 +1,1676 @@
+{
+  "passed": 11,
+  "cases": [
+    "UI generates selected source page 1 as semantic paper",
+    "whole title and complete Abstract reported",
+    "body coverage uses source characters, not translated block ratio",
+    "single controller preserves zoom and panel state",
+    "all source block IDs exposed in semantic diagnostics",
+    "assembled title selection jumps to original with unchanged SourceAnchor",
+    "two-column content reflows in left-to-right paragraph order",
+    "Figure Table Equation remain native vectors with adjacent grouped captions",
+    "decimal precision searchable in translated text and original table",
+    "untranslated text is readable selectable flow, without diagnostic notices",
+    "download and offline reload retain derived PDF and original hash"
+  ],
+  "pageerrors": [],
+  "coverage_p1": {
+    "abstract": {
+      "ratio": 1.0,
+      "source_chars": 200,
+      "translated_source_chars": 200
+    },
+    "abstract_complete": true,
+    "body": {
+      "ratio": 0.5830903790087464,
+      "source_chars": 343,
+      "translated_source_chars": 200
+    },
+    "body_preserved_in_visuals": 0,
+    "caption": {
+      "ratio": 1.0,
+      "source_chars": 53,
+      "translated_source_chars": 53
+    },
+    "title": {
+      "complete": true,
+      "source_blocks": 3,
+      "translated": true,
+      "units": 1
+    }
+  },
+  "coverage_all": {
+    "abstract": {
+      "ratio": 1.0,
+      "source_chars": 200,
+      "translated_source_chars": 200
+    },
+    "abstract_complete": true,
+    "body": {
+      "ratio": 0.815006468305304,
+      "source_chars": 773,
+      "translated_source_chars": 630
+    },
+    "body_preserved_in_visuals": 0,
+    "caption": {
+      "ratio": 1.0,
+      "source_chars": 120,
+      "translated_source_chars": 120
+    },
+    "title": {
+      "complete": true,
+      "source_blocks": 3,
+      "translated": true,
+      "units": 1
+    }
+  },
+  "japanese_pages": 5,
+  "quality": {
+    "failed_visuals": 0,
+    "missing_or_duplicate": 0,
+    "outside_page": 0,
+    "overlaps": 0,
+    "passed_visuals": 3,
+    "reading_order_preserved": true,
+    "source_blocks_mapped": 46,
+    "source_mapping_duplicates": 0,
+    "text_blocks_validated": 25,
+    "untranslated_text_validated": 10,
+    "visual_quality_version": "native-3",
+    "visuals": [
+      {
+        "annotations_present": false,
+        "asset_id": "V5e0bf5f1c5d17e388a40d70c",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 2,
+        "max_glyph_origin_difference_pt": 2.7e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 5,
+        "output_glyph_count": 18,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          178
+        ],
+        "output_ink_pixels": 176790,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          64.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          1421,
+          179
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          179
+        ],
+        "source_drawing_count": 5,
+        "source_glyph_count": 18,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          178
+        ],
+        "source_ink_pixels": 176790,
+        "source_invisible_drawing_count": 0,
+        "source_page": 1,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          64.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V4aa6a6a3d38066777c18654c",
+        "asset_kind": "equation",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 3,
+        "max_glyph_origin_difference_pt": 2e-06,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 0,
+        "output_glyph_count": 15,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          267,
+          65
+        ],
+        "output_ink_pixels": 1940,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          95.812,
+          23.236
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          267,
+          65
+        ],
+        "raw_source_image_size_px": [
+          267,
+          65
+        ],
+        "source_drawing_count": 0,
+        "source_glyph_count": 15,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          267,
+          65
+        ],
+        "source_ink_pixels": 1940,
+        "source_invisible_drawing_count": 0,
+        "source_page": 1,
+        "source_rotation": 0,
+        "source_size_pt": [
+          95.812,
+          23.236
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V1bae688b28a0e24f94068983",
+        "asset_kind": "table",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 5,
+        "max_glyph_origin_difference_pt": 2.7e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 8,
+        "output_glyph_count": 65,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          262
+        ],
+        "output_ink_pixels": 18623,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          94.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.015203,
+        "raw_output_image_size_px": [
+          1421,
+          262
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          262
+        ],
+        "source_drawing_count": 8,
+        "source_glyph_count": 65,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          262
+        ],
+        "source_ink_pixels": 18623,
+        "source_invisible_drawing_count": 0,
+        "source_page": 3,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          94.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      }
+    ]
+  },
+  "diagnostics": {
+    "ai_translation_succeeded": 10,
+    "attempt_errors": {
+      "ai_uncertain": 2
+    },
+    "cached_translations": 5,
+    "elapsed_seconds": 0.018,
+    "failure_stage": null,
+    "metadata_units": 9,
+    "pdf_placement_succeeded": 15,
+    "protected_units": 14,
+    "runtime_calls": 3,
+    "split_batches": 0,
+    "stopped_by": null,
+    "translation_candidates": 16,
+    "translation_failures": {
+      "ai_uncertain": 1
+    },
+    "translation_succeeded": 15,
+    "unsafe_units": 0
+  },
+  "semantic_units": [
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "314960e94e079fdfb2949a7ac1dde4a60af67d18b7bf15971e7343cffa84aa22",
+      "id": "S314960e94e079fdfb2949a7ac1dde4a60af67d18b7bf15971e7343cffa84aa2",
+      "original_block_ids": [
+        "1c4d7c7aa37da1c01298f8eab08da5ad9de6a37905250cd9b1076923965938d4",
+        "319a1f077b67194f39585ced1562f897c3a3dc31ba7ef3a7fabffae73f19da4d",
+        "f4e04ecc5163d003a1992fc1c2aa01aeaebce6a3370db588fba3c8102a0a1ed0"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              44.65999984741211,
+              444.0,
+              95.80000305175781
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paper_title",
+      "status": "translated",
+      "translation_id": "5faf70305ee6494e"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "c78aa1cf78be7b7ba114436741a3d41174dad7996024d226ce79840cd61c0e00",
+      "id": "722d0076909b859e7fad88afce29ad55e61d3f964639d147968d158e24901f74",
+      "original_block_ids": [
+        "722d0076909b859e7fad88afce29ad55e61d3f964639d147968d158e24901f74"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              238.64797973632812,
+              76.0,
+              259.5599670410156
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "abstract_heading",
+      "status": "translated",
+      "translation_id": "fcc65d1f842743b9"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "5d04c19d84f0810eb1ffd7b064a47eadb2a3e7ec54e71f1c6d92597ae334e317",
+      "id": "S5d04c19d84f0810eb1ffd7b064a47eadb2a3e7ec54e71f1c6d92597ae334e31",
+      "original_block_ids": [
+        "eec94ae8bdac4e433d0fed1593c5450787b9c55c596b53ee6062aacb5549605d",
+        "8bfc164a042452fac75a80f201ceb23650e4307d51d78d4b1ef3aa6bb1566f79"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              275.1979675292969,
+              540.7379760742188,
+              307.17498779296875
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "abstract_body",
+      "status": "translated",
+      "translation_id": "b6090d728f3043d9"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "0bcb4de1d7770effb88c697ba8c3bca9f8368b159abb1702abec281d08a1039d",
+      "id": "a80859b318a55d427f818d89bb1af2337ffd2236de726ffa2ccc9221ffdd2af0",
+      "original_block_ids": [
+        "a80859b318a55d427f818d89bb1af2337ffd2236de726ffa2ccc9221ffdd2af0"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              322.81298828125,
+              438.31561279296875,
+              337.19000244140625
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "abstract_body",
+      "status": "translated",
+      "translation_id": "1d33636d10c04607"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "8a24e45c77614221c507d8ab3a96561f3b0ecee0c81785d2b1637d00686bfa28",
+      "id": "b978c86b5d724782d259c737c7c0e1edc0869654eb172ae054f8405ccff7b8e1",
+      "original_block_ids": [
+        "b978c86b5d724782d259c737c7c0e1edc0869654eb172ae054f8405ccff7b8e1"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              49.12200164794922,
+              530.7730102539062,
+              97.21499633789062
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": "ai_uncertain",
+      "role": "paragraph",
+      "status": "failed",
+      "translation_id": "3ade60bced404f4e"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "63128608b84ef16dfa2a0d573fa8ee62e4f636b0ffcfb93f97f0206c928cab22",
+      "id": "048d1e4abddc13f291601886b2f77a5bf1a8f6d09732b4adc523cee6996cf381",
+      "original_block_ids": [
+        "048d1e4abddc13f291601886b2f77a5bf1a8f6d09732b4adc523cee6996cf381"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              117.77999877929688,
+              285.3671875,
+              130.84999084472656
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 2,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "caption",
+      "status": "translated",
+      "translation_id": "9cfb14de5b894d78"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "6bd88d833800d498ea59148ed4680382dabd2d20e881996a23d365c08ebf37f4",
+      "id": "S6bd88d833800d498ea59148ed4680382dabd2d20e881996a23d365c08ebf37f",
+      "original_block_ids": [
+        "845e3f2613eb8c423553fcea6844ad53fc74fbf92fa0f47bc8fea5f599f63575",
+        "b71edff9d1d18b238458bc51e877f3a02d42f98c86c3072552a612b39f29f45c",
+        "e8d15cf24675c1cb940fa78bacf4af40eb94523e05aa9a3d968d092f86419daa",
+        "6150ad800efa4cf4c5d5eaa9fc2e342f12a6a91076ce2dcf411c2a6e23b9d8cb"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              128.3400115966797,
+              179.4609375,
+              141.41000366210938
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "authors",
+      "status": "skipped_protected",
+      "translation_id": "dd5851474fda409a"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "f8e6e9350fe94561588ba5e8816b124ad7f1fd8342365d6265b260820b2c608d",
+      "id": "ed3b951174aae889c80ab1289b07f67e1c4daeeeee373ee85ac5af9f44f263b6",
+      "original_block_ids": [
+        "ed3b951174aae889c80ab1289b07f67e1c4daeeeee373ee85ac5af9f44f263b6"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              146.24000549316406,
+              235.671875,
+              159.30999755859375
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "affiliations",
+      "status": "skipped_protected",
+      "translation_id": "8ceff770ef024b7f"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "20241ffd9baa2ce46019c840b16f4ac23332ab43e87e28023ef3482e4be55d16",
+      "id": "b3317abc88dd9451da02135e7ee74ace759fbceccdbef262ad04af50c38523d9",
+      "original_block_ids": [
+        "b3317abc88dd9451da02135e7ee74ace759fbceccdbef262ad04af50c38523d9"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              164.13999938964844,
+              241.35662841796875,
+              177.20999145507812
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "contact",
+      "status": "skipped_protected",
+      "translation_id": "5977dd43325a4948"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "e02499c37b90fa3f0f02b1e57ad1767201a0cc590c53e5c737a0410ab807b05f",
+      "id": "0ce75f35be417dfa001c4f0bbb1f5b4a5aee9667bcf8f9c997b13fa65d5a4949",
+      "original_block_ids": [
+        "0ce75f35be417dfa001c4f0bbb1f5b4a5aee9667bcf8f9c997b13fa65d5a4949"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              200.74998474121094,
+              294.1640625,
+              213.81997680664062
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "bibliographic",
+      "status": "skipped_protected",
+      "translation_id": "4d8bda7fb5234ccc"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "36f4aa17bd8319da4dd370628982b7656a2806ad33254eeb27e5d0386c9e7f10",
+      "id": "a837b1784049cafb666b7c2d0b79a18be926c896fde6567f985fabf1b6f9d638",
+      "original_block_ids": [
+        "a837b1784049cafb666b7c2d0b79a18be926c896fde6567f985fabf1b6f9d638"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              218.6499786376953,
+              206.078125,
+              231.719970703125
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 1,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "marginal_metadata",
+      "status": "skipped_protected",
+      "translation_id": "8eed00898d9d4975"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "5ca9d71d6a044550a619f795caa230232237070ef52e157e361ee33b741f8d5f",
+      "id": "2268fdfc3ad2d1503c2375660c4957ee1de12dd197595934b378019bd9eac7e0",
+      "original_block_ids": [
+        "2268fdfc3ad2d1503c2375660c4957ee1de12dd197595934b378019bd9eac7e0"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              203.42999267578125,
+              49.5,
+              216.49998474121094
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "footer",
+      "status": "skipped_protected",
+      "translation_id": "adb3b6f771f84e86"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "8071707620ac33400510c83b9325a5daf3f592e9a0831bef928388ebe79fbe7b",
+      "original_block_ids": [
+        "8071707620ac33400510c83b9325a5daf3f592e9a0831bef928388ebe79fbe7b"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.19999999999999,
+              555.16,
+              108.19999999999999
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 2,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "1025baebb3ad4e68"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "34ec1a1d01faa48de59ca8882d2299740ee51152f8dd8efe3c602962c90a7b9f",
+      "original_block_ids": [
+        "34ec1a1d01faa48de59ca8882d2299740ee51152f8dd8efe3c602962c90a7b9f"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.19999999999999,
+              555.16,
+              108.19999999999999
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 2,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "1fe8b0d44dfc4089"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "998c623d9d29eba1f1469655b8f85d92b501b742965f6977ebdb5627d0b2f892",
+      "original_block_ids": [
+        "998c623d9d29eba1f1469655b8f85d92b501b742965f6977ebdb5627d0b2f892"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.19999999999999,
+              555.16,
+              108.19999999999999
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 2,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "fda6824b43cf4956"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "ab96d71cded683294635c3e5683ace1f5ca147035e2ccf099dd3810d014bfbea",
+      "original_block_ids": [
+        "ab96d71cded683294635c3e5683ace1f5ca147035e2ccf099dd3810d014bfbea"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.19999999999999,
+              555.16,
+              108.19999999999999
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 2,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "e5cbc021dce147e5"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "85aa6a495a5f95dc699651335e230ad19c2df31e40cafb1ef1ea12c932764faf",
+      "original_block_ids": [
+        "85aa6a495a5f95dc699651335e230ad19c2df31e40cafb1ef1ea12c932764faf"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              109.5100122070312,
+              139.81199645996094,
+              132.7459741210937
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "2a8509f9469b48f2"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "f8c44b8575c7a4730c939d9a647aded2845e8c9a14d77a211e9bb7d74cb619d1",
+      "id": "9dba7961570c303e2de3acfb7374f306568fc570318d8fa9eb2a67418e2aa78f",
+      "original_block_ids": [
+        "9dba7961570c303e2de3acfb7374f306568fc570318d8fa9eb2a67418e2aa78f"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              152.67398071289062,
+              121.0,
+              173.5859832763672
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "section_heading",
+      "status": "translated",
+      "translation_id": "b47a8c23447c4da8"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "65e06fc014723a390784b17908042c7e57cdcc0ba3cb73ce2db12e42418216d0",
+      "id": "7d0749b03cf26be2fa4ba8b6318a896e79406f7642ca9c4647d76c2224ee4cbc",
+      "original_block_ids": [
+        "7d0749b03cf26be2fa4ba8b6318a896e79406f7642ca9c4647d76c2224ee4cbc"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              189.22398376464844,
+              341.0,
+              203.60098266601562
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "ba054001d7a24196"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "65dd4fcd63e2ba7dbd120f9847b10b77bf1ef879d4d2d81b6e239971b5cfe457",
+      "id": "5cf287f95a397350736b92408797a18ab3868107f49dff7cf445dfcea0ddc0ce",
+      "original_block_ids": [
+        "5cf287f95a397350736b92408797a18ab3868107f49dff7cf445dfcea0ddc0ce"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              219.23898315429688,
+              440.0,
+              233.61598205566406
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "a9e737a113d54305"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "dd5966fd7cf3856b32bcb2ed5644a1096b3add763a1f58dbde5bc8b1b99adb8f",
+      "id": "d5f389a4de61bdd1ccc6f6e65ce9215c0f0c9ec9b150f84bf089113e871c7269",
+      "original_block_ids": [
+        "d5f389a4de61bdd1ccc6f6e65ce9215c0f0c9ec9b150f84bf089113e871c7269"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              249.25396728515625,
+              352.0,
+              263.6309814453125
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "f356dcd91eca48e0"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "8219d02015d7bfe0707136384ec37270d4992e5e5166cd036765b3922706b611",
+      "id": "3848fdc2f7a969064110f7ec76c729a29d4c075dfa590a7c3dbe8912e76226b7",
+      "original_block_ids": [
+        "3848fdc2f7a969064110f7ec76c729a29d4c075dfa590a7c3dbe8912e76226b7"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              279.26898193359375,
+              297.0,
+              293.64599609375
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "ba3f47ab709140c8"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "183c91f20003c9f718cc22626896e0ec6fd8fc27bb60442a00d76cbed1e5bfaa",
+      "id": "7d1a2dba2fa9ce487e6cb7467196cdb68754a6b9efd5f93e0e6a99945aa109be",
+      "original_block_ids": [
+        "7d1a2dba2fa9ce487e6cb7467196cdb68754a6b9efd5f93e0e6a99945aa109be"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              309.28399658203125,
+              336.65155029296875,
+              323.6610107421875
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "cba5eec6a63d4c8c"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "c18182aeb963759e3b1d3e9e156391702d823590982149289c4bb8e67ea67bb6",
+      "id": "c5cc551db6c1e395c957af95f054458d5dd2d4a3d226f4060819de835420b9b4",
+      "original_block_ids": [
+        "c5cc551db6c1e395c957af95f054458d5dd2d4a3d226f4060819de835420b9b4"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              339.5890197753906,
+              89.0,
+              360.5010070800781
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "section_heading",
+      "status": "translated",
+      "translation_id": "f106eabb8d4041ac"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "5fca5cb5a1d41cbf33a0cacaaf2a36ff4120c0e5dc9d054975824cf20560198e",
+      "id": "3059ccc56d948cb1f23a86c5bace7e0b9d54c4ee56a2ca7c9ca9773ffdf190a6",
+      "original_block_ids": [
+        "3059ccc56d948cb1f23a86c5bace7e0b9d54c4ee56a2ca7c9ca9773ffdf190a6"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              376.1390075683594,
+              364.61041259765625,
+              390.5160217285156
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 3,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "paragraph",
+      "status": "translated",
+      "translation_id": "72884a7e078449e6"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "8f6da6dd42d3a4f9b57f7ee514f7885ab7eec5386763828584d0e75702a462fe",
+      "id": "c7eeea71aba1a8f3d330a47af63db1102e913fd1d94b5ad6f5ccd5bb55a825b3",
+      "original_block_ids": [
+        "c7eeea71aba1a8f3d330a47af63db1102e913fd1d94b5ad6f5ccd5bb55a825b3"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              221.32998657226562,
+              209.44094848632812,
+              234.3999786376953
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "running_header",
+      "status": "skipped_protected",
+      "translation_id": "79c6c070df2f4191"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "8b69b287cff4ff969242817ef9d995dd3f8daed532bc60b505196743ff8e1c34",
+      "id": "6199da8dfbccce3fd498d1e99dc68a0374a326560ae0aba4638331efc22f5a3e",
+      "original_block_ids": [
+        "6199da8dfbccce3fd498d1e99dc68a0374a326560ae0aba4638331efc22f5a3e"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              239.22998046875,
+              49.5,
+              252.2999725341797
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "footer",
+      "status": "skipped_protected",
+      "translation_id": "bd6aee7b0b72486c"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "a078b31cedbc10e9ff6e603e0ad3e6a2d30ad8342e01a6292d861deab57215fc",
+      "id": "f8895fb9497e88900974984bbadeb476c31ec64c4685fb5079ec075995aa6b1a",
+      "original_block_ids": [
+        "f8895fb9497e88900974984bbadeb476c31ec64c4685fb5079ec075995aa6b1a"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              595.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              47.92799758911133,
+              89.0,
+              68.83999633789062
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 4,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "section_heading",
+      "status": "translated",
+      "translation_id": "3c8ee2660d6c40d0"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "0d07ed670d872098d2d21c2695e0107dffb5e9357c4ee2845592f820163884d5",
+      "id": "S0d07ed670d872098d2d21c2695e0107dffb5e9357c4ee2845592f820163884d",
+      "original_block_ids": [
+        "f2c0ecceb57b751746b52a7a7255dfa2e295070588b059971806aae481d7f966",
+        "ceed49c71f67e4134c36f58b5ddf310f7a2b74614e4ffa8c758591ee12f9eec9"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              147.82000732421875,
+              291.734375,
+              160.88999938964844
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": null,
+      "role": "caption",
+      "status": "translated",
+      "translation_id": "aa746314ede24164"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": "a6cbd74e3c09d99320593521999d895ff19e2acfd19d7157e7285bfeedd0e2de",
+      "id": "d3dbbf2dd13aee22efdbd3c377d4ea6ef679e7421f2abb59a4042f199476bd10",
+      "original_block_ids": [
+        "d3dbbf2dd13aee22efdbd3c377d4ea6ef679e7421f2abb59a4042f199476bd10"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.0,
+              257.1299743652344,
+              49.5,
+              270.1999816894531
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "metadata_preserved",
+      "role": "footer",
+      "status": "skipped_protected",
+      "translation_id": "609b4ffab4ef4b3f"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "d988bdf0c3171c454754de2581916373eaad7bfa310d5bb02384100145ca90e1",
+      "original_block_ids": [
+        "d988bdf0c3171c454754de2581916373eaad7bfa310d5bb02384100145ca90e1"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "d3f559c6b1c045c6"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "5cf2890330e4c0b28745fdf003a6662e89635b695beabd07774621a952341569",
+      "original_block_ids": [
+        "5cf2890330e4c0b28745fdf003a6662e89635b695beabd07774621a952341569"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "164ac19a953c4d67"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "da7e41c851a8e11922605a7a6ab13d9210639f6ba7a266b5ea8f84a40b378365",
+      "original_block_ids": [
+        "da7e41c851a8e11922605a7a6ab13d9210639f6ba7a266b5ea8f84a40b378365"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "cb48fbc0b4944d8e"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "0915296d1d56962df7a9637ce6ecb4dd1cb563830e012321a03dc65366eedc10",
+      "original_block_ids": [
+        "0915296d1d56962df7a9637ce6ecb4dd1cb563830e012321a03dc65366eedc10"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "aef594e1f6124c59"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "87b3f3ea110d86261db7ab75f4a1840fba3b856fa3e1411f2045e9f65e95c69f",
+      "original_block_ids": [
+        "87b3f3ea110d86261db7ab75f4a1840fba3b856fa3e1411f2045e9f65e95c69f"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "fadbe9c46e914a4b"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "ef9a6ad7aac1cb3f56890cb52001096e875e53148128d83f41aaf7277c0f0203",
+      "original_block_ids": [
+        "ef9a6ad7aac1cb3f56890cb52001096e875e53148128d83f41aaf7277c0f0203"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "e088cb24154d4a92"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "4a96f2a924fbda0a868f91aff6310030fdb27d671103c1d691b2a1ebe44f2389",
+      "original_block_ids": [
+        "4a96f2a924fbda0a868f91aff6310030fdb27d671103c1d691b2a1ebe44f2389"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "d9c4472b67f34af0"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "3ec9a8bf74f31301561b5b94036b913d481866ed92e53c73793fe519a65f23fc",
+      "original_block_ids": [
+        "3ec9a8bf74f31301561b5b94036b913d481866ed92e53c73793fe519a65f23fc"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "1697229db2c74126"
+    },
+    {
+      "assembly_version": "semantic-1",
+      "group_hash": null,
+      "id": "331906f7e7e1f0053511d814b8fbd2cd3944b47e8e12c1ad80852c9a55e393f2",
+      "original_block_ids": [
+        "331906f7e7e1f0053511d814b8fbd2cd3944b47e8e12c1ad80852c9a55e393f2"
+      ],
+      "placements": [
+        {
+          "japanese_bbox": {
+            "coordinate_system": "pymupdf_unrotated",
+            "page_rect": [
+              0,
+              0,
+              600.0,
+              842.0
+            ],
+            "rect": [
+              44.16,
+              44.239999999999995,
+              555.16,
+              138.24
+            ],
+            "rotation": 0,
+            "units": "pt"
+          },
+          "japanese_page": 5,
+          "part": 0
+        }
+      ],
+      "reason": "visual_or_equation",
+      "role": "scientific_visual",
+      "status": "skipped_protected",
+      "translation_id": "26fff93ad53b450d"
+    }
+  ]
+}

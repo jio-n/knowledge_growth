@@ -57,7 +57,7 @@ class VisualFaultRuntime(MockRuntime):
     def __init__(self,*,all_translated=False):
         super().__init__();self.inputs=[];self.all_translated=all_translated
     def send_turn(self,session,text,*,hint=None):
-        if not self.sessions[session.id].startswith('# japanese-pdf-0.2'):
+        if not self.sessions[session.id].startswith('# japanese-pdf-'):
             yield from super().send_turn(session,text,hint=hint);return
         blocks=json.loads(text)['blocks'];self.inputs.append(blocks)
         rows=[]

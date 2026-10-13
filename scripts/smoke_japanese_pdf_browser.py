@@ -49,7 +49,7 @@ def run(base,chromium,output):
         pages.fill('1,2,3');controls.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(controls.locator('.japanese-pdf-status')).to_contain_text('日本語再組版',timeout=30000)
         status=request.get(base+f'/api/sources/{sid}/japanese-pdf').json()
-        report=status['report'];assert report['layout_version']=='reflow-1'
+        report=status['report'];assert report['layout_version']=='reflow-2'
         cases+=['original page subset validation','UI reflow generation and persisted artifact']
         page.get_by_role('spinbutton',name='PDF倍率（%）',exact=True).fill('125')
         page.get_by_role('spinbutton',name='PDF倍率（%）',exact=True).press('Enter')

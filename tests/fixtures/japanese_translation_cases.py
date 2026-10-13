@@ -26,7 +26,7 @@ class TranslationFaultRuntime(MockRuntime):
         super().cancel(session_id, turn_id)
 
     def send_turn(self, session, text, *, hint=None):
-        if not self.sessions[session.id].startswith('# japanese-pdf-0.2'):
+        if not self.sessions[session.id].startswith('# japanese-pdf-'):
             yield from super().send_turn(session,text,hint=hint); return
         context = json.loads(text)
         self.inputs.append(context)

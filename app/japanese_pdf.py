@@ -13,11 +13,12 @@ import tempfile
 import fitz
 from .config import ROOT
 from .japanese_content import detect_units
+from .japanese_semantics import (ASSEMBLY_VERSION,source_members,report_units,semantic_report,coverage)
 from .japanese_translation import PDFError
 from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQualityError,
     canonical_pixmap, safe_visual_metadata, VISUAL_QUALITY_VERSION, DPI, MAX_VISUAL_PIXELS)
 
-LAYOUT_VERSION='reflow-1'
+LAYOUT_VERSION='reflow-2'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
@@ -42,13 +43,40 @@ def text_bounds(page):
     return result
 
 
-def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT):
+def balanced_title(text,font,width,size):
+    """Balance long title lines at word/CJK boundaries without shrinking type."""
+    length=font.text_length(text,fontsize=size)
+    lines=math.ceil(length/width)
+    if lines<=1:return text
+    result=[];remaining=text
+    forbidden='、。，．：；？！）］｝」』ぁぃぅぇぉっゃゅょァィゥェォッャュョー'
+    for left in range(lines,1,-1):
+        target=font.text_length(remaining,fontsize=size)/left
+        candidates=[]
+        for i in range(1,len(remaining)):
+            a,b=remaining[i-1],remaining[i]
+            if b in forbidden:continue
+            if ((re.match(r'[\u30a0-\u30ff]',a) and re.match(r'[\u30a0-\u30ff]',b)) or
+                    (re.match(r'[\u3400-\u9fff]',a) and re.match(r'[\u3400-\u9fff]',b))):continue
+            if not (a.isspace() or a in '：:、' or (re.match(r'[\u3040-\u9fff]',a) and re.match(r'[\u3040-\u9fff]',b))):continue
+            used=font.text_length(remaining[:i],fontsize=size)
+            if used>width:break
+            candidates.append((abs(used-target)-(size*.6 if a in 'とのをにはがで' else 0),i))
+        if not candidates:break
+        cut=min(candidates)[1];result.append(remaining[:cut].rstrip());remaining=remaining[cut:].lstrip()
+    return '\n'.join(result+[remaining])
+
+
+def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT,line_height=1.6,compact=False,untranslated=False,break_lines=False):
     # Fixed sizes. Story emits subsequent pages when a paragraph exceeds the
     # first available rectangle; no scale-to-fit or truncation is permitted.
     css=('@font-face {font-family:KGJapanese;src:url(kg-cjk.ttf);}'
-         f'body {{margin:0;font-family:KGJapanese;font-size:{size}pt;line-height:1.6;}}'
-         'div {padding-top:3pt;padding-bottom:5pt;margin:0;}')
-    story=fitz.Story(html='<div lang="ja">'+html.escape(text)+'</div>',user_css=css,archive=archive)
+         f'body {{margin:0;font-family:KGJapanese;font-size:{size}pt;line-height:{line_height};}}'
+         +('div {padding-top:3pt;padding-bottom:0;margin:0;}' if compact else 'div {padding-top:3pt;padding-bottom:5pt;margin:0;}'))
+    marker='<span style="font-size:9pt;color:#666">原文（未翻訳）</span><br>' if untranslated else ''
+    escaped=html.escape(text)
+    if break_lines:escaped=escaped.replace('\n','<br>')
+    story=fitz.Story(html='<div lang="ja">'+marker+escaped+'</div>',user_css=css,archive=archive)
     def rectfn(number,filled):
         if number>=MAX_PAGES: raise PDFError('output_page_limit')
         return fitz.Rect(0,0,width,height),fitz.Rect(MARGIN,first_y if number==0 else MARGIN,width-MARGIN,height-MARGIN),None
@@ -73,6 +101,14 @@ class Reflow:
         unit.setdefault('placements',[]).append({'japanese_page':page.number+1,
             'japanese_bbox':geometry(page,rect),'part':part})
 
+    def label(self,text):
+        if self.page.rect.height-self.y-MARGIN<80:self.new_page()
+        with text_document(text,self.page.rect.width,self.archive,9.,self.y,self.page.rect.height,1.25,True) as doc:
+            if len(doc)!=1:raise PDFError('metadata_label_split')
+            r=text_bounds(doc[0]);self.page.show_pdf_page(self.page.rect,doc,0)
+            self.flow.append({'kind':'metadata_label','block_ids':[],'page':self.page.number+1,'bbox':list(r)})
+            self.y=r.y1+5
+
     def japanese(self,unit):
         text=unit.get('text','')
         if unit['status']!='pending': return False
@@ -83,30 +119,30 @@ class Reflow:
         return True
 
     def paragraph(self,unit):
-        if not self.japanese(unit):
-            self.original_block(unit); return
+        role=unit.get('semantic_role')
+        translated=self.japanese(unit) if unit['kind']!='metadata' else False
+        text=unit['text'] if translated else unit['block']['text']
+        if any(not c.isspace() and not self.font.has_glyph(ord(c)) for c in text):raise PDFError('missing_source_glyph')
+        untranslated=not translated and unit['kind']!='metadata'
+        unit['_rendered_text']=('原文（未翻訳）\n' if untranslated else '')+text
         if self.page.rect.height-self.y-MARGIN<65: self.new_page()
-        size=16. if unit['block']['kind']=='heading' else BODY_SIZE
+        size=20. if role=='paper_title' else 10. if unit['kind']=='metadata' else 16. if role in ('abstract_heading','section_heading') else BODY_SIZE
+        if role=='paper_title':text=balanced_title(text,self.font,self.page.rect.width-MARGIN*2,size)
         # Headings stay with the following paragraph by reserving a few lines.
-        if unit['block']['kind']=='heading' and self.page.rect.height-self.y-MARGIN<130: self.new_page()
-        with text_document(unit['text'],self.page.rect.width,self.archive,size,self.y,self.page.rect.height) as text_pdf:
+        if role in ('abstract_heading','section_heading') and self.page.rect.height-self.y-MARGIN<130: self.new_page()
+        with text_document(text,self.page.rect.width,self.archive,size,self.y,self.page.rect.height,
+                           1.25 if role=='paper_title' or unit['kind']=='metadata' else 1.6,
+                           unit['kind']=='metadata',untranslated,role=='paper_title') as text_pdf:
             for part,temp in enumerate(text_pdf):
                 if part: self.new_page()
                 rect=text_bounds(temp)
                 self.page.show_pdf_page(self.page.rect,text_pdf,part)
                 self.record(unit,self.page,rect,part)
-                self.y=rect.y1+12
+                self.y=rect.y1+(3 if unit['kind']=='metadata' else 12)
                 self.flow.append({'kind':'text','block_ids':[unit['block']['id']],
                                   'page':self.page.number+1,'bbox':list(rect)})
-        unit.update(status='translated',reason=None,placed_font_size=size)
-
-    def original_block(self,unit):
-        b=unit['block']
-        if not b.get('bbox'): raise PDFError('missing_fallback_geometry')
-        asset={'id':'U'+b['id'][:24],'source_page':b['page'],'source_bbox':b['bbox']['rect'],
-               'kind':'original_text','original_block_ids':[b['id']],'caption_block_ids':[],
-               'status':'unresolved','reason':unit['reason'] or 'translation_failed'}
-        self.visual(asset)
+        unit.update(placed_font_size=size)
+        if translated:unit.update(status='translated',reason=None)
 
     def visual(self,asset):
         source=self.original[asset['source_page']-1]
@@ -126,18 +162,12 @@ class Reflow:
         for text in captions_text:
             with text_document(text,width,self.archive,CAPTION_SIZE,MARGIN,height=14000) as measured:
                 caption_height+=text_bounds(measured[0]).height+18
-        group_height=clip.height+caption_height+12+(35 if asset["status"]=="unresolved" else 0)
+        group_height=clip.height+caption_height+12
         dedicated=width>WIDTH or group_height>HEIGHT-MARGIN*2 or self.page.rect.width!=WIDTH
         height=max(HEIGHT,group_height+MARGIN*2+4)
         if dedicated and not (self.page.rect.width==width and self.y+group_height<=self.page.rect.height-MARGIN):
             self.new_page(width,height)
         elif self.y+group_height>self.page.rect.height-MARGIN: self.new_page()
-        if asset['status']=='unresolved':
-            with text_document(f"未解決・原物保持（原文p.{asset['source_page']}）",self.page.rect.width,self.archive,9.,self.y,self.page.rect.height) as notice:
-                if len(notice)!=1: raise PDFError('visual_notice_split')
-                rect=text_bounds(notice[0]); self.page.show_pdf_page(self.page.rect,notice,0)
-                self.flow.append({'kind':'notice','block_ids':[],'page':self.page.number+1,'bbox':list(rect)})
-                self.y=rect.y1+8
         # Match the source's subpixel raster phase at validation DPI while moving
         # it; source vectors and embedded images are copied without resampling.
         scale=DPI/72
@@ -176,6 +206,7 @@ class Reflow:
                           'page':self.page.number+1,'bbox':list(target)})
         self.y=target.y1+6
         for unit,text in zip(captions,captions_text):
+            unit['_rendered_text']=text
             with text_document(text,self.page.rect.width,self.archive,CAPTION_SIZE,self.y,self.page.rect.height) as caption_pdf:
                 if len(caption_pdf)!=1: raise PDFError('caption_group_split')
                 rect=text_bounds(caption_pdf[0])
@@ -188,16 +219,16 @@ class Reflow:
             asset['caption_status']='translated' if all(u['status']=='translated' for u in captions) else 'untranslated'
         self.y+=10
         self.assets.append(asset)
-        if dedicated: self.new_page()
+        if dedicated:self.new_page()
 
 
 def validate_output(original,pdf,units,assets,flow):
     text_count=0
     for unit in units:
         if not unit.get('placements'): raise PDFError('unplaced_source_block')
-        if unit['status']=='translated':
+        if unit['kind']!='visual':
             fragments=[pdf[p['japanese_page']-1].get_text('text',clip=fitz.Rect(p['japanese_bbox']['rect'])) for p in unit['placements']]
-            if norm(''.join(fragments))!=norm(unit['text']): raise PDFError('text_missing_or_duplicate')
+            if norm(''.join(fragments))!=norm(unit.get('_rendered_text',unit.get('text',unit['block']['text']))): raise PDFError('text_missing_or_duplicate')
             text_count+=1
     previous=(0,0.)
     for item in flow:
@@ -219,9 +250,12 @@ def validate_output(original,pdf,units,assets,flow):
         try: quality.append(visual_quality(original,pdf,asset))
         except VisualQualityError as error: quality.extend(error.quality['visuals'])
     if any(q['status']=='failed' for q in quality): raise VisualQualityError(quality)
+    source_ids=[b['id'] for u in units for b in source_members(u)]
+    if len(source_ids)!=len(set(source_ids)):raise PDFError('duplicate_source_mapping')
     return {'text_blocks_validated':text_count,'missing_or_duplicate':0,'overlaps':0,
             'outside_page':0,'reading_order_preserved':True,'visuals':quality,
-            'visual_quality_version':VISUAL_QUALITY_VERSION,'failed_visuals':0,'passed_visuals':len(quality)}
+            'visual_quality_version':VISUAL_QUALITY_VERSION,'failed_visuals':0,'passed_visuals':len(quality),
+            'source_blocks_mapped':len(source_ids),'source_mapping_duplicates':0,'untranslated_text_validated':sum(u['kind']!='visual' and u['status']!='translated' for u in units)}
 
 
 def generate_pdf(original,units,output_path):
@@ -231,10 +265,15 @@ def generate_pdf(original,units,output_path):
             Path(directory,'kg-cjk.ttf').write_bytes(font.buffer)
             layout=Reflow(source,output,units,fitz.Archive(directory),font)
             ordered=sorted((u for u in units if 'layout_item' in u),key=lambda u:u['layout_item']['order'])
+            titles=[u for u in ordered if u.get('semantic_role')=='paper_title']
+            front=[u for u in ordered if u['kind']=='metadata' and u.get('semantic_role') not in ('running_header','footer')]
+            trailing=[u for u in ordered if u['kind']=='metadata' and u not in front]
+            ordered=titles+front+[u for u in ordered if u not in titles+front+trailing]+trailing
             section=''
+            labels=set()
             for index,owner in enumerate(ordered):
                 item=owner['layout_item']
-                if item['kind']=='text' and owner['block']['kind']=='heading' and index+1<len(ordered):
+                if item['kind']=='text' and owner.get('semantic_role') in ('abstract_heading','section_heading') and index+1<len(ordered):
                     following=ordered[index+1]['layout_item']
                     if following['kind']=='asset':
                         asset=following['asset']; clip=fitz.Rect(asset['source_bbox'])
@@ -243,13 +282,19 @@ def generate_pdf(original,units,output_path):
                         reserve=clip.height+math.ceil(caption_chars/max(1,(width-MARGIN*2)/CAPTION_SIZE))*CAPTION_SIZE*1.6+110
                         if width!=layout.page.rect.width or layout.y+reserve>layout.page.rect.height-MARGIN:
                             layout.new_page(width,max(HEIGHT,reserve+MARGIN*2))
-                if item['kind']=='text':
-                    if owner['block']['kind']=='heading': section=owner['block'].get('heading_path') or owner['block']['text']
-                    owner['section']=section or owner['block'].get('heading_path','')
+                if item['kind'] in ('text','metadata'):
+                    if owner['kind']=='metadata':
+                        category=('authors' if owner.get('semantic_role') in ('authors','affiliations','contact') else
+                                  'trailing' if owner in trailing else 'bibliographic')
+                        if category not in labels:
+                            layout.label({'authors':'著者・所属・連絡先（原文）','bibliographic':'書誌情報（原文）',
+                                          'trailing':'原文の周辺情報（本文外）'}[category]);labels.add(category)
+                    if owner.get('semantic_role') in ('abstract_heading','section_heading'):section=owner['block']['id']
+                    owner['section']='metadata' if owner['kind']=='metadata' else section
                     layout.paragraph(owner)
                 else:
                     for bid in item['asset']['original_block_ids']+item['asset']['caption_block_ids']:
-                        layout.by_id[bid]['section']=section or layout.by_id[bid]['block'].get('heading_path','')
+                        layout.by_id[bid]['section']=section
                     layout.visual(item['asset'])
             if not any(u['status']=='translated' for u in units): raise PDFError('no_safe_translated_blocks')
             if layout.y==MARGIN and len(output)>1: output.delete_page(len(output)-1)
@@ -259,29 +304,33 @@ def generate_pdf(original,units,output_path):
             page.insert_text((MARGIN,page.rect.height-18),f"knowledge_growth | {page.number+1}",fontsize=8,color=(.4,.4,.4))
         toc=[]; previous_level=0
         for unit in units:
-            if unit['status']=='translated' and unit['block']['kind']=='heading':
+            if unit.get('placements') and unit.get('semantic_role') in ('paper_title','abstract_heading','section_heading'):
                 level=min(max(1,unit['block'].get('level') or 1),previous_level+1)
-                toc.append([level,unit['text'],unit['placements'][0]['japanese_page']])
+                toc.append([level,unit['text'] if unit['status']=='translated' else unit['block']['text'],unit['placements'][0]['japanese_page']])
                 previous_level=level
         if toc: output.set_toc(toc)
         output.embfile_add('knowledge_growth-japanese-font-NOTICE.txt',
             (ROOT/'docs/licenses/droid-NOTICE.txt').read_bytes(),desc='Droid Sans Fallback: Apache 2.0 license and attribution')
-        output.set_metadata({'title':'日本語再組版・選択ページ試作','creator':'knowledge_growth reflow-1'})
+        output.set_metadata({'title':'日本語再組版・選択ページ試作','creator':'knowledge_growth reflow-2'})
         output.save(output_path,garbage=4,deflate=True)
     with fitz.open(stream=original,filetype='pdf') as source,fitz.open(output_path) as completed:
         quality=validate_output(source,completed,units,layout.assets,layout.flow)
         translated=[u for u in units if u['status']=='translated']
+        reading_coverage=coverage(units)
+        by_id={u['block']['id']:u for u in units}
+        def source_ids(ids):return [b['id'] for bid in ids for b in source_members(by_id[bid])]
+        public_assets=[]
+        for a in layout.assets:
+            public_asset={k:v for k,v in a.items() if not k.startswith('_')}
+            for key in ('original_block_ids','caption_block_ids'):public_asset[key]=source_ids(a[key])
+            public_assets.append(public_asset)
         text_blocks=sum(bool(u['block']['text'].strip()) and u['kind']!='visual' for u in units)
-        return {'layout_version':LAYOUT_VERSION,'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
+        return {'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
                 'japanese_page_count':len(completed),'original_page_count':len(source),
                 'counts':dict(Counter(u['status'] for u in units)),'text_blocks':text_blocks,
                 'source_text_blocks':sum(bool(u['block']['text'].strip()) for u in units),
-                'translated_ratio':len(translated)/text_blocks if text_blocks else 0,
+                'translated_ratio':reading_coverage['body']['ratio'] or 0,'coverage':reading_coverage,
                 'translated_pages':sorted({p['japanese_page'] for u in translated for p in u['placements']}),
-                'quality':quality,'assets':[{k:v for k,v in a.items() if not k.startswith('_')} for a in layout.assets],
-                'reading_order':[bid for item in layout.flow for bid in item['block_ids']],
-                'units':[{'block_id':u['block']['id'],'translation_id':u.get('translation_id'),
-                          'page':u['block']['page'],'bbox':u['block'].get('bbox'),
-                          'section':u.get('section',u['block'].get('heading_path','')),'kind':u['kind'],'asset_id':u['asset_id'],
-                          'status':u['status'],'reason':u['reason'],'font_size':u.get('placed_font_size'),
-                          'placements':u.get('placements',[])} for u in units]}
+                'quality':quality,'assets':public_assets,'semantic_units':semantic_report(units),
+                'reading_order':[bid for item in layout.flow for bid in source_ids(item['block_ids'])],
+                'units':report_units(units)}

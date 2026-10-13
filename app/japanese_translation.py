@@ -14,7 +14,7 @@ from .import_bridge.validator import canonical, _object, _constant
 from .llm.base import LLMError
 from .paper_brief import StrictModel
 
-PROMPT_VERSION = 'japanese-pdf-0.2'
+PROMPT_VERSION = 'japanese-pdf-0.3'
 MAX_BATCH_CHARS = 6000
 MAX_BLOCK_CHARS = 5000
 MAX_BATCH_BLOCKS = 8
@@ -48,6 +48,7 @@ TRANSLATION_ERRORS = frozenset({
     'citations_changed', 'references_changed', 'terms_changed', 'japanese_required',
     'ai_uncertain', 'translation_validation_error', 'output_too_large',
     'translation_attempt_limit', 'translation_time_limit',
+    'assembled_user_edit_review',
 })
 
 
@@ -182,7 +183,8 @@ def translation_diagnostics(units, stats, *, published=False, failure_stage=None
             'ai_translation_succeeded':sum(bool(u.get('translation_succeeded')) and not u.get('cached') for u in candidates),
             'cached_translations':sum(bool(u.get('cached')) for u in candidates),
             'pdf_placement_succeeded':sum(u['status']=='translated' for u in units) if published else 0,
-            'protected_units':sum(u['status']=='skipped_protected' for u in units),
+            'protected_units':sum(u['status']=='skipped_protected' and u['kind']=='visual' for u in units),
+            'metadata_units':sum(u['kind']=='metadata' for u in units),
             'unsafe_units':sum(u['status']=='skipped_unsafe' for u in units),
             'translation_failures':dict(failures), 'failure_stage':failure_stage,
             **stats}
@@ -203,6 +205,11 @@ def save_unit(con, source, version, unit):
         AND source_text=? ORDER BY user_edited DESC,updated_at DESC,rowid DESC LIMIT 1''',
         (source['id'], version['id'], b['id'], b['text'])).fetchone()
     ts = now()
+    if row and row['translated_text'] and unit['kind'] in ('metadata','visual'):
+        # Reclassification/display policy must not rewrite an earlier successful
+        # translation (including user edits). Reports carry the current policy.
+        unit['translation_id']=row['id']
+        return
     # User-edited/legacy translation content is never replaced automatically.
     if row:
         tid = row['id']
@@ -240,11 +247,21 @@ def translate_units(runtime, source, version, units, *, stats=None):
             unit.update(translation_candidate=True, translation_attempts=0, translation_error=None)
             b = unit['block']
             row = cached_translation(con, source, version, b)
+            originals=unit.get('original_blocks',[b])
+            partial_edit=(not row or not row['user_edited']) and any(con.execute('''SELECT 1 FROM translations
+                WHERE source_id=? AND version_id=? AND block_id=? AND user_edited=1 AND translated_text<>'' ''',
+                (source['id'],version['id'],original['id'])).fetchone() for original in originals if original['id']!=b['id'])
+            if partial_edit:
+                unit.update(status='failed',reason='assembled_user_edit_review',translation_error='assembled_user_edit_review')
+                continue
             if row:
                 unit.update(text=row['translated_text'], provider=row['provider'], model=row['model'],
                             runtime=row['runtime'], prompt_version=row['prompt_version'], cached=True,
                             translation_succeeded=True)
             else:
+                # A partial user edit cannot become a whole-group translation,
+                # nor may a new AI group silently supersede that edit. Keep it
+                # untouched and render the full original group for review.
                 pending.append(unit)
     batches, batch, chars = [], [], 0
     for unit in pending:
@@ -255,7 +272,7 @@ def translate_units(runtime, source, version, units, *, stats=None):
     if batch: batches.append(batch)
     if len(batches) > MAX_BATCHES:
         raise PDFError('too_many_batches_select_fewer_pages')
-    prompt = (PROMPTS_DIR / 'japanese_pdf_v0_2.md').read_text(encoding='utf-8')
+    prompt = (PROMPTS_DIR / 'japanese_pdf_v0_3.md').read_text(encoding='utf-8')
     instructions = prompt + '\nJSON schema:\n' + canonical(TranslationOutput.model_json_schema())
     queue = deque(batches)
     attempt_errors = Counter()
@@ -275,7 +292,7 @@ def translate_units(runtime, source, version, units, *, stats=None):
             blocks = [u['block'] for u in active]
             try:
                 result = provider.complete_json(instructions, canonical({'blocks': [
-                    {'block_id': b['id'], 'text': b['text']} for b in blocks]}),
+                    {'block_id': b['id'], 'text': b['text'],'role':b.get('semantic_role','paragraph')} for b in blocks]}),
                     deadline=min(deadline, time.monotonic()+MAX_TURN_SECONDS))
                 for unit in active: unit.update(provider=result.provider, model=result.model)
                 valid, errors, anomaly = validate_batch(result.text, blocks)

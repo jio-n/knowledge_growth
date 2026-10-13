@@ -132,17 +132,17 @@ def test_scientific_content_damage_cannot_be_hidden_by_small_mean_pixel_differen
         if damage=='line':assert not diag['drawings_preserved']
 
 
-def test_partial_eight_candidate_fixture_keeps_six_translations_and_two_safe_originals(client):
+def test_metadata_separation_keeps_five_translations_and_two_readable_originals(client):
     runtime=VisualFaultRuntime();client.app.state.ai_runtime=runtime
     data=make_visual_fixture();sid=upload(client,data)
     status,response=generate(client,sid,[1]);d=status['report']['diagnostics']
     assert status['state']=='preview_ready',status
-    assert d['translation_candidates']==8 and d['ai_translation_succeeded']==d['pdf_placement_succeeded']==6
+    assert d['translation_candidates']==7 and d['ai_translation_succeeded']==d['pdf_placement_succeeded']==5
     assert d['translation_failures']=={'ai_uncertain':1,'japanese_required':1}
-    assert d['protected_units']==26
+    assert d['protected_units']==24 and d['metadata_units']==2
     visuals=status['report']['quality']['visuals']
-    assert {'original_text','figure','table','equation'}=={a['asset_kind'] for a in visuals}
-    assert len([a for a in visuals if a['asset_kind']=='original_text'])==2
+    assert {'figure','table','equation'}=={a['asset_kind'] for a in visuals}
+    assert not any(a['asset_kind']=='original_text' for a in visuals)
     assert all(a['status']=='passed' and a['mean_pixel_difference']==0 for a in visuals)
     assert client.get(f'/api/sources/{sid}/file').content==data
     with fitz.open(stream=response.content,filetype='pdf') as pdf:
@@ -151,7 +151,7 @@ def test_partial_eight_candidate_fixture_keeps_six_translations_and_two_safe_ori
         assert '91.012345' in text and '92.987654' in text and 'y = W x + b (1)' in text
     runtime.all_translated=True
     recovered,_=generate(client,sid,[1],retry_failed=True)
-    assert recovered['report']['diagnostics']['cached_translations']==6
+    assert recovered['report']['diagnostics']['cached_translations']==5
     assert recovered['report']['diagnostics']['ai_translation_succeeded']==2
     assert len(runtime.inputs[-1])==2
     with TestClient(create_app(runtime=NoAIRuntime())) as reopened:
@@ -181,18 +181,18 @@ def test_every_failed_asset_is_reported_and_successful_ai_is_cached(client,monke
     assert response.status_code==404 and not list(generated_dir().glob('*.pdf'))
     q=status['report']['quality'];failed=[a for a in q['visuals'] if a['status']=='failed']
     assert {'figure','table','equation'}=={a['asset_kind'] for a in failed}
-    assert q['failed_visuals']==len(failed) and q['passed_visuals']==2
-    assert status['report']['diagnostics']['ai_translation_succeeded']==6
+    assert q['failed_visuals']==len(failed) and q['passed_visuals']==0
+    assert status['report']['diagnostics']['ai_translation_succeeded']==5
     assert status['report']['diagnostics']['translation_failures']=={'ai_uncertain':1,'japanese_required':1}
     observed=json.dumps(q)+caplog.text+capsys.readouterr().out
     assert TITLE not in observed and '91.012345' not in observed
     assert client.get(f'/api/sources/{sid}/file').content==data
     with closing(get_db()) as con:
-        assert con.execute("SELECT COUNT(*) FROM translations WHERE source_id=? AND translated_text<>''",(sid,)).fetchone()[0]==6
+        assert con.execute("SELECT COUNT(*) FROM translations WHERE source_id=? AND translated_text<>''",(sid,)).fetchone()[0]==5
         assert user_before=={table:[dict(r) for r in con.execute(f'SELECT * FROM {table} WHERE source_id=?',(sid,))] for table in user_before}
     monkeypatch.setattr(engine.Reflow,'visual',visual)
     fresh,_=generate(client,sid,[1],retry_failed=True)
-    assert fresh['state']=='preview_ready' and fresh['report']['diagnostics']['cached_translations']==6
+    assert fresh['state']=='preview_ready' and fresh['report']['diagnostics']['cached_translations']==5
 
 
 def test_failed_crop_has_safe_asset_diagnostic(client,monkeypatch):
@@ -204,7 +204,7 @@ def test_failed_crop_has_safe_asset_diagnostic(client,monkeypatch):
     status,_=generate(client,upload(client,make_visual_fixture()),[1])
     assert status['error']=='visual_crop_failed'
     q=status['report']['quality']['visuals'][0]
-    assert q['asset_kind']=='original_text' and q['classification']=='crop_unavailable'
+    assert q['asset_kind']=='figure' and q['classification']=='crop_unavailable'
     assert q['source_size_pt'][0]>0 and q['source_page']==1
 
 
@@ -330,5 +330,5 @@ def test_old_quality_artifact_is_preserved_but_not_returned_as_current_generatio
         con.execute('UPDATE japanese_pdf_generations SET report_json=? WHERE id=?',(json.dumps(report),old['generation_id']));con.commit()
     fresh,_=generate(client,sid,[1])
     assert fresh['generation_id']!=old['generation_id'] and fresh['report']['visual_quality_version']=='native-3'
-    assert fresh['report']['diagnostics']['cached_translations']==6
+    assert fresh['report']['diagnostics']['cached_translations']==5
     assert client.get(f'/api/sources/{sid}/japanese-pdf/{old["generation_id"]}/file').content==original_file.content
