@@ -1,0 +1,2329 @@
+{
+  "passed": 18,
+  "cases": [
+    "UI maximum-three-page validation",
+    "UI generation -> persisted preview",
+    "original/Japanese relative position preserved",
+    "zoom and collapsed side panel preserved",
+    "single PDF.js controller",
+    "Japanese TextLayer selection",
+    "selection return uses original identity, no derived Highlight bbox",
+    "Evidence/SourceAnchor switches to authoritative original page/bbox",
+    "original model/decimal table text retained in Japanese viewer",
+    "saved Japanese preference cannot override explicit Evidence URL",
+    "skip locations and reasons visible",
+    "download PDF",
+    "reload restores generated artifact, zoom and panel state",
+    "fit-width mode preserved across language switch",
+    "text/PDF display mode remains separate from PDF language",
+    "noncontiguous page generation and saved artifact selection",
+    "rapid language switch and route teardown without pageerrors",
+    "rotated CropBox Japanese PDF.js TextLayer"
+  ],
+  "pageerrors": [],
+  "original_hash": "6a2a59280f8f5bc6d095b2624c62c04d209c98c416232663a4855b99d4d1d8e9",
+  "pdf_hash": "988781570be3a35baa93ac85ca48ae036b676dad754cf4fcd8d1c4c7e0ea79fc",
+  "generation_report": {
+    "counts": {
+      "skipped_protected": 14,
+      "translated": 14
+    },
+    "quality": [
+      {
+        "changed_pixels": 29810,
+        "dpi": 200,
+        "outside_pixels": 0,
+        "page": 1
+      },
+      {
+        "changed_pixels": 190667,
+        "dpi": 200,
+        "outside_pixels": 0,
+        "page": 2
+      },
+      {
+        "changed_pixels": 47632,
+        "dpi": 200,
+        "outside_pixels": 0,
+        "page": 3
+      }
+    ],
+    "selected_pages": [
+      1,
+      2,
+      3
+    ],
+    "text_blocks": 27,
+    "translated_pages": [
+      1,
+      2,
+      3
+    ],
+    "translated_ratio": 0.5185185185185185,
+    "units": [
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            35.0,
+            113.008,
+            59.786
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                35.0,
+                113.008,
+                59.786
+              ],
+              "text": "Abstract"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "3dcffcae145f2b7fd6590879d290531b8cd20bee63f933307bd67e56dd097285",
+        "font_size": 17.03,
+        "page": 1,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "d5c1f7073a9040c0"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            546.847,
+            131.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                546.847,
+                115.114
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves"
+            },
+            {
+              "rect": [
+                40.0,
+                116.248,
+                143.939,
+                131.362
+              ],
+              "text": "the original evidence."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "14607eccd9a2bf55ee6e678779b820694140681a57105cac248a82ff5ac4564c",
+        "font_size": 10.84,
+        "page": 1,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "9bf8ae00aa2547f0"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            35.0,
+            160.006,
+            59.786
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                35.0,
+                160.006,
+                59.786
+              ],
+              "text": "1 Introduction"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "596e76a217e2b5d46e2ab6ceb832929002b6eb80c19a533eab8270f71ed18131",
+        "font_size": 17.03,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "ab13018ba55b489f"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            110.0,
+            281.505,
+            173.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                110.0,
+                281.505,
+                125.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                40.0,
+                126.248,
+                252.784,
+                141.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                40.0,
+                142.495,
+                278.447,
+                157.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                40.0,
+                158.743,
+                87.696,
+                173.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "52deb6020b2c94015a9f184de0e36de2a72eb3fdd908a2730400a947170302eb",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "a3cd3d9308134126"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            250.0,
+            281.505,
+            313.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                250.0,
+                281.505,
+                265.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                40.0,
+                266.248,
+                252.784,
+                281.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                40.0,
+                282.495,
+                278.447,
+                297.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                40.0,
+                298.743,
+                87.696,
+                313.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "8cf28ec8119737b63f2db2209daef010254c1a9b4fa1e26057a23d0c86d0de58",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "95ca9da13ad74737"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            390.0,
+            281.505,
+            453.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                390.0,
+                281.505,
+                405.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                40.0,
+                406.248,
+                252.784,
+                421.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                40.0,
+                422.495,
+                278.447,
+                437.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                40.0,
+                438.743,
+                87.696,
+                453.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "ec000bc439e2128de2103719ae44edadb383e1e7ba73c13ef04c5899e1f831dd",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "7f2e304c66dd4037"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            110.0,
+            551.505,
+            173.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                110.0,
+                551.505,
+                125.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                310.0,
+                126.248,
+                522.784,
+                141.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                310.0,
+                142.495,
+                548.447,
+                157.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                310.0,
+                158.743,
+                357.696,
+                173.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "4da024ecb199e4ccfeef3a466e2e9815e4acd662ba719fc46195508d2e25d93c",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "3dc99d688e9d4c14"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            250.0,
+            551.505,
+            313.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                250.0,
+                551.505,
+                265.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                310.0,
+                266.248,
+                522.784,
+                281.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                310.0,
+                282.495,
+                548.447,
+                297.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                310.0,
+                298.743,
+                357.696,
+                313.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "84fab240a90b204f36f507dc74ebb1b944fb0867faf2639660fbaea0e7c72c9f",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "01921b7affc2418c"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            390.0,
+            551.505,
+            453.857
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                390.0,
+                551.505,
+                405.114
+              ],
+              "text": "The synthetic method processes input data in two"
+            },
+            {
+              "rect": [
+                310.0,
+                406.248,
+                522.784,
+                421.362
+              ],
+              "text": "stages. A frozen backbone is evaluated in a"
+            },
+            {
+              "rect": [
+                310.0,
+                422.495,
+                548.447,
+                437.609
+              ],
+              "text": "few-shot setting. The experiment uses generated"
+            },
+            {
+              "rect": [
+                310.0,
+                438.743,
+                357.696,
+                453.857
+              ],
+              "text": "data only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "1449970e7bc4594b5d117a926e123258bc5cfd240234a8317f97995ec5d55626",
+        "font_size": 11.0,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "ad844e10c5ac4df8"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            40.0,
+            111.136,
+            62.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                40.0,
+                111.136,
+                62.032
+              ],
+              "text": "2 Results"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "5364928034254a8eb864d01c2d6a82d06f54f4d40ad4058e6896f61d7e025811",
+        "font_size": 15.06,
+        "page": 3,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "e60fa37dfd33412a"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            331.621,
+            115.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                331.621,
+                115.114
+              ],
+              "text": "Table 1. Synthetic benchmark scores (invented test values)."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "103aed6bebd2b911e87bfa26b332a15a0d79d4ed38cd7ef0ed56a07cb30a6252",
+        "font_size": 10.13,
+        "page": 3,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "c4764107f5c54bfb"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            145.0,
+            555.0,
+            561.0
+          ],
+          "rotation": 0,
+          "spans": [],
+          "units": "pt"
+        },
+        "block_id": "23a181adb3cb68278795f816e07adf4a84eddc8de43afe6ef1dd00d17338e522",
+        "font_size": null,
+        "page": 3,
+        "reason": "visual_or_equation",
+        "status": "skipped_protected",
+        "translation_id": "af6fe1b7890c4a74"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            152.0,
+            171.96,
+            160.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                152.0,
+                171.96,
+                160.244
+              ],
+              "text": "Dataset | Metric | Setting | Baseline | Proposed"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "df09423e12ac500be87ae320e7cacf6053255b26b4c23a7f458b1a0802e1adbe",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "ec64d72b8afa46d2"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            184.0,
+            204.99,
+            192.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                184.0,
+                204.99,
+                192.244
+              ],
+              "text": "Synthetic-00 | Accuracy | few-shot | 60.012345 | 62.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "c35924a4d1c73ad696d884458e3a635077308ee942fcaef8d95280d5a9f4b749",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "a2cb38b331c848c5"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            216.0,
+            204.99,
+            224.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                216.0,
+                204.99,
+                224.244
+              ],
+              "text": "Synthetic-01 | Accuracy | few-shot | 61.012345 | 63.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "aca90ea1578b043ba6bcbf48179c63bbdb4bc0baa3de36613b21db3f3fd7690d",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "94496f173aaa4066"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            248.0,
+            204.99,
+            256.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                248.0,
+                204.99,
+                256.244
+              ],
+              "text": "Synthetic-02 | Accuracy | few-shot | 62.012345 | 64.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "e9eabb38eca351ffcb6aff8bb035a3585365dddc1a334f545c8cf40b4f9df03f",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "d80fdd7e8eaf4e3f"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            280.0,
+            204.99,
+            288.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                280.0,
+                204.99,
+                288.244
+              ],
+              "text": "Synthetic-03 | Accuracy | few-shot | 63.012345 | 65.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "f2c3091a45874d88739d0de21738373247ac5ae42cb817fa6ab0eefa70821ae6",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "c4e0720c719e490d"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            312.0,
+            204.99,
+            320.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                312.0,
+                204.99,
+                320.244
+              ],
+              "text": "Synthetic-04 | Accuracy | few-shot | 64.012345 | 66.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9050982ea84bdf084dc4668dfb23378a76814a3848d5abaf1e3eb8bc0ae49ead",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "1df3b5b8718e4734"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            344.0,
+            204.99,
+            352.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                344.0,
+                204.99,
+                352.244
+              ],
+              "text": "Synthetic-05 | Accuracy | few-shot | 65.012345 | 67.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "310f8e994060e5cdff382071595517e66da1d9a24bdcadc981e604a87dcad1d7",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "d83d17cbbf644ecf"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            376.0,
+            204.99,
+            384.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                376.0,
+                204.99,
+                384.244
+              ],
+              "text": "Synthetic-06 | Accuracy | few-shot | 66.012345 | 68.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "ca2b75cb6dbd3c13c2838f4031fd68a388edc720e617ebe7562a22128fc8b86d",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "cf4f18bf721448a7"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            408.0,
+            204.99,
+            416.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                408.0,
+                204.99,
+                416.244
+              ],
+              "text": "Synthetic-07 | Accuracy | few-shot | 67.012345 | 69.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "2f16046e40a7ab51788dbcc4cbdf3403ba52ef20dc67a1be2f71bc84d6d7f6c0",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "5f8917c0c7c340a5"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            440.0,
+            204.99,
+            448.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                440.0,
+                204.99,
+                448.244
+              ],
+              "text": "Synthetic-08 | Accuracy | few-shot | 68.012345 | 70.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "713138fbb79c6edf14151fdc3ee044a1e3e6fdea6c12891e35989f1566fbdebb",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "4feade2ef6794f7a"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            472.0,
+            204.99,
+            480.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                472.0,
+                204.99,
+                480.244
+              ],
+              "text": "Synthetic-09 | Accuracy | few-shot | 69.012345 | 71.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "75cb18a00197b3c510cdaa7bebf90318c7a8812104d78705be2d5014f6cd837e",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "ca6dea84254e4afb"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            504.0,
+            204.99,
+            512.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                504.0,
+                204.99,
+                512.244
+              ],
+              "text": "Synthetic-10 | Accuracy | few-shot | 70.012345 | 72.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "8302e18b85aa0c2a24ffa16a549416a5a02de74c9ee99819fbb5d7e78aa1a8a7",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "7fbb40e8b14b4798"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            536.0,
+            204.99,
+            544.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                536.0,
+                204.99,
+                544.244
+              ],
+              "text": "Synthetic-11 | Accuracy | few-shot | 71.012345 | 73.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "434e07d0d211a7fa024ab6e5556f4fbf2ceee6ca8d5d0863be5eea57336a1bf2",
+        "font_size": null,
+        "page": 3,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "000eaba3e1a640f5"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            595.0,
+            284.563,
+            626.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                595.0,
+                284.563,
+                610.114
+              ],
+              "text": "Table 1 contains invented scores for test use only."
+            },
+            {
+              "rect": [
+                40.0,
+                611.248,
+                277.864,
+                626.362
+              ],
+              "text": "Shared evidence phrase appears on both pages."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "fb2fa75c38ff557c1b9b3e9a3cb0b035fc02bf3911f8093d38573ef9e5cc709d",
+        "font_size": 10.84,
+        "page": 3,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "bfb64d2e15f9498b"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            715.0,
+            140.464,
+            737.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                715.0,
+                140.464,
+                737.032
+              ],
+              "text": "3 Conclusion"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "4f5d76a5256a3378cbe60aef85f1bba463701e7a94dffbf0283c22677f02c089",
+        "font_size": 15.06,
+        "page": 3,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "032d70bb04e24e61"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            765.0,
+            269.251,
+            780.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                765.0,
+                269.251,
+                780.114
+              ],
+              "text": "This fixture is for offline regression testing only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "d0da6686772a051cf73110fc01bb7558e03a455d84301918c6f3195b91d0570f",
+        "font_size": 10.13,
+        "page": 3,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "85ab9f82f5cf4054"
+      }
+    ]
+  },
+  "figure_equation_report": {
+    "counts": {
+      "failed": 1,
+      "overflow": 1,
+      "skipped_protected": 19,
+      "translated": 8
+    },
+    "quality": [
+      {
+        "changed_pixels": 48640,
+        "dpi": 200,
+        "outside_pixels": 0,
+        "page": 1
+      },
+      {
+        "changed_pixels": 47632,
+        "dpi": 200,
+        "outside_pixels": 0,
+        "page": 2
+      }
+    ],
+    "selected_pages": [
+      1,
+      2
+    ],
+    "text_blocks": 27,
+    "translated_pages": [
+      1,
+      2
+    ],
+    "translated_ratio": 0.2962962962962963,
+    "units": [
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            32.0,
+            297.86,
+            59.54
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                32.0,
+                297.86,
+                59.54
+              ],
+              "text": "Synthetic Research Fixture"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "7ad2576795fb2eee78f8f883d4c1164ac743b25d097e5c4d483edeaea03fbdda",
+        "font_size": 18.99,
+        "page": 1,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "fb08115d8bce4297"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            92.0,
+            147.584,
+            114.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                92.0,
+                147.584,
+                114.032
+              ],
+              "text": "1 Architecture"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "6be2d192464bf1d4fb57fa0c199357cdc4a0c8fe7090742fbb48f7dac5344fbd",
+        "font_size": null,
+        "page": 1,
+        "reason": "minimum_readable_size",
+        "status": "overflow",
+        "translation_id": "a08fd46eaccc4555"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            45.0,
+            180.0,
+            535.0,
+            260.0
+          ],
+          "rotation": 0,
+          "spans": [],
+          "units": "pt"
+        },
+        "block_id": "26ef44cb355c74f635d01bea312bde706efa603b933381fec893166386e2de85",
+        "font_size": null,
+        "page": 1,
+        "reason": "visual_or_equation",
+        "status": "skipped_protected",
+        "translation_id": "26f2213b34dc4d42"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            57.0,
+            208.0,
+            88.136,
+            227.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                57.0,
+                208.0,
+                88.136,
+                227.236
+              ],
+              "text": "Input"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "14fc0e27da6402541b8c8410fe4d696d70f0e23d8b68fd44927adaf61b7ab86a",
+        "font_size": null,
+        "page": 1,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "6c2a66a5bf0d4830"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            232.0,
+            208.0,
+            284.136,
+            227.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                232.0,
+                208.0,
+                284.136,
+                227.236
+              ],
+              "text": "Encoder"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "89577e0872009fe2244e22df55c8a3da5ebbd0a97646f59a1f3e5ef35f58757b",
+        "font_size": null,
+        "page": 1,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "f602757622c247df"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            407.0,
+            208.0,
+            449.028,
+            227.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                407.0,
+                208.0,
+                449.028,
+                227.236
+              ],
+              "text": "Output"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "5595590620729a152825e9b43422db4ab2ded99e14328d3cf53a72b51385c626",
+        "font_size": null,
+        "page": 1,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "1e8bacf79b3a4bc3"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            285.0,
+            299.842,
+            300.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                285.0,
+                299.842,
+                300.114
+              ],
+              "text": "Figure 1. Synthetic input-encoder-output architecture."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9771b43b42154d5614068fcd85c1be3cae6ceb165ddde4db327237cf227c1ee2",
+        "font_size": 10.13,
+        "page": 1,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "19129d1a030d40e2"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            365.0,
+            312.701,
+            396.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                365.0,
+                312.701,
+                380.114
+              ],
+              "text": "As shown in Figure 1, the encoder maps input to output."
+            },
+            {
+              "rect": [
+                40.0,
+                381.248,
+                297.411,
+                396.362
+              ],
+              "text": "A frozen backbone is evaluated in a few-shot setting."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "6ef6ea3811b65d9e2d9d36274d556e4508edd9e42089e218be507d28bd4f0301",
+        "font_size": 10.57,
+        "page": 1,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "100571dac56c4299"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            100.0,
+            470.0,
+            203.488,
+            489.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                100.0,
+                470.0,
+                203.488,
+                489.236
+              ],
+              "text": "y = W x + b    (1)"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "e8e6f97d951d2c719f91788c07c8f9fce7392d4727d38e14a5041dfd028e9d42",
+        "font_size": null,
+        "page": 1,
+        "reason": "visual_or_equation",
+        "status": "skipped_protected",
+        "translation_id": "118d944038e145e0"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            540.0,
+            277.864,
+            571.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                540.0,
+                244.809,
+                555.114
+              ],
+              "text": "Equation (1) is a synthetic linear mapping."
+            },
+            {
+              "rect": [
+                40.0,
+                556.247,
+                277.864,
+                571.362
+              ],
+              "text": "Shared evidence phrase appears on both pages."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "864a66d420538ac7acfcf7614c931f670b945ecc3aca2601f50ea2335d1e5cba",
+        "font_size": null,
+        "page": 1,
+        "reason": "translation_failed",
+        "status": "failed",
+        "translation_id": "43b3fd54a86a4165"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            40.0,
+            111.136,
+            62.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                40.0,
+                111.136,
+                62.032
+              ],
+              "text": "2 Results"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "a899e1dad925af8b239692aef84212e57922cfaa3de34e8b14a1c91403b81f4d",
+        "font_size": 15.06,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "49db1fd8b3f74e9a"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            331.621,
+            115.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                331.621,
+                115.114
+              ],
+              "text": "Table 1. Synthetic benchmark scores (invented test values)."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9489e83151bc444ca3662ae00c73cc039de096c0f3bd3a10c5339a940bc64697",
+        "font_size": 10.13,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "6a2136a231564f80"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            145.0,
+            555.0,
+            561.0
+          ],
+          "rotation": 0,
+          "spans": [],
+          "units": "pt"
+        },
+        "block_id": "b5c305f7984849c6fe961d40c5500c6f2ffdf9b1e1bd02f3968a0a2d55be87c2",
+        "font_size": null,
+        "page": 2,
+        "reason": "visual_or_equation",
+        "status": "skipped_protected",
+        "translation_id": "7ec1a2ae44e44e42"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            152.0,
+            171.96,
+            160.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                152.0,
+                171.96,
+                160.244
+              ],
+              "text": "Dataset | Metric | Setting | Baseline | Proposed"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b3c334a707bc33a5c4cbba7e201f2b874988bc52a177caa1496f2d2d5dc898ff",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "58c13ad4d00f4ff6"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            184.0,
+            204.99,
+            192.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                184.0,
+                204.99,
+                192.244
+              ],
+              "text": "Synthetic-00 | Accuracy | few-shot | 60.012345 | 62.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "e1c36eb12a9e10a6e3b2fdbb2c910e21f735105398a95756b563c30ebb9eb478",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "0e8ee27f61234ff4"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            216.0,
+            204.99,
+            224.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                216.0,
+                204.99,
+                224.244
+              ],
+              "text": "Synthetic-01 | Accuracy | few-shot | 61.012345 | 63.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "23753a2aa920c6321d2f1af027ab8a692b01f19294c4ad548fd25ba5060878fd",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "6f6ef7b9438b4151"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            248.0,
+            204.99,
+            256.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                248.0,
+                204.99,
+                256.244
+              ],
+              "text": "Synthetic-02 | Accuracy | few-shot | 62.012345 | 64.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "13f48fd7e29639277ca2ad62f9a7536e0e69f2f110fc5f68495879777339fbb1",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "633164db4f0c447f"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            280.0,
+            204.99,
+            288.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                280.0,
+                204.99,
+                288.244
+              ],
+              "text": "Synthetic-03 | Accuracy | few-shot | 63.012345 | 65.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "5bc5cf6c1a34560165a979814b2f2b109b332b73514b7b059e8b9667968abe59",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "56208326850047f5"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            312.0,
+            204.99,
+            320.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                312.0,
+                204.99,
+                320.244
+              ],
+              "text": "Synthetic-04 | Accuracy | few-shot | 64.012345 | 66.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "fde32bf859cd7331dab66eceeeb47cfbdd6ee782b7ae29b3bfaccb20d2513fd8",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "2c62e0b5e96b4c28"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            344.0,
+            204.99,
+            352.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                344.0,
+                204.99,
+                352.244
+              ],
+              "text": "Synthetic-05 | Accuracy | few-shot | 65.012345 | 67.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "66d812bd8f9a56c90352c2051729afbb3c56b52c267c2a7dd09e28904245fdc3",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "74488231dd594c89"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            376.0,
+            204.99,
+            384.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                376.0,
+                204.99,
+                384.244
+              ],
+              "text": "Synthetic-06 | Accuracy | few-shot | 66.012345 | 68.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "8a46f3255673cbb22a9a28d169687440f07b3302b57e1dcbf64de7d4cffb4431",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "48f51f43d99d4787"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            408.0,
+            204.99,
+            416.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                408.0,
+                204.99,
+                416.244
+              ],
+              "text": "Synthetic-07 | Accuracy | few-shot | 67.012345 | 69.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "cc237530d916d27f0468d2ed6947589da9ef7da8edc00198261a3d10c060c00b",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "3123cd1e820745c1"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            440.0,
+            204.99,
+            448.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                440.0,
+                204.99,
+                448.244
+              ],
+              "text": "Synthetic-08 | Accuracy | few-shot | 68.012345 | 70.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "db500d0f63bd78a3dead51f36bfbd23f3f2abb6d801cffbf5be3c0fd76e8dfaa",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "47c3f95ae4d44683"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            472.0,
+            204.99,
+            480.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                472.0,
+                204.99,
+                480.244
+              ],
+              "text": "Synthetic-09 | Accuracy | few-shot | 69.012345 | 71.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "49fd749f08394809d77449dd716b486714136dc1b7305caa9a3b2e081bf30ea9",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "10d8a4f0486e4d68"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            504.0,
+            204.99,
+            512.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                504.0,
+                204.99,
+                512.244
+              ],
+              "text": "Synthetic-10 | Accuracy | few-shot | 70.012345 | 72.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "f932c099a8dd357bf49f3c62e6f567fd9437ce3ad251f0463920bbe7aee521c3",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "838e10bc86954b74"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            536.0,
+            204.99,
+            544.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                536.0,
+                204.99,
+                544.244
+              ],
+              "text": "Synthetic-11 | Accuracy | few-shot | 71.012345 | 73.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "0fa648448d9b8b3d156fb4495abee588f5448530f4ed951068c959d1c98f8036",
+        "font_size": null,
+        "page": 2,
+        "reason": "image_drawing_table_or_annotation",
+        "status": "skipped_protected",
+        "translation_id": "f91310d7a5c74ddc"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            595.0,
+            284.563,
+            626.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                595.0,
+                284.563,
+                610.114
+              ],
+              "text": "Table 1 contains invented scores for test use only."
+            },
+            {
+              "rect": [
+                40.0,
+                611.248,
+                277.864,
+                626.362
+              ],
+              "text": "Shared evidence phrase appears on both pages."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "27e1a5fddc219c539a603930111f0d1825ff29667878e7baf615c6e376e5c2d3",
+        "font_size": 10.84,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "437be4f0e18749b7"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            715.0,
+            140.464,
+            737.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                715.0,
+                140.464,
+                737.032
+              ],
+              "text": "3 Conclusion"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9fce8d00c683812c6a883647ab9b7f9465d154c156b8060b43df42a794f4344b",
+        "font_size": 15.06,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "c436c8bf029344a2"
+      },
+      {
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            765.0,
+            269.251,
+            780.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                765.0,
+                269.251,
+                780.114
+              ],
+              "text": "This fixture is for offline regression testing only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "14d0d68d159439b1047549cbc24a7e03909fc156b773a362d5d7ebe02c69a324",
+        "font_size": 10.13,
+        "page": 2,
+        "reason": null,
+        "status": "translated",
+        "translation_id": "8c868fb1f4624639"
+      }
+    ]
+  }
+}

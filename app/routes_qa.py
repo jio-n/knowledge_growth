@@ -120,27 +120,31 @@ class TranslateIn(BaseModel):
 def translate(body: TranslateIn, request: Request):
     con = get_db()
     try:
+        source = con.execute("SELECT * FROM sources WHERE id=?", (body.source_id,)).fetchone()
+        if not source: raise HTTPException(404, "資料が見つかりません")
+        block = None
         if body.block_id:
+            block = con.execute("SELECT * FROM document_blocks WHERE id=? AND source_id=?", (body.block_id, body.source_id)).fetchone()
+            if not block: raise HTTPException(422, "対象資料のブロックではありません")
             existing = con.execute(
-                "SELECT translated_text FROM translations WHERE source_id=? AND block_id=?",
-                (body.source_id, body.block_id)).fetchone()
+                "SELECT translated_text FROM translations WHERE source_id=? AND version_id=? AND block_id=? AND source_text=? AND (source_hash=? OR source_hash IS NULL) AND translated_text<>'' ORDER BY user_edited DESC,updated_at DESC,rowid DESC LIMIT 1",
+                (body.source_id, block["version_id"], body.block_id, block["text"], source["content_hash"])).fetchone()
             if existing:
                 return {"translation": existing["translated_text"], "cached": True}
         prompt = get_prompt("translate")
         try:
             res = get_provider(request.app.state.ai_runtime).complete(
-                "あなたは学術文書の翻訳者です。", prompt.render(selection=body.text),
+                "あなたは学術文書の翻訳者です。", prompt.render(selection=block["text"] if block else body.text),
                 hint="translate")
         except LLMError as e:
             raise HTTPException(502, str(e))
-        if body.block_id:
-            version = con.execute(
-                "SELECT version_id FROM document_blocks WHERE id=?", (body.block_id,)).fetchone()
-            con.execute(
-                """INSERT INTO translations (id, source_id, version_id, block_id, source_text,
-                   translated_text, provider, model, updated_at) VALUES (?,?,?,?,?,?,?,?,?)""",
-                (new_id(), body.source_id, version["version_id"] if version else None,
-                 body.block_id, body.text, res.text, res.provider, res.model, now()))
+        if block:
+            from .japanese_translation import save_unit
+            version = con.execute("SELECT * FROM source_versions WHERE id=?", (block["version_id"],)).fetchone()
+            unit = {"block": dict(block), "text": res.text, "provider": res.provider, "model": res.model,
+                    "runtime": request.app.state.ai_runtime.status().runtime, "status": "translated", "reason": None,
+                    "prompt_version": "translate-" + prompt.version}
+            save_unit(con, dict(source), dict(version), unit)
             con.commit()
         return {"translation": res.text, "cached": False}
     finally:

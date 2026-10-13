@@ -720,3 +720,12 @@ summary { cursor: pointer; }
   .reader-pane-right { min-width: 0; }
   .doc-toolbar__search { margin-left: 0; }
 }
+
+/* Partial Japanese PDF prototype: one PDF controller, explicit provenance. */
+.japanese-pdf-controls { padding: 6px 12px; border-bottom: 1px solid var(--border); flex: 0 0 auto; }
+.japanese-pdf-actions, .japanese-pdf-controls form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.japanese-pdf-controls input[type=text] { width: 185px; }
+.japanese-pdf-status { margin: 5px 0; font-size: 12px; }
+.japanese-pdf-controls details { font-size: 12px; }
+.japanese-pdf-report { max-height: 170px; overflow: auto; }
+.japanese-pdf-report p { margin: 4px 0; overflow-wrap: anywhere; }

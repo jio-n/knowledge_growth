@@ -8,7 +8,7 @@ Phase 0（T0-01 / T0-02、generated PDF fixtures）は実装・検証済み。
 [DB migration / backup / 復旧手順](../../development/db_migrations.md) を参照。
 Phase 1とPaper Brief / Import Bridge backend foundationは実装済み。
 T2A-04のImport確認UIとT2-05のPaper Brief表示UIは実装済み。
-Phase 0AのSubscription-first AI Runtime Foundationは実装済み。日本語版Readerは未実装。
+Phase 0AのSubscription-first AI Runtime Foundationは実装済み。日本語PDFの最大3ページ試作は実装済み。
 
 This directory is the source-of-truth package for the next reader MVP.
 
@@ -66,3 +66,5 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [Structured Paper Brief生成](structured_brief_generation.md): T2-02/T2-03/T2-06、AIRuntime経由、bounded context、Evidence、再生成preview、schema v4、tests・manual smoke。
 
 - [原文PDF Reader高DPI・ズーム・全幅表示](reader_hidpi_zoom.md): T3-04、T10-03のPDF状態復元、生成fixtureとbrowser回帰、Windows確認手順。
+
+- [日本語PDF試作](japanese_pdf_prototype.md): T3-01／T3-03 PoC、schema v5、生成・保存・切替、図表保護、Cloud fixture品質とWindows受入手順。

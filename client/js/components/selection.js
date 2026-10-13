@@ -47,6 +47,19 @@ function onMouseUp(e) {
   const range = sel.getRangeAt(0);
   if (!ctx.root.contains(range.commonAncestorContainer)) { closePopover(); return; }
 
+  if (ctx.isJapanese?.() && closestFromNode(range.startContainer, ".textLayer[data-pdf-page]")) {
+    const container = closestFromNode(range.startContainer, ".textLayer[data-pdf-page]");
+    if (!container.contains(range.endContainer)) return;
+    const page = Number(container.dataset.pdfPage);
+    const bbox = pdfviewer.selectionGeometry(page, range);
+    if (!bbox) return;
+    const rect = range.getBoundingClientRect();
+    closeAll();
+    popoverEl = el("div", { class: "selection-popover", style: { left: `${Math.max(8, rect.left)}px`, top: `${rect.bottom + 8}px` } },
+      mkBtn("原文を見る", () => { closeAll(); ctx.onOriginal(page, bbox); }));
+    document.body.append(popoverEl);
+    return;
+  }
   const info = buildAnchorInfo(range);
   if (!info) { closePopover(); return; }
   showPopover(range, info);

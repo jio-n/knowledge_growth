@@ -36,6 +36,10 @@ def files_dir() -> Path:
     return _data_dir() / "files"
 
 
+def generated_dir() -> Path:
+    return _data_dir() / "generated" / "japanese_pdf"
+
+
 def db_path() -> Path:
     return _data_dir() / "knowledge.db"
 

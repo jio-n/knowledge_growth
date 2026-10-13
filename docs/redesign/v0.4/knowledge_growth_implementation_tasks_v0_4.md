@@ -274,12 +274,14 @@ AI再生成・preview/confirm/commit・field provenance・user edit保護は実�
 # Phase 3: 日本語版Reader
 
 ## T3-01 TranslationUnit導入
-- [ ] original_block_id
-- [ ] translated_text
-- [ ] page / bbox
-- [ ] source_hash
-- [ ] provider/model/prompt_version
-- [ ] status
+- [x] original_block_id
+- [x] translated_text
+- [x] page / bbox
+- [x] source_hash
+- [x] provider/model/prompt_version
+- [x] status
+
+実装: [日本語PDF試作](japanese_pdf_prototype.md)。既存translationsをv5で拡張。
 
 ## T3-02 Section優先翻訳
 - [ ] 表示中sectionから翻訳
@@ -289,6 +291,9 @@ AI再生成・preview/confirm/commit・field provenance・user edit保護は実�
 - [ ] failure単位のretry
 
 ## T3-03 Japanese Paper View
+
+最大3ページのPDF生成PoCは実装済み（本文・安全なCaption置換、保護、overflow、原文確認）。
+全文Japanese Paper Viewは後続。[試作と検証](japanese_pdf_prototype.md)。
 - [ ] 原PDFのページ構造を参照した日本語表示
 - [ ] Figure/Table/Equation保持
 - [ ] Heading/Caption翻訳

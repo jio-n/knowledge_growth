@@ -17,6 +17,7 @@ import * as qa from "../components/qa.js";
 import * as summary from "../components/summary.js";
 import * as paperbrief from "../components/paperbrief.js";
 import { openImportBridge } from "../components/importbridge.js";
+import { createJapanesePdfControls } from "../components/japanesepdf.js";
 import * as note from "../components/note.js";
 
 let readerState = null; // { sourceId, source, doc, viewMode, activeTab, ui, els }
@@ -64,6 +65,8 @@ export async function render(container, sourceId, isCurrent = () => true) {
     getBlocks: () => (readerState ? readerState.doc.blocks : []),
     getVersion: () => readerState?.doc.version,
     switchTab,
+    isJapanese: () => readerState?.pdfLanguage === "japanese" && readerState?.viewMode === "pdf",
+    onOriginal: (page, bbox) => showOriginalSelection(page, bbox),
   });
   restoreScroll();
 
@@ -83,6 +86,7 @@ export async function render(container, sourceId, isCurrent = () => true) {
 
 export function unmount() {
   persistReaderPosition();
+  readerState?.japaneseControls?.dispose();
   paperbrief.unmount();
   summary.unmount();
   qa.unmount();
@@ -178,7 +182,19 @@ function buildLayout(container) {
   toolbarChildren.push(el("div", { class: "doc-toolbar__search" }, searchInput, searchNextBtn, searchCount));
   const toolbar = el("div", { class: "doc-toolbar" }, ...toolbarChildren);
 
-  const leftPane = el("div", { class: "reader-pane-left" }, toolbar, blockContainer, pdfContainer);
+  const mountedReader = readerState;
+  const japaneseControls = source.type === "pdf" ? createJapanesePdfControls(source.id, {
+    rememberedId: readerState.ui.japaneseGenerationId,
+    onSwitch: async (language, artifact, blockId) => {
+      if (readerState !== mountedReader) return;
+      await switchPdfLanguage(language, artifact);
+      if (readerState !== mountedReader) return;
+      if (blockId) resolveAnchor({ blockId, sourceVersion: mountedReader.doc.version.id });
+    },
+  }) : null;
+  readerState.japaneseControls = japaneseControls;
+  const leftPane = el("div", { class: "reader-pane-left" }, toolbar,
+    ...(japaneseControls ? [japaneseControls.root] : []), blockContainer, pdfContainer);
   const divider = el("div", { class: "reader-divider" });
 
   const tabDefs = [["brief", "Paper Brief"], ["summary", "概要"], ["qa", "対話"], ["note", "ノート"]];
@@ -214,17 +230,63 @@ function buildLayout(container) {
   if (source.type === "pdf") {
     const mounted = readerState;
     pdfControls.hidden = mounted.viewMode !== "pdf";
-    mounted.pdfReady = pdfviewer.mount(pdfContainer, {
-      fileUrl: api.fileUrl(source.id),
-      view: { ...mounted.ui.pdfView, position: mounted.ui.pdfView?.position,
-        scrollTop: mounted.ui.pdfView ? 0 : mounted.ui.scrollTop },
-      onChange: (view) => {
-        if (readerState !== mounted) return;
-        pdfControls.update(view);
-        saveReaderUi(source.id, { pdfView: { mode: view.mode, zoom: view.zoom, position: view.position } });
-      },
+    mounted.pdfLanguage = "original";
+    mounted.pdfReady = mountPdf(mounted, api.fileUrl(source.id), mounted.ui.pdfView || { scrollTop: mounted.ui.scrollTop });
+    mounted.japaneseControls.ready.then(async () => {
+      if (readerState !== mounted || mounted.pdfLanguageTouched || mounted.ui.pdfLanguage !== "japanese" || new URLSearchParams(location.hash.split("?")[1] || "").has("evidence")) return;
+      const artifact = mounted.japaneseControls.getArtifact();
+      if (artifact?.state === "preview_ready") {
+        const mode = mounted.viewMode;
+        await switchPdfLanguage("japanese", artifact);
+        if (readerState === mounted && mode === "block") setViewMode("block");
+      }
     });
   }
+}
+
+function mountPdf(mounted, fileUrl, view) {
+  return pdfviewer.mount(mounted.els.pdfContainer, {
+    fileUrl, view,
+    onChange: (next) => {
+      if (readerState !== mounted) return;
+      mounted.els.pdfControls.update(next);
+      saveReaderUi(mounted.sourceId, { pdfView: { mode: next.mode, zoom: next.zoom, position: next.position } });
+    },
+  });
+}
+
+async function switchPdfLanguage(language, artifact = null) {
+  const mounted = readerState;
+  if (!mounted || mounted.source.type !== "pdf") return;
+  mounted.pdfLanguageTouched = true;
+  setViewMode("pdf");
+  const token = language === "japanese" ? artifact?.generation_id : null;
+  if (language === mounted.pdfLanguage && token === (mounted.pdfArtifact?.generation_id || null)) {
+    await mounted.pdfReady; return;
+  }
+  pdfviewer.rememberPosition();
+  const view = loadReaderUi(mounted.sourceId).pdfView || mounted.ui.pdfView;
+  // mount unmounts the sole previous controller synchronously, then loads anew.
+  mounted.pdfLanguage = language;
+  mounted.pdfArtifact = language === "japanese" ? artifact : null;
+  mounted.japaneseControls.setLanguage(language);
+  saveReaderUi(mounted.sourceId, { pdfLanguage: language, japaneseGenerationId: token });
+  const loading = mountPdf(mounted, token ? api.japanesePdfFileUrl(mounted.sourceId, token) : api.fileUrl(mounted.sourceId), view);
+  mounted.pdfReady = loading;
+  await loading;
+}
+
+async function showOriginalSelection(page, bbox) {
+  const mounted = readerState;
+  if (!mounted) return;
+  const r = bbox?.rect;
+  const matches = mounted.pdfArtifact?.report.units.filter(u => u.page === page && u.bbox?.rect && r &&
+    r[0] >= u.bbox.rect[0] - 2 && r[2] <= u.bbox.rect[2] + 2 &&
+    r[1] >= u.bbox.rect[1] - 2 && r[3] <= u.bbox.rect[3] + 2) || [];
+  await switchPdfLanguage("original");
+  if (readerState !== mounted) return;
+  if (matches.length === 1) resolveAnchor({ blockId: matches[0].block_id, sourceVersion: mounted.doc.version.id });
+  else { pdfviewer.scrollToPage(page); toast("原文の同じページを表示しました。対応ブロックは未確定です。"); }
 }
 
 function buildHeader(source) {
@@ -303,7 +365,7 @@ function switchTab(tabKey, opts = {}) {
     paperbrief.mount(readerState.els.briefPanel, readerState.sourceId, {
       onEvidence: navigateBriefEvidence,
       isPdf: readerState.source.type === "pdf",
-      onPdf: () => setViewMode(readerState.source.type === "pdf" ? "pdf" : "block"),
+      onPdf: () => readerState.source.type === "pdf" ? switchPdfLanguage("original") : setViewMode("block"),
       onImport: () => openImportBridge(),
     });
   } else if (tabKey === "summary") {
@@ -422,6 +484,11 @@ function updateSearchCount() {
 
 export function resolveAnchor(rawAnchor) {
   if (!readerState) return;
+  if (readerState.pdfLanguage === "japanese") {
+    const mounted = readerState;
+    switchPdfLanguage("original").then(() => { if (readerState === mounted) resolveAnchor(rawAnchor); });
+    return;
+  }
   const anchor = parseAnchor(rawAnchor);
   const result = resolveSourceAnchor(anchor, readerState.doc.blocks || [], readerState.doc.version);
   readerState.els.leftPane.querySelector(".anchor-candidates")?.remove();
@@ -455,7 +522,7 @@ async function navigateBriefEvidence(anchor, kind = "resolved") {
   const mounted = readerState;
   if (!mounted) return;
   if (mounted.source.type === "pdf") {
-    setViewMode("pdf");
+    await switchPdfLanguage("original");
     await mounted.pdfReady;
     if (readerState !== mounted) return;
   }

@@ -117,3 +117,17 @@ source_idはsourcesへのFKでcascade削除。state=generatingはsourceごとに
 previewは共有Paper Brief field形式のstagingで、accepted Briefの並行保存schemaではない。
 確定時は既存paper_brief_fieldsとjob状態を同じtransactionで保存する。
 [API・保護・復旧契約](../redesign/v0.4/structured_brief_generation.md)。
+
+## TranslationUnit / Japanese PDF generation（v5追加）
+
+TranslationUnitは既存translationsのsource_id / version_id / block_id / source_text / translated_textを再利用する。
+original_page、original_bbox（原文geometry JSON）、source_hash、runtime、prompt_version、created_at、
+translation_status（translated / skipped_protected / skipped_unsafe / overflow / failed）、reasonを追加する。
+legacy訳は消さず、created_at=updated_atで補完する。user_editedの訳文は自動上書きしない。
+
+japanese_pdf_generationsはsource/version/hash/document_digest、pages_json、state、file_hash、report_json、error、
+created_at/updated_atを保存する。stateはgenerating / preview_ready / failed、未生成はGET時のnot_generated。
+同じsourceのgeneratingにpartial unique indexを設定する。reportのblock_idは正本のdocument_blocksを参照し、
+translation_idは既存translationsを指す。reportに訳文は重複保存しない。成果物はdata/generated/japanese_pdfへ置く。
+
+[設計・quality・fallback詳細](../redesign/v0.4/japanese_pdf_prototype.md)。

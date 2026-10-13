@@ -115,3 +115,11 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 - `POST /api/sources/{id}/paper-brief/generation/commit`: `{generation_id,confirmed:true}`。
 
 [bounded context・validation・Evidence・stale/再生成・user保護](../redesign/v0.4/structured_brief_generation.md)。
+
+## 日本語PDF試作（T3-01 / T3-03 PoC）
+
+- POST `/api/sources/{source_id}/japanese-pdf/generate`: `{pages:[1,3], retry_failed:false}`、最大3ページ、202。重複jobは同じ生成IDを返す。同じsourceで別生成が実行中なら409、AI未接続は503。same-origin制御。
+- GET `/api/sources/{source_id}/japanese-pdf`: state（not_generated / generating / preview_ready / failed）、generation_id、pages、report、artifacts履歴。stale成果物は最新扱いしない。
+- GET `/api/sources/{source_id}/japanese-pdf/{generation_id}/file`: version/hash/ownershipを照合してapplication/pdf。`?download=true`でattachment。未完成は404、stale/破損は409。
+
+詳細とWindows操作は[日本語PDF試作](../redesign/v0.4/japanese_pdf_prototype.md)。
