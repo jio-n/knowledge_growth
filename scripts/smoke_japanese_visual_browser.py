@@ -190,7 +190,15 @@ def run(base,chromium,output,baseline):
         pair=Image.new('RGB',(a.width+b.width,max(a.height,b.height)+28),'white');pair.paste(a,(0,28));pair.paste(b,(a.width,28))
         draw=ImageDraw.Draw(pair);draw.text((12,6),'Source p.1 (synthetic)',fill='black');draw.text((a.width+12,6),f'Japanese p.{n}',fill='black')
         pair.save(output/f'comparison-{n}.png')
-    result={'passed':len(cases),'cases':cases,'pageerrors':errors,'before':old,'after':partial,'damaged':damaged,'recovered':fixed}
+    def job_summary(job):
+        if job is None:return None
+        report=job['report']
+        return {**{k:job.get(k) for k in ('generation_id','state','pages','error')},
+                'report':{k:report[k] for k in ('diagnostics','quality','counts','japanese_page_count','visual_quality_version') if k in report},
+                **({'baseline_asset_metrics':job['baseline_asset_metrics']} if 'baseline_asset_metrics' in job else {})}
+    # History recursively repeats previous reports; the evidence artifact keeps
+    # only the evaluated jobs' diagnostics, never the whole artifact history.
+    result={'passed':len(cases),'cases':cases,'pageerrors':errors,'before':job_summary(old),'after':job_summary(partial),'damaged':job_summary(damaged),'recovered':job_summary(fixed)}
     (output/'browser-report.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps({'passed':len(cases),'cases':cases,'pageerrors':errors,'diagnostics':d,'japanese_pages':report['japanese_page_count']},ensure_ascii=False))
 
