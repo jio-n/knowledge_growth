@@ -1,250 +1,239 @@
-# 選択ページの日本語PDF試作 — Phase 3-2
+# 選択ページ相当の日本語PDF再組版 — Phase 3-2
 
-更新: 2026-10-13。T3-01、T3-03の最大3ページPoC。
-基点は最新mainの`a93556be1218c717c10470d78ab803c1f24e9db2`（PR #8 merge）。
-Windows実機・MMAD・実ChatGPT翻訳の品質はこのPRでは未確認。
-Cloudでは独自に生成したPDFと決定的なmock訳だけを使用した。
+更新: 2026-10-13。T3-01 / T3-03 PoC、Draft PR #9。
+固定bboxへの原文置換を廃止し、内容と原物を保持する再組版へ変更した。
+Cloudで使ったのは独自の生成PDFと決定的mock訳のみ。
+Windows実機・MMAD・このPRの実ChatGPT翻訳品質は未確認で、merge前に確認する。
 
-## 画面でできること
+## 方針と画面
 
-PDF Readerの「日本語版を試作」を開き、`1,3,5`や`1-3`で対象を指定する。
-最大3ページを翻訳して、ページ数・順序を変えずに派生PDFを保存する。
-「日本語PDF（試作）」と「原文PDF」で同じページ内の相対位置へ戻り、
-zoom / fit mode / サイドパネルの開閉とタブを保持する。
-「日本語PDFを保存」でダウンロードでき、再起動後も生成済みファイルを選べる。
-異なる対象ページセットの生成履歴も選択できる。
+優先順位は意味の正しい日本語化、Figure/Table/Equationの内容保持、Captionとの隣接、
+Sectionと段落の自然な読み順、可能な範囲で原論文に近い外観。
+元のページ数、段組、段落bboxとの一致を求めない。
 
-「日本語試作・一部ページのみ翻訳済み」を常に表示し、置換率と対象ページを示す。
-理由一覧の「原文を見る」は該当する原文blockへ移動する。
-対象外ページ、保護領域、overflow、失敗箇所は英語のまま残る。
-日本語のTextLayerは選択・コピーでき、PDFから日本語を抽出できる。
-日本語選択からの操作は「原文を見る」に限定した。原文へ戻った後、既存の質問・
-Highlight・保存を使える。派生PDFの文字bboxをSourceAnchorへ保存しない。
+Readerの「日本語版を試作」を開き、**原文PDFのページ番号**を`1,3,7`または`1-3`で指定する。
+最大3ページ相当の内容を選んで「日本語PDFを生成」→「日本語PDF（試作）」で読む。
+対象外の原文ページは派生PDFには収録しない。派生ページ数は増減する。
+「日本語試作・一部ページのみ翻訳済み」、原文の選択ページ、日本語ページ数、
+対象本文/Captionの翻訳数、原物保持・未解決の理由を表示する。
+生成PDFにも選択ページのみの試作であることを示すheaderを付ける。
 
-PDF表示／テキスト表示は従来の表示方法の切替で、その下の英日ボタンはPDFの言語切替。
-Paper BriefのEvidence、ノート、Q&A、既存Anchorは引き続き原文を正本とする。
-Evidence navigation時は原文をmountしてから既存resolverで座標を解決する。
-PDF.js controllerは同時に1つだけ。mount/unmount契約を維持した。
-PDF.js 4.x内部のfetch readerが連続切替時に中断promiseを未処理にするケースを避けるため、
-Reader自身がAbortController付きfetchをawaitし、取得したPDF bytesをPDF.jsへ渡す。
-このためPDF全bytesを取得してから表示を開始する。ページcanvasの既存上限は維持するが、
-PDF全体の受信buffer・workerを含むメモリ量の上限ではない。
+「原文PDF」で原文へ戻り、zoom / fit / パネル状態を保持する。
+日本語の文字選択では「原文を見る」から対応する**原文block_id**へ戻る。
+図表内の選択も原物の配置対応から元のcell/figure blockを探す。
+日本語文字のbboxをSourceAnchorに保存しない。
+原物画像を選択できない場合も、理由一覧の「原文図表を見る」から戻れる。
 
-## TranslationUnitとmigration v5
+日本語表示中の文書内検索はPDF.jsの実PDFテキストを検索する。
+未描画ページも検索対象にし、日本語本文と保持した英語モデル名・数字を検索できる。
+元のSection見出しに対応する日本語PDF bookmarkも作る。
+「日本語PDFを保存」で外部viewerへ開け、生成履歴は再起動後も再利用できる。
 
-`translations`を拡張した。翻訳本文を保存する別テーブルは追加していない。
+## 再利用・migration・旧版互換
 
-| TranslationUnitの情報 | 保存先 |
+TranslationUnitは既存`translations`を再利用する。
+source_id / version_id / block_id / source_text / translated_textに、v5で追加した
+original_page / original_bbox / source_hash / provider / runtime / model / prompt_version /
+created_at / updated_at / translation_status / reasonを保持する。
+既存の訳、user_edited、Note、Highlight、Brief、Evidenceを消さない。
+
+再組版の配置は生成PDFごとに変わるので、`japanese_pdf_generations.report_json`に保存する。
+**追加migrationは不要。v5のSQLを変更していない。** mainのv4から初回導入する場合は
+既存のv5 migrationと移行前backupが実行される。すでにv5なら追加のDB移行はない。
+訳文を保存する新しいテーブルも追加しない。
+
+| reportの項目 | 用途 |
 |---|---|
-| source / source version / original block | 既存source_id / version_id / block_id |
-| 原文・訳文 | 既存source_text / translated_text |
-| ページ・原文bbox | original_page / original_bbox（既存geometry JSON契約） |
-| source hash | source_hash（原PDF bytesのSHA-256） |
-| provider / runtime / model / prompt | provider / runtime / model / prompt_version |
-| 状態・理由 | translation_status / reason |
-| 作成・更新日時 | created_at / updated_at |
+| layout_version = reflow-1 | 固定bbox版と新方式のキャッシュを区別 |
+| units[].block_id / translation_id | 既存原文block・TranslationUnit |
+| units[].page / bbox | 原文の正本geometry（既存SourceAnchor契約） |
+| units[].placements[] | 日本語ページ、bbox、分割段落のpart |
+| units[].asset_id / section | 対応する原物IDとSection |
+| assets[] | 図表/数式のsource page/bbox、原文block IDs、Caption IDs、配置、未解決理由 |
+| quality / reading_order | 本文の検査、原物の品質、出力の読み順 |
 
-状態は`translated`、`skipped_protected`、`skipped_unsafe`、`overflow`、`failed`。
-元のブロックがfigure/table候補で文字を持たない場合も保護結果を記録する。
-通常の段落翻訳APIも同じ保存関数を使用し、source/blockの所有関係を確認する。
-空のskip行を段落翻訳キャッシュとして返さない。
+旧固定bbox版の生成PDFとreportは削除しない。履歴では「旧座標版」と表示し、
+同じsource/version/hashである限り再表示・ダウンロードできる。
+ただし新しい生成で旧版の完成PDFをキャッシュとして返さない。
+旧訳は正確なsource/version/block/原文が一致すれば再利用し、旧overflowの訳も再組版へ流せる。
 
-既存の訳は同一source/version/block/原文が一致する場合に再利用する。
-legacy行のhashがNULLでも同じversionと原文を確認する。
-user_editedを優先し、訳文・provider/model・作成日時を自動上書きしない。
-既存の重複行を削除したり、移行時にunique制約を追加したりしない。
-PDF生成の配置結果とreasonは更新するが、生成履歴には各時点のimmutableなreportを保存する。
-失敗した配置でも翻訳本文を残し、再生成でAIの成功結果を再利用できる。
+AIRuntime → RuntimeProvider、Codex app-server + ChatGPT plan、既存security isolation、
+JSON schema・block ID・数値token検証、finite batch/retryを維持した。
+モデルをハードコードせず、従量課金APIやAPIキーを追加していない。
+`prompts/japanese_pdf_v0_1.md`はそのまま研究翻訳に使用する。
+本文はuntrusted user JSONで、通常ログへ原文・訳文・AI応答を出さない。
 
-新しい`japanese_pdf_generations`は生成履歴、source/version/hash、抽出ブロックのdigest、
-対象ページ、file hash、report、状態だけを保存する。訳文の二重保存はしない。
-1つのsourceで同時に実行できる生成は1つ。同一hash/version/digest/ページセットの
-完成PDFを再利用する。再試行指定では新しい生成履歴を作り、成功した訳を再利用する。
+## 内容・原物・Captionの検出
 
-append-onlyの`005_japanese_pdf.sql`でv4→v5へ移行する。
-既存Note、Highlight、Paper Brief、Evidence、訳文を保持し、migration runnerが移行前DBをbackupする。
-legacyのcreated_atはupdated_atから補完する。過去のprompt/runtimeが不明な行には架空の生成情報を補わず、NULLを保持する。復旧はv4 backupと旧アプリを組み合わせる。
+`app/japanese_content.py`が元のdocument_blocks.idxの読み順で内容を計画する。
+画像、全drawing、表候補、PyMuPDFの表検出、数式/数学フォント/上付き文字を調べる。
+罫線なし表では、横に並ぶ数値とモデル名、その近くのheaderを一緒に保護する。
+交差する原物領域は結合し、その領域内の文字もまとめて原物に含める。
+元のfigure/table/equation候補フラグだけを完全な判定とは扱わない。
 
-## 翻訳と保護判定
+図表の近くにある独立したCaptionを関連付ける。
+ラベル付きの最初の行でCaptionが分割されている場合は、近接・整列した未完の続きもまとめる。
+図表と複数のCaptionが競合する、図内Captionを安全に分離できない、
+geometryがない、表検出が失敗する場合は、その**選択原文ページ全体**を原物として保持する。
+この場合は未解決と表示し、Caption対応を確定したとは扱わない。
+図内文字・表のcell・数式を翻訳しない。数学を含む一塊の本文も原物を優先する。
 
-AIRuntime → RuntimeProviderを通じて既存のCodex app-server + ChatGPT planを使用する。
-モデル指定を追加していない。従量課金API、APIキー、追加MCPは使用しない。
-既存security isolationを維持し、promptは`prompts/japanese_pdf_v0_1.md`に置く。
-論文本文はuser側のuntrusted JSONデータとして渡し、本文内の指示を実行しない。
-通常ログに原文・訳文・モデル応答を出さず、APIエラーは固定codeだけを返す。
+Section情報は原物内部のモデル名等を見出しとして使わず、再組版する見出しの順序で割り当てる。
+元のDBとSourceAnchorのheading/bboxを変更しない。
+読み順の品質は既存の列を考慮した抽出に依存し、VLMによる意味解析は実装していない。
 
-Pydanticのstrict schemaとJSON parserで余分なfield、不正JSON、重複keyを拒否する。
-入力と出力のblock ID集合を照合し、架空ID・欠落・重複を拒否する。
-数字・小数点精度・引用番号に使われる数値tokenも照合し、変化を拒否する。
-モデル名・Dataset・Metric・単位・Figure/Table参照の維持はpromptで指示する。
-翻訳が不確実な応答は配置しない。最大8block / 6,000文字のbatch、1blockは最大5,000文字。
-最大160領域・24batch・各batch最大2回（最大48turn）に制限する。
-有効に翻訳できたblockは先に保存し、不確実なblockだけ次の試行へ送る。
-JSON契約全体が不正なbatchは、そのbatchを拒否して有限回で打ち切る。
+## 再組版エンジン
 
-元のroleに加え、画像bbox、全drawing（細線も含む）、表検出、注釈・リンク、
-数式・数学フォント・上付き文字、隣接span、重複blockを確認する。
-罫線のない表では、横に並ぶ短い領域に数値cellがある行や短いラベルを保護する。
-画像・線・表の周囲には2ptの保護余白を設ける。
-Captionは図表と独立している場合に翻訳する。
-方向が横書き以外の文字、曖昧な領域、表検出失敗、数式混在の見出しは原文を残す。
-この判定は高度な図表解析ではなく、保守的なPoCの判定である。
+`app/japanese_pdf.py`が白紙の派生documentを作る。原文PDFへredactionや上書きをしない。
+本文はPyMuPDF Storyで**11pt、line-height 1.6**、見出し16pt、Caption10ptで配置する。
+残りの領域に収まらなければ次ページへ流す。文字サイズを下げる処理はない。
+段落が複数ページになる場合は同じ原文block_idに複数のplacementsを保持する。
+本文が元のbboxに収まらないという理由で翻訳を諦めない。
 
-## PDF置換・フォント・overflow
+原物はsource clipと交差するdisplay-list操作を新しいvector PDFへ描き出し、
+`show_pdf_page`でベクターと画像をコピーする。表示clipだけに頼るとPDF.jsが領域外の
+非表示原文まで抽出するため、不要な原文をコピー先のresourceに残さない。1つのtext描画操作が領域内外にまたがる場合は、
+切り出した一時PDFの領域外glyphだけをtext-onlyで除去する。原文PDFにはこの処理を行わない。
+元のpointサイズを保つ。本文領域に対して大きな表・図は専用ページに置き、
+必要ならページの幅・高さを増やす。図表とCaptionを同じページの一体のgroupとして配置する。
+直前のSection見出しも可能な範囲でgroupと一緒に置く。
 
-元PDF bytesを変更せずに別documentを開く。
-各blockのscratch pageで、原文bboxのtext-only redactionと日本語配置を試す。
-`fill=False`を指定し、白い矩形で背景を塗らない。
-`apply_redactions(images=0, graphics=0, text=0)`で画像・ベクターを保持する設定を明示する。
-redaction後の領域に原文文字が残れば失敗とする。
+元PDFに表示する注釈がある場合は、`show_pdf_page`が注釈を複製しないため、
+元ページ全体の200dpi表示を重ねて保持し、未解決と表示する。
+この場合はvector_preserved=falseを記録し、下の同じvector textを選択・検索用に保持する。
+通常の図表・数式ではベクターを保持し、再描画時の画質を保つ。
 
-`insert_htmlbox`でHTML escapeした訳文を配置する。
-line-heightは1.4、段落のmargin/paddingは0、HTMLboxの既定body余白1pxを保ち、元spanの文字サイズを基準にする。
-最大15%まで縮小し、最小8.5ptを守る。領域外のglyph bbox、欠字、文字抽出不一致を拒否する。
-収まらない場合はscratchを破棄し、元の英文と`overflow`を残す。
-余白の自動拡張、別ページへの送り、図表の移動はしない。
+翻訳が不確実・失敗・欠字の場合は原文表示を配置し、理由を残す。
+Captionの翻訳失敗時もCaptionを落とさず、同じ図表の近くに原文を配置する。
+原物保持・未解決の表示もPDF内に残す。
+旧overflow statusはデータ互換のため残るが、新本文をbbox不足でoverflowにしない。
 
-日本語フォントはPyMuPDF組込みのDroid Sans Fallback Regular。
-Windowsのシステムフォントに依存せず、実行時にfont bufferを一時的なarchiveへ取り出す。
-PDF内にフォントを埋め込み、同一streamをdeduplicateする。元のフォント資源を保つため、文書全体の再subset化はしない。フォントbinaryはGitへ追加していない。
-DroidはApache License 2.0。著作権表示と全文licenseを
-[docs/licenses/droid-NOTICE.txt](../../licenses/droid-NOTICE.txt)に保持し、
-生成PDFにもNOTICE添付を埋め込む。出典は
-[MuPDFのDroid NOTICE](https://github.com/ArtifexSoftware/mupdf/blob/master/resources/fonts/droid/NOTICE)。
-PyMuPDF本体の既存AGPL/commercial license契約とは別に扱う。
+日本語フォントはPyMuPDF組込みDroid Sans Fallback Regular（Apache 2.0）。
+実行時に一時font archiveを作り、PDFに埋め込む。Windowsのシステムフォントには依存しない。
+font binaryはGitに追加せず、[NOTICEと全文license](../../licenses/droid-NOTICE.txt)を
+リポジトリと生成PDFの添付へ保持する。原文font resourcesを再subset化しない。
 
-MediaBox / CropBox / rotationとページ数・順序を保存する。
-回転＋CropBoxでは置換時だけrotationを0にし、処理後に戻す。
-これはPyMuPDFの当該組合せでの配置matrixのcrop offset差を避けるためである。
-原文bboxは未回転のCropBox左上原点・pt単位の既存契約を維持する。
+## API・Reader・対応ジャンプ
 
-## API・ファイル永続化
+APIのpathと生成/保存の契約は維持する。
 
-| Method / path（先頭は`/api/sources/{source_id}`） | 用途 |
+| API（先頭`/api/sources/{source_id}`） | 用途 |
 |---|---|
-| POST `/japanese-pdf/generate` | `{pages:[1,3], retry_failed:false}`、202応答 |
-| GET `/japanese-pdf` | not_generated / generating / preview_ready / failedと履歴、report |
-| GET `/japanese-pdf/{generation_id}/file` | PDF.js向けのPDF |
-| GET `/japanese-pdf/{generation_id}/file?download=true` | attachmentでダウンロード |
+| POST /japanese-pdf/generate | 原文pagesを最大3つ、retry_failed。202 |
+| GET /japanese-pdf | not_generated / generating / preview_ready / failed、履歴・report |
+| GET /japanese-pdf/{generation_id}/file | 表示用PDF |
+| 同path + ?download=true | attachment download |
 
-`KG_DATA_DIR/generated/japanese_pdf/{generation_id}.pdf`へ保存する。
-生成IDはサーバーが発行する16桁hexで、任意のパスを受け付けない。
-元ファイルのパスもfiles directory内に制限する。
-source ownership、最新version、実bytes hash、抽出blockのdigestを開始時・確定時・取得時に照合する。
-変更した元PDFや抽出blockに対応しない古い成果物はlatest扱いせず、取得も409で拒否する。
+source/version/hash/抽出digest、所有関係、file hashの照合、path traversal防止、
+同じsourceの同時生成制限、fsync→atomic replace→DB確定を維持した。
+新方式の版を確認して完成PDFを再利用する。失敗時は原文・Brief・Noteを変更しない。
+中断jobは起動時にfailedへ回復し、完成PDFは再利用できる。
 
-同じdirectoryの一時PDFへ保存し、正常に開くこと、geometry、抽出、pixel検査を確認する。
-fsync → os.replace → DBのpreview_ready確定の順で公開する。
-失敗時は未公開ファイルを削除し、原文・Brief・Noteは変更しない。
-再起動時のgeneratingはinterruptedとしてfailedへ移す。完成ファイルは再利用できる。
-完成後にファイルを失った／変更した場合もhash照合で拒否する。
-単一local app processの運用を前提にする。OSの強制終了で未参照の一時・確定ファイルが
-残る場合はあるが、DBの完成状態と照合できないファイルを配信しない。
+Readerは1つのPDF.js controllerを維持する。
+`client/js/pdfalignment.js`がsource blockとplacementsから対応する位置を求める。
+原文ページ番号と日本語ページ番号の一致を前提にしない。原文回転も考慮する。
+長い段落の細かい意味位置は確定せず、同じ元ブロックへ戻る。
+対象外の原文ページから日本語へ切り替える場合は近い対象を表示し、その旨を通知する。
 
-## 自動品質と目視検証
+`kg.reader.<sourceId>.pdfViews`へ原文と生成IDごとの日本語位置を保存する。
+旧pdfViewも互換で保持し、zoom / fit / side panelを維持する。
+Paper Brief・Note・Q&A・HighlightからのEvidenceは必ず原文へ切り替えてから解決する。
+日本語ページ/文字bboxを原文SourceAnchorに保存しない。
 
-保存済みPDFを再度開き、元PDFと約200dpiでrenderする。
-翻訳対象ページ全体の差分を測定し、置換済み原文bbox以外の差分が1pixelでもあれば生成失敗にする。
-rasterのantialiasingのため、許可maskに0.5ptの境界余白を付ける。
-実際のglyph extentsは原文bbox内を0.1ptの丸め許容で確認する。
-画像・線・表は2pt保護余白と交差判定を先に行う。
-対象外ページはcontent stream bytesの不変を検査し、fixtureテストでは全pixelの一致も検査する。
-Figure/Table/Equationの保護領域は別途200dpiのpixel完全一致を検査する。
+## 検証基準と結果
 
-テストは通常英文、2段組、Figure＋Caption、罫線付き表、モデル名と小数値、罫線なし表、数式、
-数式混在の見出し、長い日本語overflow、欠字、回転・CropBox、図表と文字の接近・重複、文字なしPDFを含む。
-原PDF hash、不正AI JSON、finite retry、successful cache、user edit保持、stale source、
-file corruption、atomic確定失敗、許可領域外の意図的変更、再起動回復も検証する。
-実ChatGPTログインはCIで不要。
+「元の本文bbox外の差分0」は新方式の基準から削除した。
+保存済みPDFを開き直し、次を確認する。
 
-main baselineは**330 passed**。最初の環境にはjsonschemaがなく、requirementsの依存を導入して再確認した。
-最終pytestは**376 passed**。既存Starlette/httpxの非推奨通知1件。
-ブラウザでは新日本語PDF **18項目成功**、Reader回帰 **20項目成功**、
-Import/Brief **34項目成功**、Structured Brief生成 **17項目成功**、
-Phase 1のPDF選択・Highlight・Q&A・Anchor fallbackも成功した。各suiteのpageerrorは0件。
+- 元PDF bytes/hashが不変。
+- 翻訳済みunitの全fragmentの抽出文字が、保存した日本語と一致する。欠落・重複を拒否する。
+- 全配置が用紙の内側にあり、item同士が重ならず、元の本文/Section順序で流れる。
+- 図表とCaptionが同じページにあり、対応する原文IDsを持つ。
+- 図表/数式の数値・文字を元clipと照合し、元サイズとvectorを保持する。
+- 原物のclipを200dpiでrenderし、移動後clipと比較する。native raster phaseを揃え、
+  平均pixel差が0.2/255を超える原物は公開しない。本文の再組版領域はこの比較対象にしない。
+- AI JSONの不正、欠落/重複/架空ID、数値改変を拒否し、失敗/retry/cache/user edit保持を確認する。
+- 旧固定bbox成果物、stale/corrupt file、atomic失敗、再起動、SourceAnchorの回帰を確認する。
 
-3ページlayout fixture（4ページPDFのp.1/2/3を選択）の結果:
+主fixtureはAbstract、2段組、Figure＋Caption、数式、罫線付きTable＋Captionを含む原文3ページ。
+**日本語は4ページ**になり、本文・見出し・Caption **28/28対象を日本語化**。
+原物内部を含む19blockは保護表示し、Figure/Table/Equationの3原物を保持した。
+欠落・重複・overlap・用紙外配置は0。原物の平均pixel差はすべて**0.0**、数字・文字も一致した。
 
-| ページ | 置換 | 保護skip | 理由 |
-|---|---:|---:|---|
-| p.1 Abstract | 2 | 0 | 見出しと本文を置換 |
-| p.2 2段組 | 7 | 0 | 見出しと左右の本文を置換 |
-| p.3 Table | 5 | 14 | table候補1領域、罫線・表と交差する13文字領域 |
+別の長文fixtureでは、原文1ページ相当を**日本語2ページ**へ流し、本文11ptを維持した。
+より長い決定的訳のテストでも複数ページへ配置し、overflowや縮小なしで全文抽出を確認した。
+Caption継続、対応の曖昧な2つの図、罫線なし表、接近/重複、CropBox＋90/180/270度回転、
+注釈の表示保持、欠字、文字なしPDFも検証する。
 
-文字を持つ27block中14blockを置換、**51.9%**。
-安全に分離できた14対象はすべて置換した。overflow/failed/skipped_unsafeは0。
-p.4は原文のまま。p.1/2/3の許可領域外pixel差分はすべて**0**。
+固定bbox版baseline pytestは**376 passed**。最終pytestは**390 passed**。既存Starlette/httpx非推奨通知1件。
+Chromiumの新再組版browserは**17項目成功**、Reader回帰20、Import/Brief34、Structured Brief17項目成功。
+各suiteのpageerrorは0件。日本語検索、選択、原文p.2→日本語p.1の対応、Evidenceの原文p.3への復帰、
+artifact別の位置復元、download、長文改ページ、連続20回切替を確認した。
 
-Figure/Equationを含むreader_detail fixtureは27文字block中8block置換、**29.6%**。
-保護skip19（図表候補・数式3、画像/線/表交差16）、overflow1、failed1。
-overflowは日本語のArchitecture見出しが幅に収まらず原文を維持した。
-failedは決定的mock辞書にない本文で、実AI翻訳の品質評価ではない。
-両ページの許可領域外pixel差分は**0**。図・数式・表は保持した。
+画像を目視し、日本語の行送り、文字サイズ、欠け・二重表示・重なりがないこと、
+原物とCaptionの隣接、元の数式・表の表示を確認した。
+比較画像の左右はページ番号が独立しており、同じ番号同士の意味対応を表すものではない。
 
-比較画像（左が英語、右が日本語、元renderは200dpi、掲載画像は縮小）を目視し、
-日本語本文の可読性、2段組、文字欠け・二重表示がないこと、表・数式が同じ見た目であることを確認した。
+![原文p.1と日本語p.1](assets/japanese-pdf/reflow-comparison-1.png)
+![原文2段組と日本語の続き](assets/japanese-pdf/reflow-comparison-2.png)
+![専用ページの表とCaption](assets/japanese-pdf/reflow-comparison-3.png)
+![長文の次ページ](assets/japanese-pdf/reflow-long-page-2.png)
 
-![Abstractの英日比較](assets/japanese-pdf/comparison-page-1.png)
-![2段組の英日比較](assets/japanese-pdf/comparison-page-2.png)
-![表とCaptionの英日比較](assets/japanese-pdf/comparison-page-3.png)
-![図・数式・overflowの英日比較](assets/japanese-pdf/comparison-figure-equation.png)
-![アプリでの日本語表示](assets/japanese-pdf/browser-japanese-columns.png)
-
-詳細は[ブラウザとpixel品質report](assets/japanese-pdf/browser-report.json)。
-生成PDF自体はruntime dataとして扱い、Gitへcommitしていない。
+[ブラウザ・配置・原物品質report](assets/japanese-pdf/browser-report.json)。
+生成PDF自体はruntime fileとして扱い、Gitへcommitしない。
 
 再現:
 
 ```bash
 .venv/bin/python -m pytest tests/ -q
-.venv/bin/python -m pip install playwright
 .venv/bin/python scripts/smoke_japanese_pdf_browser.py --chromium /usr/bin/chromium
 ```
 
-browser scriptは一時dataでmock serverを起動し、終了時にDBを削除する。
-画像・report・ダウンロードしたPDFは既定でOSの一時directoryの`kg-japanese-pdf-smoke`へ出力する。
-`--output`で出力先を指定できる。Chromiumが自動検出できないWindowsでは、
-Playwrightをinstallした後、Chromium実行ファイルの絶対pathを`--chromium`へ渡す。
+browser scriptは一時dataのmock serverを自動起動し、DBを終了時に削除する。
+画像・report・download PDFの既定出力はOS一時directoryの`kg-japanese-pdf-smoke`。
+Playwright/Chromiumは任意の開発依存で、`--output`と`--chromium`で場所を指定できる。
 
-## Windows / MMAD acceptance（merge前に実施）
+## Windows / MMAD確認手順
 
-1. 現在のアプリを終了し、mainを変更せず本PRのbranchを取得する。
-   `git fetch origin`、`git switch feat/japanese-pdf-prototype`で切り替える。
-   既存dataを保持して`start_knowledge_growth.bat`で起動する。
-   v5 migration前のbackupは`data/backups`へ自動保存される。
-   既存venvの依存が足りない場合は`.venv\Scripts\python.exe -m pip install -r requirements.txt`を実行する。
-2. AI状態メニューでChatGPT planの接続を確認し、登録済みのMMADを開く。
-   MMADをGitHubやCloudにアップロードしない。
-3. PDF表示で「日本語版を試作」を開き、Abstract、2段組本文、評価Tableがあるページを
-   **PDFの1-basedページ番号**で入力する。例えば`1,3,7`のような非連続指定ができる。
-4. 「日本語PDFを生成」を押す。生成中は原文を閲覧できる。
-   完了後「日本語PDF（試作）」を押し、対象ページと置換率を確認する。
-5. 表のモデル名、数字、小数点精度、罫線、図・数式が元のままか確認する。
-   「翻訳済みページ・未翻訳領域と理由」でskip/overflow/failedを確認し、
-   各「原文を見る」で該当箇所へ移動する。全文翻訳済みと解釈しない。
-6. 100%/125%/幅に合わせるで日本語の文字サイズ、欠字、欠け、二重表示、重なりを確認する。
-   英日を往復して同じページ内の近い位置へ戻ること、zoom/fit/パネル状態の維持を確認する。
-7. 日本語を選択してコピーし、「原文を見る」で対応ブロックに戻る。
-   Paper BriefのEvidenceも原文の正しいページへ戻ることを確認する。
-8. 「日本語PDFを保存」でダウンロードし、外部PDF viewerで開く。
-   日本語の選択・検索と、ページ数・順序・表の値・数式を確認する。
-9. アプリを終了・再起動し、同じ資料から完成PDFを再表示・ダウンロードする。
-   既存Note、Highlight、Paper Brief、Import、Q&Aも利用できることを確認する。
-10. 結果をPRへ記録してからmergeを判断する。Cloudのfixture成功だけでは
-    MMADの品質が確認済みとは扱わない。
+1. アプリを終了して既存branchを更新する。PowerShellでリポジトリへ移動し、
+   `git fetch origin`、`git switch feat/japanese-pdf-prototype`、
+   `git pull --ff-only origin feat/japanese-pdf-prototype`。
+   未commitのローカル変更がある場合は上書きせず、gitの表示を確認する。
+2. `start_knowledge_growth.bat`で起動する。ChatGPT planの接続状態を確認する。
+   初回のv4→v5のみDB backup/migrationが走り、既存v5では追加migrationはない。
+3. 登録済みMMADを開き、「日本語版を試作」でAbstract、本文、Figure/Tableのある
+   **原文ページ番号**を1〜3つ指定する。非連続の`1,3,7`等も使える。
+4. 「日本語PDFを生成」を押す。旧座標版があっても新しい再組版を生成する。
+   完了したら「日本語PDF（試作）」を押す。日本語ページ数が原文と異なってよい。
+5. 本文が自然な順序で流れ、文字が小さくなりすぎず、欠け・重なり・欠落がないことを確認する。
+   長い段落が次ページへ続くこと、Section順序、図表と日本語Captionが隣接することを見る。
+6. 表のモデル名・小数値・罫線、グラフ、数式が原文と同じ内容か確認する。
+   「原文との対応・原物保持・未解決の理由」で対応と未翻訳理由を確認し、
+   「原文図表を見る」から正しい原物へ戻る。
+7. 日本語本文を選択→「原文を見る」で元段落へ戻る。原文から日本語へ切り替えて
+   同じブロックへ戻ること、zoom/fit/パネル状態を維持することを確認する。
+   Paper BriefのEvidenceは日本語表示中でも原文の正しい段落/図表へ戻ることを見る。
+8. 日本語表示中に文書内検索で日本語語句、表のモデル名・小数値を検索する。
+9. 「日本語PDFを保存」で外部PDF viewerへ開き、日本語選択/検索、bookmark、
+   Captionと図表、本文改ページを確認する。
+10. アプリを終了・再起動し、完成PDFを再表示・downloadする。
+    既存Paper Brief、Note、Highlight、Import、Q&Aも利用できることを確認する。
 
-## 制約・未実装
+MMADをGitHub/Cloudへ送信しない。Windowsでの結果をPRへ記録してからmergeを判断する。
+Cloudのfixture成功を実論文の品質確認済みとは扱わない。
 
-最大3ページ、160領域・24batch。複雑なPDFではskipやoverflowが多くなる。
-古い登録に原文bboxがない場合はmissing_geometryでskipする。幾何情報付きの登録PDFが必要である。
-200dpi検査は1ページ1,600万pixelまでとし、それを超える用紙サイズは生成失敗にする。
-実論文のレイアウトを完全に判別できる保証はなく、配置が不安全な場合は原文または生成失敗にする。
-OCR、縦書き、内部文字の図表翻訳、VLM、表cell構造化、全文一括翻訳、左右比較、
-完全な意味位置同期、Japanese選択からのHighlight/質問の直接保存は未実装。
-アプリ内の文書内検索は従来の原文block検索を継続する。日本語PDF自体の文字抽出・
-外部viewerでの検索は可能だが、日本語訳全文を検索するアプリUIは未追加。
-Paper Briefの既存「日本語版で読む · 今後対応」CTAは今回変更せず、Reader toolbarから試作を使う。
-他の後続機能（音声、ConversationThread、Visual Clip、保存HighlightのPDF描画、RCO/RKOS）は対象外。
+## 制約と次段階
 
-次はWindowsでMMADの結果を確認し、必要な安全判定の改善を独自の最小fixtureで再現する。
-T3-02/T3-05/完全なT3-06は別PRで扱う。
+最大3原文ページ、160領域・24batch、最大64生成ページ。
+原物の200dpi検査は1,600万pixelまで。上限超過は固定エラーで失敗し、元データを保持する。
+原物とCaptionの判定は保守的な幾何・文字解析で、複雑な領域は原ページ表示になる。
+該当領域に本文が含まれていれば、その本文も英語のまま原物に残る。
+複数の原文ページへまたがる図表の自動結合は未対応。
+
+原文の抽出読み順が誤っている場合の完全な意味復元、OCR/VLM、図表内部の翻訳、
+表cell構造化、全文一括翻訳、左右比較、文中の細かい意味位置同期は未実装。
+長文の原文→日本語ジャンプは対応段落の最初のfragmentが基本で、完全な文単位同期ではない。
+日本語からHighlight/Q&Aを直接保存する操作はまだ追加せず、原文へ戻った後に既存操作を使う。
+既存Paper Briefの「日本語版で読む・今後対応」CTAは変更せず、Reader toolbarから試作する。
+
+次はWindowsのMMADで品質を確認し、問題を独自の最小fixtureへ再現して改善する。

@@ -13,7 +13,7 @@ from pydantic import Field
 from .config import files_dir, generated_dir
 from .db import get_db, new_id, now
 from .import_bridge.validator import canonical
-from .japanese_pdf import detect_units, generate_pdf
+from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units
 from .paper_brief import StrictModel
 from .routes_ai import local_control
@@ -139,7 +139,7 @@ def start(source_id: str, body: GenerateIn, request: Request, tasks: BackgroundT
             if not body.retry_failed:
                 for row in ready:
                     path = output_path(row['id'])
-                    if matches(row, saved) and path.is_file() and digest(path.read_bytes()) == row['file_hash']:
+                    if json.loads(row['report_json'] or '{}').get('layout_version') == LAYOUT_VERSION and matches(row, saved) and path.is_file() and digest(path.read_bytes()) == row['file_hash']:
                         return public(row)
             runtime = request.app.state.ai_runtime
             if runtime.status().state != 'ready' or not runtime.capabilities().inference:

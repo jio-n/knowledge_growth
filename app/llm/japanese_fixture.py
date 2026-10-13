@@ -18,6 +18,7 @@ FIXTURE_TRANSLATIONS = {
         'Figure 1に示すように、エンコーダは入力を出力に変換する。凍結したバックボーンをFew-shot設定で評価する。',
     'Table 1 contains invented scores for test use only. Shared evidence phrase appears on both pages.':
         'Table 1には検証専用の架空スコアを示す。共通の根拠表現が両ページに記載されている。',
+    'Equation (1) is a synthetic linear mapping. Shared evidence phrase appears on both pages.': 'Equation (1)は合成の線形写像である。共通の根拠表現が両ページに記載されている。',
     'This fixture is for offline regression testing only.': 'この資料はオフラインの回帰テスト専用である。',
     'This generated document tests paper registration and reading. It contains original synthetic text with no external paper content. The synthetic method processes an input and returns an output.':
         'この生成文書で論文の登録と閲覧を検証する。外部論文を含まない独自の合成文章を収録する。合成手法は入力を処理して出力を返す。',
@@ -31,6 +32,9 @@ def fixture_reply(context):
     for b in context['blocks']:
         original = b['text']
         text = FIXTURE_TRANSLATIONS.get(original)
+        abstract='We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence.'
+        for count in (30,39):
+            if original == ' '.join([abstract]*count): text=' '.join([FIXTURE_TRANSLATIONS[abstract]]*count)
         if match := re.fullmatch(r'(LEFT|RIGHT) paragraph (\d+)\. Synthetic column content for reading order\.', original):
             text = f'{"左" if match[1] == "LEFT" else "右"}列の段落{match[2]}。読み順を確認するための合成文章。'
         if match := re.fullmatch(r'1 (LEFT|RIGHT) Column', original):

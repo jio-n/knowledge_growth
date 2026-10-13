@@ -1,7 +1,6 @@
 """Original synthetic layouts for partial Japanese PDF acceptance (no real papers)."""
 import fitz
 from tests.fixtures.pdf_factory import make_pdf, _text
-from app.llm.japanese_fixture import FIXTURE_TRANSLATIONS
 
 ABSTRACT = 'We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence.'
 BODY = 'The synthetic method processes input data in two stages. A frozen backbone is evaluated in a few-shot setting. The experiment uses generated data only.'
@@ -10,9 +9,31 @@ BODY = 'The synthetic method processes input data in two stages. A frozen backbo
 def make_japanese_fixture(kind='layout', rotation=0, crop=False):
     if kind in ('simple', 'two_column', 'reader_detail'):
         return make_pdf(kind, rotation=rotation, crop=crop)
+    if kind=='reflow_demo':
+        with fitz.open() as doc:
+            page=doc.new_page(width=595,height=842)
+            _text(page,(40,35,555,80),'Abstract',size=18,bold=True)
+            _text(page,(40,100,555,210),ABSTRACT)
+            for x,label in ((45,'Input'),(220,'Encoder'),(395,'Output')):
+                page.draw_rect((x,220,x+140,300),color=(0,0,0),fill=(.9,.94,1))
+                _text(page,(x+12,248,x+128,285),label,size=14)
+            for x in (185,360): page.draw_line((x,260),(x+35,260))
+            _text(page,(40,325,555,365),'Figure 1. Synthetic input-encoder-output architecture.')
+            _text(page,(40,405,555,480),'As shown in Figure 1, the encoder maps input to output.\nA frozen backbone is evaluated in a few-shot setting.')
+            columns=fitz.open(stream=make_pdf('two_column'),filetype='pdf')
+            doc.insert_pdf(columns,from_page=0,to_page=0);columns.close()
+            _text(doc[1],(100,730,520,790),'y = W x + b (1)',size=14)
+            table=fitz.open(stream=make_pdf('reader_detail'),filetype='pdf')
+            doc.insert_pdf(table,from_page=1,to_page=1);table.close()
+            if crop: doc[0].set_cropbox((20,20,575,822))
+            doc[0].set_rotation(rotation)
+            return doc.tobytes(garbage=4,deflate=True)
     with fitz.open() as doc:
         page = doc.new_page(width=595, height=842)
-        if kind == 'no_text':
+        if kind=='long_reflow':
+            _text(page,(40,35,555,80),'Abstract',size=18,bold=True)
+            _text(page,(40,100,555,500),' '.join([ABSTRACT]*39),size=6)
+        elif kind == 'no_text':
             page.draw_rect((50, 50, 300, 300), color=(0, 0, 0), fill=(.2, .5, .8))
         else:
             _text(page, (40, 35, 555, 80), 'Abstract', size=18, bold=True)

@@ -90,3 +90,5 @@ v3→v4もbackup後に移行する。v3 backupでPR #5のアプリへ復旧で�
 ## v5 日本語PDF試作
 
 `005_japanese_pdf.sql`で既存translationsにoriginal_page/original_bbox/source_hash/runtime/prompt_version/created_at/translation_status/reasonを追加する。既存の訳文・user_edited・Anchor等は保持する。生成履歴はjapanese_pdf_generationsに置き、翻訳本文を重複保存しない。v4→v5も移行前backupを作る。復旧はv4 backupとv4対応アプリを使用する。[保存・API・Windows手順](../redesign/v0.4/japanese_pdf_prototype.md)。
+
+日本語PDF再組版への変更では追加migrationを行わない。schema v5をそのまま使用し、生成物ごとの日本語配置・図表対応・layout_versionはjapanese_pdf_generations.report_jsonへ保存する。既存の固定bbox生成PDF・訳文・原文geometryは削除/上書きしない。

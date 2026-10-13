@@ -12,6 +12,11 @@ const REASONS = {
   minimum_readable_size: "最小文字サイズで収まらない", glyph_outside_bbox: "文字が領域を超える",
   cached_not_japanese: "保存済み訳に日本語がない",
   translation_failed: "翻訳応答の失敗／不確実", missing_glyph: "フォントにない文字",
+  annotations_present: "注釈付き原ページの表示内容を保持",
+  ambiguous_caption: "図表とCaptionの対応が曖昧・原ページを保持",
+  caption_inside_visual: "Captionを安全に分離できず原ページを保持",
+  caption_without_visual: "対応図表が未解決・原ページを保持",
+  visual_without_caption: "Captionとの対応未解決・原物を保持",
   table_detection_failed: "表領域を確認できない", text_extraction_mismatch: "文字抽出を確認できない",
 };
 
@@ -20,14 +25,14 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
   const original = el("button", { type: "button", class: "btn btn--sm", onClick: () => switchTo("original") }, "原文PDF");
   const japanese = el("button", { type: "button", class: "btn btn--sm", disabled: true, onClick: () => switchTo("japanese") }, "日本語PDF（試作）");
   const download = el("a", { class: "btn btn--sm", hidden: true, download: true }, "日本語PDFを保存");
-  const status = el("p", { role: "status", class: "japanese-pdf-status" }, "日本語PDFは未生成です。最大3ページを試作できます。");
-  const pages = el("input", { type: "text", placeholder: "例: 1, 3, 5 または 1-3", "aria-label": "翻訳対象ページ", required: true });
+  const status = el("p", { role: "status", class: "japanese-pdf-status" }, "日本語PDFは未生成です。原文の最大3ページ相当を日本語で再組版します。");
+  const pages = el("input", { type: "text", placeholder: "例: 1, 3, 5 または 1-3", "aria-label": "翻訳対象の原文ページ", required: true });
   const submit = el("button", { type: "submit", class: "btn btn--sm" }, "日本語PDFを生成");
   const retry = el("input", { type: "checkbox" });
   const history = el("select", { "aria-label": "生成済み日本語PDF", hidden: true,
     onChange: () => { current = artifacts.find(a => a.generation_id === history.value); update(); if (language === "japanese") switchTo("japanese"); } });
   let artifacts = [];
-  const report = el("details", {}, el("summary", {}, "翻訳済みページ・未翻訳領域と理由"));
+  const report = el("details", {}, el("summary", {}, "原文との対応・原物保持・未解決の理由"));
   const reportBody = el("div", { class: "japanese-pdf-report" }); report.append(reportBody);
   const form = el("form", { onSubmit: async (event) => {
     event.preventDefault();
@@ -42,7 +47,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = result; rememberedId = result.generation_id; update(); await refresh();
     } catch (error) { if (!disposed) status.textContent = error.message; }
     finally { busy = false; if (!disposed) updateButtons(); }
-  } }, el("label", {}, "対象ページ（最大3） ", pages), submit,
+  } }, el("label", {}, "原文ページ（最大3） ", pages), submit,
     el("label", {}, retry, " 失敗ブロックを再試行（成功した訳は再利用）"));
   const setup = el("details", {}, el("summary", {}, "日本語版を試作"), form);
   const root = el("div", { class: "japanese-pdf-controls" },
@@ -66,13 +71,17 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     if (current?.state === "generating") status.textContent = "指定ページを翻訳・生成中です。原文PDFは引き続き閲覧できます。";
     else if (current?.state === "preview_ready") {
       const r = current.report;
-      status.textContent = `日本語試作・一部ページのみ翻訳済み · 対象 p.${current.pages.join(", ")} · 置換 ${r.counts.translated || 0}/${r.text_blocks}テキストブロック（${Math.round(r.translated_ratio * 100)}%） · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
+      status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · 翻訳対象 ${r.counts.translated || 0}/${r.text_blocks}本文・Caption（${Math.round(r.translated_ratio * 100)}%） · 原物保持 ${(r.counts.skipped_protected || 0)+(r.counts.skipped_unsafe || 0)}領域 · 未翻訳 ${r.counts.failed || 0}ブロック · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     reportBody.textContent = "";
     if (current?.report) {
-      reportBody.append(el("p", {}, `日本語を含むページ: ${current.report.translated_pages?.join(", ") || "なし"}。対象外ページと未置換領域は英語原文のままです。`));
+      reportBody.append(el("p", {}, `日本語を含む生成ページ: ${current.report.translated_pages?.join(", ") || "なし"}。選択した原文ページ相当のみを収録します。図表・数式と未翻訳の内容は原物を保持します。`));
+      for (const asset of current.report.assets || []) {
+        reportBody.append(el("p", {}, `${asset.kind} · ${asset.status === "unresolved" ? "未解決・原物保持" : asset.kind === "equation" ? "数式の原物保持" : asset.caption_status === "untranslated" ? "Caption対応済み・未翻訳" : "Caption対応済み"} · 原文p.${asset.source_page} → 日本語p.${asset.japanese_page} · ${REASONS[asset.reason] || (asset.vector_preserved ? "ベクター原物を保持" : "原物の表示内容を保持")}`,
+          el("button", { type:"button", class:"btn btn--sm", onClick:()=>onSwitch("original",current,asset.original_block_ids[0]) }, "原文図表を見る")));
+      }
       for (const unit of current.report.units) {
-        reportBody.append(el("p", {}, `p.${unit.page} · ${unit.status} · ${REASONS[unit.reason] || unit.reason || "置換済み"}`,
+        reportBody.append(el("p", {}, `原文 p.${unit.page} → 日本語 p.${unit.placements?.map(p=>p.japanese_page).join(", ") || unit.page} · ${unit.status} · ${REASONS[unit.reason] || unit.reason || "翻訳済み"}`,
           el("button", { type: "button", class: "btn btn--sm", onClick: async () => {
             await switchTo("original"); onSwitch("original", current, unit.block_id);
           } }, "原文を見る")));
@@ -88,7 +97,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = artifacts.find(a => a.generation_id === rememberedId) || artifacts[0] || result;
       const ready = artifacts.filter(a => a.state === "preview_ready");
       history.textContent = "";
-      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `p.${a.pages.join(", ")}`));
+      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.layout_version ? "再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
       history.hidden = !ready.length;
       update();
       if (current.state === "generating") timer = setTimeout(refresh, 1500);

@@ -10,7 +10,7 @@ from app.ai.base import TurnEvent
 from app.config import files_dir, generated_dir
 from app.db import get_db
 from app.main import create_app
-from app.japanese_pdf import compare_pixels
+from app.japanese_pdf import norm
 from app.japanese_translation import validate_reply
 from tests.fixtures.japanese_pdf_factory import make_japanese_fixture, BODY
 
@@ -28,64 +28,63 @@ def generate(client, sid, pages, **kwargs):
     return status, client.get(f'/api/sources/{sid}/japanese-pdf/{status["generation_id"]}/file')
 
 
-@pytest.mark.parametrize('kind,pages', [('simple',[1]), ('two_column',[1]), ('reader_detail',[1,2]), ('layout',[1,2,3])])
-def test_layout_protection_extraction_and_original_hash(client, kind, pages):
-    original = make_japanese_fixture(kind)
-    sid = upload(client, original)
-    status, response = generate(client, sid, pages)
-    assert status['state'] == 'preview_ready', status
-    assert response.status_code == 200
-    report = status['report']
-    assert report['counts']['translated'] > 0
-    assert all(q['outside_pixels'] == 0 and q['dpi'] == 200 for q in report['quality'])
+@pytest.mark.parametrize('kind,pages', [('simple',[1]),('two_column',[1]),('reader_detail',[1,2]),('layout',[1,2,3]),('reflow_demo',[1,2,3])])
+def test_reflow_content_visuals_mapping_and_original_hash(client,kind,pages):
+    original=make_japanese_fixture(kind); sid=upload(client,original)
+    status,response=generate(client,sid,pages)
+    assert status['state']=='preview_ready',status
+    report=status['report']; assert report['layout_version']=='reflow-1'
+    assert report['quality']['missing_or_duplicate']==report['quality']['overlaps']==report['quality']['outside_page']==0
+    assert report['quality']['reading_order_preserved']
     with closing(get_db()) as con:
-        src = con.execute('SELECT * FROM sources WHERE id=?', (sid,)).fetchone()
-        assert hashlib.sha256((files_dir()/src['file_path']).read_bytes()).hexdigest() == hashlib.sha256(original).hexdigest()
-        units = con.execute('SELECT * FROM translations WHERE source_id=?', (sid,)).fetchall()
-        assert all(u['version_id'] and u['source_hash'] == src['content_hash'] and u['original_bbox'] and u['created_at'] and u['updated_at'] for u in units)
-        assert all(u['runtime'] == 'mock' and u['prompt_version'] == 'japanese-pdf-0.1' for u in units if u['translated_text'])
-    with fitz.open(stream=original, filetype='pdf') as before, fitz.open(stream=response.content, filetype='pdf') as after:
-        assert len(before) == len(after)
-        for number,(a,b) in enumerate(zip(before,after),1):
-            assert (a.mediabox,a.cropbox,a.rotation) == (b.mediabox,b.cropbox,b.rotation)
-            changed = [u['bbox']['rect'] for u in report['units'] if u['page'] == number and u['status']=='translated']
-            assert compare_pixels(a,b,changed)['outside_pixels'] == 0
-            for unit in report['units']:
-                if unit['page'] != number: continue
-                rect = fitz.Rect(unit['bbox']['rect'])
-                if unit['status'] == 'translated':
-                    assert any('\u3040' <= ch <= '\u9fff' for ch in b.get_text('text',clip=rect))
-                    assert '□' not in b.get_text() and '�' not in b.get_text()
-                    assert a.get_text('text',clip=rect).strip() not in b.get_text('text',clip=rect)
-                else:
-                    assert a.get_text('text',clip=rect) == b.get_text('text',clip=rect)
-            if number not in pages: assert compare_pixels(a,b,[])['changed_pixels'] == 0
-        if kind=='reader_detail':
-            # Exact pixels in graph, table, equation and model/numeric text regions.
-            for page, rect in [(0,(42,175,540,265)),(0,(95,465,525,515)),(1,(35,140,560,566))]:
-                assert before[page].get_pixmap(clip=rect,dpi=200).samples == after[page].get_pixmap(clip=rect,dpi=200).samples
-            assert '66.012345' in after[1].get_text()
+        src=con.execute('SELECT * FROM sources WHERE id=?',(sid,)).fetchone()
+        assert (files_dir()/src['file_path']).read_bytes()==original
+        rows={r['block_id']:r for r in con.execute('SELECT * FROM translations WHERE source_id=?',(sid,))}
+        assert all(r['version_id'] and r['original_bbox'] and r['source_hash']==hashlib.sha256(original).hexdigest() for r in rows.values())
+    with fitz.open(stream=response.content,filetype='pdf') as output:
+        assert len(output)==report['japanese_page_count']
+        assert output.get_toc() and all(1<=item[2]<=len(output) for item in output.get_toc())
+        assert '□' not in ''.join(p.get_text() for p in output) and '�' not in ''.join(p.get_text() for p in output)
+        for unit in report['units']:
+            assert unit['placements'] and unit['section'] is not None
+            if unit['status']=='translated':
+                extracted=''.join(output[p['japanese_page']-1].get_text('text',clip=fitz.Rect(p['japanese_bbox']['rect'])) for p in unit['placements'])
+                assert norm(extracted)==norm(rows[unit['block_id']]['translated_text'])
+                assert unit['font_size']>=10
+        for asset in report['assets']:
+            assert asset['vector_preserved']
+            if asset['kind'] in ('figure','table') and kind in ('reflow_demo','reader_detail'):
+                assert output[asset['japanese_page']-1].get_drawings()
+            for bid in asset['caption_block_ids']:
+                caption=next(u for u in report['units'] if u['block_id']==bid)
+                assert all(p['japanese_page']==asset['japanese_page'] for p in caption['placements'])
+        if kind in ('reader_detail','reflow_demo'):
+            assert '66.012345' in ''.join(p.get_text() for p in output)
+            assert {'figure','table','equation'} <= {a['kind'] for a in report['assets']}
+    assert all(q['source_text_preserved'] and q['native_size_preserved'] and q['mean_pixel_difference']<=.2 for q in report['quality']['visuals'])
 
 
-@pytest.mark.parametrize('rotation', [90,180,270])
-def test_rotated_cropbox_preserves_selected_and_unselected(client, rotation):
-    data = make_japanese_fixture('simple',rotation=rotation,crop=True)
-    status,r=generate(client,upload(client,data),[1])
+@pytest.mark.parametrize('rotation',[90,180,270])
+def test_rotated_cropbox_source_geometry_kept_and_visuals_reflow(client,rotation):
+    data=make_japanese_fixture('reflow_demo',rotation=rotation,crop=True)
+    sid=upload(client,data); status,r=generate(client,sid,[1,2,3])
     assert status['state']=='preview_ready',status
-    with fitz.open(stream=data,filetype='pdf') as a,fitz.open(stream=r.content,filetype='pdf') as b:
-        assert a[0].cropbox == b[0].cropbox and b[0].rotation == rotation
-        assert compare_pixels(a[1],b[1],[])['changed_pixels']==0
+    assert any(u['bbox']['rotation']==rotation for u in status['report']['units'] if u['page']==1)
+    assert client.get(f'/api/sources/{sid}/file').content==data
+    with fitz.open(stream=r.content,filetype='pdf') as result: assert all(p.rotation==0 for p in result)
 
 
-@pytest.mark.parametrize('kind', ['near','overlap','symbol','unruled'])
-def test_ambiguous_regions_remain_original(client,kind):
-    data=make_japanese_fixture(kind)
-    status,r=generate(client,upload(client,data),[1])
+@pytest.mark.parametrize('kind',['near','overlap','symbol','unruled'])
+def test_ambiguous_or_protected_display_is_retained_and_mapped(client,kind):
+    data=make_japanese_fixture(kind);sid=upload(client,data)
+    status,r=generate(client,sid,[1])
     assert status['state']=='preview_ready',status
-    assert any(u['status'].startswith('skipped_') for u in status['report']['units'])
-    with fitz.open(stream=data,filetype='pdf') as a,fitz.open(stream=r.content,filetype='pdf') as b:
-        rect=(30,440,550,550) if kind in ('symbol','unruled') else (30,290,550,550)
-        assert a[0].get_pixmap(clip=rect,dpi=200).samples==b[0].get_pixmap(clip=rect,dpi=200).samples
+    assert status['report']['assets']
+    assert all(q['mean_pixel_difference']<=.2 for q in status['report']['quality']['visuals'])
+    if kind=='unruled':
+        with fitz.open(stream=r.content,filetype='pdf') as doc:
+            text=''.join(p.get_text() for p in doc)
+            assert 'SyntheticGPT' in text and 'LoRA-ViT' in text and '91.012345' in text
 
 
 def test_no_text_cannot_claim_ready(client):
@@ -179,17 +178,27 @@ class FaultRuntime(MockRuntime):
         yield TurnEvent('completed',session.id,'t')
 
 
-@pytest.mark.parametrize('mode,status_reason',[('overflow','minimum_readable_size'),('missing_glyph','missing_glyph')])
-def test_unplaceable_translation_retains_original_and_cached_text(client,mode,status_reason):
-    runtime=FaultRuntime(mode); client.app.state.ai_runtime=runtime
-    sid=upload(client,make_japanese_fixture(mode)); status,r=generate(client,sid,[1])
+def test_long_japanese_flows_to_more_pages_without_shrinking_and_reuses_cache(client):
+    runtime=FaultRuntime('overflow');client.app.state.ai_runtime=runtime
+    sid=upload(client,make_japanese_fixture('overflow'));status,r=generate(client,sid,[1])
     assert status['state']=='preview_ready',status
-    failed=next(u for u in status['report']['units'] if u['reason']==status_reason)
+    assert status['report']['japanese_page_count']>status['report']['original_page_count']
+    assert not status['report']['counts'].get('overflow')
+    body=next(u for u in status['report']['units'] if len(u['placements'])>1)
+    assert body['status']=='translated' and body['font_size']==11
     with fitz.open(stream=r.content,filetype='pdf') as doc:
-        assert 'The synthetic method' in doc[0].get_text('text',clip=fitz.Rect(failed['bbox']['rect']))
-    count=len(runtime.inputs)
-    generate(client,sid,[1],retry_failed=True)
-    assert len(runtime.inputs)==count  # layout overflow doesn't repeat an AI turn
+        text=''.join(doc[p['japanese_page']-1].get_text('text',clip=fitz.Rect(p['japanese_bbox']['rect'])) for p in body['placements'])
+        assert norm(text)==norm('非常に長い日本語文章。'*1000)
+    count=len(runtime.inputs);generate(client,sid,[1],retry_failed=True);assert len(runtime.inputs)==count
+
+
+def test_missing_glyph_retains_original_display_with_reason(client):
+    runtime=FaultRuntime('missing_glyph');client.app.state.ai_runtime=runtime
+    sid=upload(client,make_japanese_fixture('missing_glyph'));status,r=generate(client,sid,[1])
+    assert status['state']=='preview_ready',status
+    unit=next(u for u in status['report']['units'] if u['reason']=='missing_glyph')
+    with fitz.open(stream=r.content,filetype='pdf') as doc:
+        assert 'The synthetic method' in doc[unit['placements'][0]['japanese_page']-1].get_text()
 
 
 def test_bounded_retry_only_uncertain_units_and_success_cache(client):
@@ -273,16 +282,16 @@ def test_atomic_publication_failure_keeps_original_and_can_retry(client,monkeypa
     assert generate(client,sid,[1],retry_failed=True)[0]['state']=='preview_ready'
 
 
-def test_pixels_outside_allowed_boxes_reject_whole_pdf(client,monkeypatch):
+def test_text_missing_or_duplicated_cannot_be_published(client,monkeypatch):
     import app.japanese_pdf as engine
-    original_place=engine.place_block
-    def unsafe(document,*args):
-        original_place(document,*args)
-        document[0].draw_line((20,600),(400,600),width=2)
-    monkeypatch.setattr(engine,'place_block',unsafe)
-    sid=upload(client,make_japanese_fixture('simple')); original=client.get(f'/api/sources/{sid}/file').content
+    render=engine.Reflow.paragraph
+    def duplicate(self,unit):
+        render(self,unit)
+        unit['placements'].append(unit['placements'][0].copy())
+    monkeypatch.setattr(engine.Reflow,'paragraph',duplicate)
+    sid=upload(client,make_japanese_fixture('simple'));original=client.get(f'/api/sources/{sid}/file').content
     status,r=generate(client,sid,[1])
-    assert status['state']=='failed' and status['error']=='changes_outside_text_bbox'
+    assert status['state']=='failed' and status['error']=='text_missing_or_duplicate'
     assert r.status_code==404 and client.get(f'/api/sources/{sid}/file').content==original
     assert not list(generated_dir().glob('*.pdf'))
 
@@ -316,3 +325,94 @@ def test_english_legacy_cache_cannot_be_counted_as_japanese(client):
     assert unit['status']=='failed' and unit['reason']=='cached_not_japanese'
     with fitz.open(stream=r.content,filetype='pdf') as pdf:
         assert 'This generated document' in pdf[0].get_text()
+
+
+def test_legacy_fixed_bbox_artifact_retained_but_not_reused_for_reflow(client):
+    sid=upload(client,make_japanese_fixture('simple'));first,pdf=generate(client,sid,[1])
+    token=first['generation_id']
+    with closing(get_db()) as con:
+        report=first['report'];report.pop('layout_version')
+        con.execute('UPDATE japanese_pdf_generations SET report_json=? WHERE id=?',(json.dumps(report),token));con.commit()
+    fresh,other=generate(client,sid,[1])
+    assert fresh['generation_id']!=token and fresh['report']['layout_version']=='reflow-1'
+    assert client.get(f'/api/sources/{sid}/japanese-pdf/{token}/file').content==pdf.content
+    assert len(fresh['artifacts'])==2
+
+
+def test_ambiguous_caption_preserves_complete_source_page_and_reports_unresolved(client):
+    from tests.fixtures.pdf_factory import _text
+    with fitz.open() as doc:
+        p=doc.new_page(width=595,height=842)
+        _text(p,(40,30,555,70),'Abstract',size=18,bold=True)
+        for x in (40,300): p.draw_rect((x,150,x+200,300),color=(0,0,0),fill=(.8,.9,1))
+        _text(p,(40,315,555,355),'Figure 1. Synthetic input-encoder-output architecture.')
+        q=doc.new_page(width=595,height=842)
+        _text(q,(40,30,555,70),'1 Introduction',size=18,bold=True)
+        _text(q,(40,100,555,200),BODY)
+        original=doc.tobytes()
+    status,r=generate(client,upload(client,original),[1,2])
+    assert status['state']=='preview_ready',status
+    asset=next(a for a in status['report']['assets'] if a['source_page']==1)
+    assert asset['status']=='unresolved' and asset['reason']=='ambiguous_caption'
+    assert asset['source_bbox']==[0,0,595,842] and not asset['caption_block_ids']
+    assert any(q['asset_id']==asset['id'] and q['source_text_preserved'] for q in status['report']['quality']['visuals'])
+
+
+def test_layout_overlap_cannot_be_published(client,monkeypatch):
+    import app.japanese_pdf as engine
+    paragraph=engine.Reflow.paragraph
+    def overlap(self,unit):
+        paragraph(self,unit)
+        self.flow.append(dict(self.flow[-1]))
+    monkeypatch.setattr(engine.Reflow,'paragraph',overlap)
+    status,pdf=generate(client,upload(client,make_japanese_fixture('simple')),[1])
+    assert status['state']=='failed' and status['error']=='layout_overlap' and pdf.status_code==404
+
+
+def test_visible_annotation_appearance_is_preserved(client):
+    from tests.fixtures.pdf_factory import _text
+    with fitz.open() as doc:
+        p=doc.new_page(width=595,height=842)
+        _text(p,(40,40,555,90),'Abstract',size=18,bold=True)
+        a=p.add_rect_annot((40,150,400,300));a.set_colors(stroke=(0,0,0),fill=(1,1,0));a.update()
+        q=doc.new_page(width=595,height=842)
+        _text(q,(40,40,555,90),'1 Introduction',size=18,bold=True)
+        _text(q,(40,150,555,300),BODY)
+        original=doc.tobytes()
+    status,_=generate(client,upload(client,original),[1,2])
+    assert status['state']=='preview_ready',status
+    asset=next(a for a in status['report']['assets'] if a['source_page']==1)
+    assert asset['rasterize_annotations'] and not asset['vector_preserved']
+    assert asset['reason']=='annotations_present'
+
+
+def test_multiline_caption_continuation_stays_with_visual(client):
+    from tests.fixtures.pdf_factory import _text
+    with fitz.open() as doc:
+        p=doc.new_page(width=595,height=842)
+        _text(p,(40,30,555,70),'Abstract',size=18,bold=True)
+        _text(p,(40,90,555,130),BODY)
+        p.draw_rect((40,200,550,300),color=(0,0,0))
+        _text(p,(40,315,555,345),'Figure 1. Synthetic input-encoder-output architecture')
+        _text(p,(40,331,555,365),'with a frozen backbone in a few-shot setting.')
+        data=doc.tobytes()
+    # These synthetic caption strings aren't in the deterministic mock dictionary:
+    # retain their English text, keep both blocks beside the same original visual.
+    status,r=generate(client,upload(client,data),[1])
+    assert status['state']=='preview_ready',status
+    asset=next(a for a in status['report']['assets'] if a['caption_block_ids'])
+    assert len(asset['caption_block_ids'])==2
+    assert asset['caption_status']=='untranslated'
+    with fitz.open(stream=r.content,filetype='pdf') as pdf:
+        page=pdf[asset['japanese_page']-1].get_text()
+        assert 'Figure 1.' in page and 'with a frozen backbone' in page
+
+
+def test_visual_crop_drops_hidden_text_even_in_single_paint_operation():
+    from app.japanese_pdf import cropped_visual
+    with fitz.open() as original:
+        page=original.new_page()
+        page.insert_text((40,60),['Outside before','y = x + b (1)','Outside after'],fontsize=11,lineheight=2)
+        with cropped_visual(page,fitz.Rect(38,68,120,88)) as crop:
+            assert crop[0].get_text(clip=fitz.INFINITE_RECT()).strip()=='y = x + b (1)'
+            assert 'Outside before' in original[0].get_text() and 'Outside after' in original[0].get_text()

@@ -106,6 +106,23 @@ export function rememberPosition() {
 export function refresh() { if (session) reflow(session, true); }
 export function pageCount() { return session?.records.size || 0; }
 
+// Search the active PDF's selectable text, including reflow pages not yet drawn.
+export async function findTextMatches(query) {
+  const current=session, needle=normalizeWhitespace(query).trim();
+  if (!current?.doc || !needle) return [];
+  const matches=[];
+  try {
+    for (let num=1;num<=current.doc.numPages;num++) {
+      const page=await current.doc.getPage(num);
+      if (current.disposed) return [];
+      const text=normalizeWhitespace((await page.getTextContent()).items.map(i=>i.str || "").join(""));
+      if (text.includes(needle)) matches.push({page:num,quote:query});
+      page.cleanup();
+    }
+  } catch (error) { if (!current.disposed) throw error; }
+  return current.disposed ? [] : matches;
+}
+
 function capturePosition(s) {
   const box = s.container.getBoundingClientRect();
   const cx = box.left + s.container.clientWidth / 2;

@@ -17,11 +17,13 @@ import * as qa from "../components/qa.js";
 import * as summary from "../components/summary.js";
 import * as paperbrief from "../components/paperbrief.js";
 import { openImportBridge } from "../components/importbridge.js";
+import { mapPosition, originalSelection } from "../pdfalignment.js";
 import { createJapanesePdfControls } from "../components/japanesepdf.js";
 import * as note from "../components/note.js";
 
 let readerState = null; // { sourceId, source, doc, viewMode, activeTab, ui, els }
 let searchState = { query: "", matches: [], idx: -1 };
+let searchRevision = 0;
 let activeDrag = null; // pane-resize drag context (module-level: see wireDivider/mousemove below)
 
 export async function render(container, sourceId, isCurrent = () => true) {
@@ -231,13 +233,13 @@ function buildLayout(container) {
     const mounted = readerState;
     pdfControls.hidden = mounted.viewMode !== "pdf";
     mounted.pdfLanguage = "original";
-    mounted.pdfReady = mountPdf(mounted, api.fileUrl(source.id), mounted.ui.pdfView || { scrollTop: mounted.ui.scrollTop });
+    mounted.pdfReady = mountPdf(mounted, api.fileUrl(source.id), mounted.ui.pdfViews?.original || (mounted.ui.pdfLanguage === "japanese" ? {} : mounted.ui.pdfView) || { scrollTop: mounted.ui.scrollTop });
     mounted.japaneseControls.ready.then(async () => {
       if (readerState !== mounted || mounted.pdfLanguageTouched || mounted.ui.pdfLanguage !== "japanese" || new URLSearchParams(location.hash.split("?")[1] || "").has("evidence")) return;
       const artifact = mounted.japaneseControls.getArtifact();
       if (artifact?.state === "preview_ready") {
         const mode = mounted.viewMode;
-        await switchPdfLanguage("japanese", artifact);
+        await switchPdfLanguage("japanese", artifact, true);
         if (readerState === mounted && mode === "block") setViewMode("block");
       }
     });
@@ -245,17 +247,20 @@ function buildLayout(container) {
 }
 
 function mountPdf(mounted, fileUrl, view) {
+  const viewKey=mounted.pdfLanguage === "japanese" ? "japanese:"+mounted.pdfArtifact.generation_id : "original";
   return pdfviewer.mount(mounted.els.pdfContainer, {
     fileUrl, view,
     onChange: (next) => {
       if (readerState !== mounted) return;
       mounted.els.pdfControls.update(next);
-      saveReaderUi(mounted.sourceId, { pdfView: { mode: next.mode, zoom: next.zoom, position: next.position } });
+      const saved={ mode:next.mode, zoom:next.zoom, position:next.position };
+      saveReaderUi(mounted.sourceId, { pdfView:saved,
+        pdfViews:{...loadReaderUi(mounted.sourceId).pdfViews,[viewKey]:saved} });
     },
   });
 }
 
-async function switchPdfLanguage(language, artifact = null) {
+async function switchPdfLanguage(language, artifact = null, restore = false) {
   const mounted = readerState;
   if (!mounted || mounted.source.type !== "pdf") return;
   mounted.pdfLanguageTouched = true;
@@ -265,8 +270,19 @@ async function switchPdfLanguage(language, artifact = null) {
     await mounted.pdfReady; return;
   }
   pdfviewer.rememberPosition();
-  const view = loadReaderUi(mounted.sourceId).pdfView || mounted.ui.pdfView;
+  const ui=loadReaderUi(mounted.sourceId);
+  let view=ui.pdfView || mounted.ui.pdfView || {};
+  const report=language === "japanese" ? artifact?.report : mounted.pdfArtifact?.report;
+  if (restore && ui.pdfViews?.["japanese:"+token]) view=ui.pdfViews["japanese:"+token];
+  else if (mounted.pdfLanguage !== language) {
+    const position=mapPosition(report,view.position,language === "japanese" ? "toJapanese" : "toOriginal");
+    view={...view,position:position || ui.pdfViews?.[language === "original" ? "original" : "japanese:"+token]?.position};
+    if (language === "japanese" && report?.layout_version && !report.selected_pages.includes(ui.pdfView?.position?.page))
+      toast("この原文ページは試作対象外です。近い対象箇所の日本語を表示しました。");
+  }
   // mount unmounts the sole previous controller synchronously, then loads anew.
+  searchRevision++;
+  searchState={query:"",matches:[],idx:-1};
   mounted.pdfLanguage = language;
   mounted.pdfArtifact = language === "japanese" ? artifact : null;
   mounted.japaneseControls.setLanguage(language);
@@ -279,14 +295,11 @@ async function switchPdfLanguage(language, artifact = null) {
 async function showOriginalSelection(page, bbox) {
   const mounted = readerState;
   if (!mounted) return;
-  const r = bbox?.rect;
-  const matches = mounted.pdfArtifact?.report.units.filter(u => u.page === page && u.bbox?.rect && r &&
-    r[0] >= u.bbox.rect[0] - 2 && r[2] <= u.bbox.rect[2] + 2 &&
-    r[1] >= u.bbox.rect[1] - 2 && r[3] <= u.bbox.rect[3] + 2) || [];
+  const anchor=originalSelection(mounted.pdfArtifact?.report,page,bbox);
   await switchPdfLanguage("original");
   if (readerState !== mounted) return;
-  if (matches.length === 1) resolveAnchor({ blockId: matches[0].block_id, sourceVersion: mounted.doc.version.id });
-  else { pdfviewer.scrollToPage(page); toast("原文の同じページを表示しました。対応ブロックは未確定です。"); }
+  if (anchor) resolveAnchor({...anchor,sourceVersion:mounted.doc.version.id});
+  else toast("対応する原文ブロックを確定できませんでした。原文の対応位置を表示しています。");
 }
 
 function buildHeader(source) {
@@ -451,24 +464,37 @@ function restoreScroll() {
 
 // ---------- in-document search ----------
 
-function runSearch(query) {
-  searchState = { query, matches: docviewer.findTextMatches(query), idx: -1 };
-  if (readerState.viewMode === "block") docviewer.markSearchMatches(searchState.matches, -1);
+async function runSearch(query) {
+  const mounted=readerState, revision=++searchRevision;
+  const japanese=mounted?.viewMode === "pdf" && mounted.pdfLanguage === "japanese";
+  let matches;
+  try { matches=japanese ? await pdfviewer.findTextMatches(query) : docviewer.findTextMatches(query); }
+  catch { if (readerState === mounted) toast("PDF内検索に失敗しました。再試行してください。"); return; }
+  if (readerState !== mounted || revision !== searchRevision) return;
+  searchState = { query, matches, idx: -1, japanese };
+  if (mounted.viewMode === "block") docviewer.markSearchMatches(matches, -1);
   updateSearchCount();
 }
 
-function searchNext() {
+async function searchNext() {
+  const mounted=readerState;
+  if (!mounted) return;
   const q = readerState.els.searchInput.value.trim();
-  if (q !== searchState.query) runSearch(q);
+  const japanese=readerState.viewMode === "pdf" && readerState.pdfLanguage === "japanese";
+  if (q !== searchState.query || japanese !== searchState.japanese) await runSearch(q);
+  if (readerState !== mounted) return;
   if (!searchState.matches.length) { updateSearchCount(); return; }
   searchState.idx = (searchState.idx + 1) % searchState.matches.length;
-  const blockIdx = searchState.matches[searchState.idx];
-  const block = readerState.doc.blocks.find((b) => b.idx === blockIdx);
-  if (readerState.viewMode === "block") {
-    docviewer.markSearchMatches(searchState.matches, blockIdx);
-    docviewer.jumpToBlockIdx(blockIdx);
-  } else if (readerState.viewMode === "pdf" && block && block.page) {
-    pdfviewer.scrollToPage(block.page, block.text.slice(0, 80));
+  if (searchState.japanese) {
+    const match=searchState.matches[searchState.idx];
+    pdfviewer.scrollToPage(match.page,match.quote);
+  } else {
+    const blockIdx = searchState.matches[searchState.idx];
+    const block = readerState.doc.blocks.find((b) => b.idx === blockIdx);
+    if (readerState.viewMode === "block") {
+      docviewer.markSearchMatches(searchState.matches, blockIdx);
+      docviewer.jumpToBlockIdx(blockIdx);
+    } else if (block?.page) pdfviewer.scrollToPage(block.page,block.text.slice(0,80));
   }
   updateSearchCount();
 }

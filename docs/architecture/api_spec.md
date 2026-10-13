@@ -123,3 +123,5 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 - GET `/api/sources/{source_id}/japanese-pdf/{generation_id}/file`: version/hash/ownershipを照合してapplication/pdf。`?download=true`でattachment。未完成は404、stale/破損は409。
 
 詳細とWindows操作は[日本語PDF試作](../redesign/v0.4/japanese_pdf_prototype.md)。
+
+日本語生成方式はreflow-1に更新した。pagesは原文ページ番号で、指定した最大3ページ相当のみを収録する。派生PDFのページ数・段組は原文と異なる。reportにlayout_version、japanese_page_count、units[].placements、assets[]、qualityを返す。旧固定bbox成果物もsource/hashが一致する限り取得できるが、新生成のcacheとして返さない。

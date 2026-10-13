@@ -131,3 +131,5 @@ created_at/updated_atを保存する。stateはgenerating / preview_ready / fail
 translation_idは既存translationsを指す。reportに訳文は重複保存しない。成果物はdata/generated/japanese_pdfへ置く。
 
 [設計・quality・fallback詳細](../redesign/v0.4/japanese_pdf_prototype.md)。
+
+再組版への変更でもschemaはv5を維持する。report_json.layout_version=reflow-1、units[].placementsに日本語ページ/bbox/part、asset_idとsectionを保存する。assets[]に原文geometry・caption/block対応・日本語geometryを保持する。配置は生成物ごとの情報であり、translationsの原文bboxやSourceAnchorを日本語座標に書き換えない。旧固定bbox生成物は保持し、新方式のcacheとしては使わない。

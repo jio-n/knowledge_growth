@@ -49,6 +49,7 @@ const READER_DEFAULTS = {
   blockScrollTop: null,
   pdfLanguage: "original",
   japaneseGenerationId: null,
+  pdfViews: {},       // original and japanese:<generationId> positions
   pdfView: null,       // { mode: width|page|custom, zoom, position: {page,x,y} }
   sidePanelCollapsed: false,
   activeTab: "summary", // summary | qa | note

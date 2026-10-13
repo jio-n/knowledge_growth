@@ -292,7 +292,7 @@ AI再生成・preview/confirm/commit・field provenance・user edit保護は実�
 
 ## T3-03 Japanese Paper View
 
-最大3ページのPDF生成PoCは実装済み（本文・安全なCaption置換、保護、overflow、原文確認）。
+最大3原文ページ相当のPDF再組版PoCは実装済み（固定サイズ本文の改ページ、原物/Caption group、block対応、原文確認）。
 全文Japanese Paper Viewは後続。[試作と検証](japanese_pdf_prototype.md)。
 - [ ] 原PDFのページ構造を参照した日本語表示
 - [ ] Figure/Table/Equation保持
