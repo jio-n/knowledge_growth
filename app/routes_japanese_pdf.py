@@ -90,7 +90,9 @@ def run_generation(token, runtime):
         final.parent.mkdir(parents=True, exist_ok=True)
         report = generate_pdf(original, units, temporary)
         failure_stage = 'publication'
-        with temporary.open('rb') as file:
+        # Windows os.fsync uses _commit / FlushFileBuffers, which requires write access.
+        # Read-only 'rb' succeeds on POSIX but can fail with PermissionError on Windows.
+        with temporary.open('r+b') as file:
             os.fsync(file.fileno())
         file_hash = digest(temporary.read_bytes())
         with closing(get_db()) as con:
