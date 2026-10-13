@@ -39,8 +39,9 @@ def test_page_bbox_and_span_coordinates(name):
         g = b.bbox
         assert g["coordinate_system"] == "pymupdf_unrotated" and g["units"] == "pt"
         x0, y0, x1, y1 = g["rect"]
-        assert 0 <= x0 < x1 <= 595 and 0 <= y0 < y1 <= 842
-        assert b.page in (1, 2)
+        width, height = g["page_rect"][2:]
+        assert 0 <= x0 < x1 <= width and 0 <= y0 < y1 <= height
+        assert 1 <= b.page <= (60 if name == "long_reader" else 2)
         for span in g["spans"]:
             a, z, c, d = span["rect"]
             assert x0 <= a < c <= x1 and y0 <= z < d <= y1

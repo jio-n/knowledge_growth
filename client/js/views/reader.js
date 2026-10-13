@@ -82,6 +82,7 @@ export async function render(container, sourceId, isCurrent = () => true) {
 }
 
 export function unmount() {
+  persistReaderPosition();
   paperbrief.unmount();
   summary.unmount();
   qa.unmount();
@@ -125,6 +126,8 @@ function buildLayout(container) {
   const blockContainer = el("div", { class: "doc-scroll" });
   const pdfContainer = el("div", { class: "pdf-scroll", hidden: true });
 
+  const panelToggle = el("button", { class: "btn btn--sm", type: "button",
+    onClick: () => toggleSidePanel() }, "PDFを全幅で読む");
   const toolbarChildren = [];
   let toggleButtons = null;
   if (source.type === "pdf") {
@@ -134,6 +137,43 @@ function buildLayout(container) {
     textToggleBtn.addEventListener("click", () => setViewMode("block"));
     toggleButtons = { pdf: pdfToggleBtn, block: textToggleBtn };
     toolbarChildren.push(el("div", { class: "doc-toolbar__toggle" }, pdfToggleBtn, textToggleBtn));
+  }
+  let pdfControls = null;
+  if (source.type === "pdf") {
+    const zoomInput = el("input", { type: "number", min: "75", max: "250", step: "5",
+      "aria-label": "PDF倍率（%）", title: "75〜250%を入力。幅・ページに合わせる場合は自動計算。",
+      onChange: (e) => { e.target.value = Math.round(pdfviewer.setZoom(Number(e.target.value) / 100) * 100); },
+      onKeydown: (e) => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } },
+    });
+    const widthButton = el("button", { type: "button", class: "btn btn--sm",
+      onClick: () => pdfviewer.fit("width") }, "幅に合わせる");
+    const pageButton = el("button", { type: "button", class: "btn btn--sm",
+      onClick: () => pdfviewer.fit("page") }, "ページ全体");
+    const pageInput = el("input", { type: "number", min: "1", "aria-label": "PDFページ番号",
+      onChange: (e) => {
+        const num = Math.min(pdfviewer.pageCount(), Math.max(1, Math.floor(Number(e.target.value) || 1)));
+        e.target.value = num;
+        pdfviewer.scrollToPage(num);
+      },
+      onKeydown: (e) => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } },
+    });
+    const pageTotal = el("span", {}, "/ …");
+    pdfControls = el("div", { class: "pdf-controls", role: "group", "aria-label": "PDF表示設定" },
+      el("button", { type: "button", class: "btn btn--sm", "aria-label": "PDFを縮小",
+        onClick: () => pdfviewer.setZoom((Number(zoomInput.value) - 25) / 100) }, "−"),
+      zoomInput, el("span", {}, "%"),
+      el("button", { type: "button", class: "btn btn--sm", "aria-label": "PDFを拡大",
+        onClick: () => pdfviewer.setZoom((Number(zoomInput.value) + 25) / 100) }, "+"),
+      widthButton, pageButton, pageInput, pageTotal);
+    pdfControls.update = (view) => {
+      if (document.activeElement !== zoomInput) zoomInput.value = view.percent;
+      if (document.activeElement !== pageInput) pageInput.value = view.position?.page || 1;
+      pageInput.max = view.pages;
+      pageTotal.textContent = `/ ${view.pages}`;
+      widthButton.setAttribute("aria-pressed", String(view.mode === "width"));
+      pageButton.setAttribute("aria-pressed", String(view.mode === "page"));
+    };
+    toolbarChildren.push(pdfControls, panelToggle);
   }
   toolbarChildren.push(el("div", { class: "doc-toolbar__search" }, searchInput, searchNextBtn, searchCount));
   const toolbar = el("div", { class: "doc-toolbar" }, ...toolbarChildren);
@@ -158,7 +198,7 @@ function buildLayout(container) {
 
   readerState.els = {
     leftPane, rightPane, blockContainer, pdfContainer, divider, split,
-    tabsHeader, briefPanel, summaryPanel, qaPanel, notePanel, searchInput, searchCount, toggleButtons,
+    tabsHeader, briefPanel, summaryPanel, qaPanel, notePanel, searchInput, searchCount, toggleButtons, pdfControls, panelToggle,
   };
 
   applyPaneWidth();
@@ -172,7 +212,18 @@ function buildLayout(container) {
     toggleButtons.block.classList.toggle("active", readerState.viewMode === "block");
   }
   if (source.type === "pdf") {
-    readerState.pdfReady = pdfviewer.mount(pdfContainer, { fileUrl: api.fileUrl(source.id) });
+    const mounted = readerState;
+    pdfControls.hidden = mounted.viewMode !== "pdf";
+    mounted.pdfReady = pdfviewer.mount(pdfContainer, {
+      fileUrl: api.fileUrl(source.id),
+      view: { ...mounted.ui.pdfView, position: mounted.ui.pdfView?.position,
+        scrollTop: mounted.ui.pdfView ? 0 : mounted.ui.scrollTop },
+      onChange: (view) => {
+        if (readerState !== mounted) return;
+        pdfControls.update(view);
+        saveReaderUi(source.id, { pdfView: { mode: view.mode, zoom: view.zoom, position: view.position } });
+      },
+    });
   }
 }
 
@@ -214,6 +265,7 @@ function buildHeader(source) {
 
 function setViewMode(mode) {
   if (!readerState) return;
+  pdfviewer.rememberPosition();
   readerState.viewMode = mode;
   readerState.els.blockContainer.hidden = mode !== "block";
   readerState.els.pdfContainer.hidden = mode !== "pdf";
@@ -221,7 +273,10 @@ function setViewMode(mode) {
     readerState.els.toggleButtons.pdf.classList.toggle("active", mode === "pdf");
     readerState.els.toggleButtons.block.classList.toggle("active", mode === "block");
   }
+  if (mode === "block") readerState.els.blockContainer.scrollTop = loadReaderUi(readerState.sourceId).blockScrollTop || 0;
+  if (readerState.els.pdfControls) readerState.els.pdfControls.hidden = mode !== "pdf";
   saveReaderUi(readerState.sourceId, { pdfMode: mode });
+  pdfviewer.refresh();
 }
 
 // ---------- tabs ----------
@@ -271,6 +326,7 @@ document.addEventListener("mousemove", (e) => {
   const rect = activeDrag.splitEl.getBoundingClientRect();
   let pct = ((e.clientX - rect.left) / rect.width) * 100;
   pct = Math.min(80, Math.max(20, pct));
+  pdfviewer.rememberPosition();
   activeDrag.pane.style.flex = `0 0 ${pct}%`;
   activeDrag.pct = pct;
 });
@@ -278,12 +334,28 @@ document.addEventListener("mouseup", () => {
   if (!activeDrag) return;
   activeDrag.divider.classList.remove("dragging");
   saveReaderUi(activeDrag.sourceId, { paneWidthPct: activeDrag.pct });
+  if (readerState?.sourceId === activeDrag.sourceId) readerState.ui.paneWidthPct = activeDrag.pct;
+  pdfviewer.refresh();
   activeDrag = null;
 });
 
 function applyPaneWidth() {
   const pct = readerState.ui.paneWidthPct || 55;
-  readerState.els.leftPane.style.flex = `0 0 ${pct}%`;
+  const { leftPane, rightPane, divider, panelToggle, split } = readerState.els;
+  const collapsed = !!readerState.ui.sidePanelCollapsed;
+  leftPane.style.flex = collapsed ? "1 1 100%" : `0 0 ${pct}%`;
+  rightPane.hidden = divider.hidden = collapsed;
+  split.classList.toggle("reader-split--full", collapsed);
+  panelToggle.textContent = collapsed ? "サイドパネルを表示" : "PDFを全幅で読む";
+  panelToggle.setAttribute("aria-expanded", String(!collapsed));
+}
+function toggleSidePanel() {
+  if (!readerState) return;
+  pdfviewer.rememberPosition();
+  readerState.ui.sidePanelCollapsed = !readerState.ui.sidePanelCollapsed;
+  saveReaderUi(readerState.sourceId, { sidePanelCollapsed: readerState.ui.sidePanelCollapsed });
+  applyPaneWidth();
+  pdfviewer.refresh();
 }
 
 function wireDivider() {
@@ -300,20 +372,19 @@ function wireDivider() {
 
 // ---------- scroll persistence ----------
 
+function persistReaderPosition() {
+  if (!readerState?.els) return;
+  pdfviewer.rememberPosition();
+  if (!readerState.els.blockContainer.hidden) saveReaderUi(readerState.sourceId, { blockScrollTop: readerState.els.blockContainer.scrollTop });
+}
 function restoreScroll() {
-  const ui = readerState.ui;
-  const { blockContainer, pdfContainer } = readerState.els;
-  if (ui.scrollTop) {
-    const target = readerState.viewMode === "pdf" ? pdfContainer : blockContainer;
-    setTimeout(() => { target.scrollTop = ui.scrollTop; }, 300);
-  }
-  const onScroll = debounce(() => {
-    if (!readerState) return;
-    const active = readerState.viewMode === "pdf" ? pdfContainer : blockContainer;
-    saveReaderUi(readerState.sourceId, { scrollTop: active.scrollTop });
-  }, 400);
-  blockContainer.addEventListener("scroll", onScroll);
-  pdfContainer.addEventListener("scroll", onScroll);
+  const mounted = readerState;
+  const { blockContainer } = mounted.els;
+  blockContainer.scrollTop = mounted.ui.blockScrollTop ?? (mounted.viewMode === "block" ? mounted.ui.scrollTop : 0);
+  blockContainer.addEventListener("scroll", debounce(() => {
+    if (readerState !== mounted || blockContainer.hidden) return;
+    saveReaderUi(mounted.sourceId, { blockScrollTop: blockContainer.scrollTop });
+  }, 200));
 }
 
 // ---------- in-document search ----------
@@ -389,7 +460,7 @@ async function navigateBriefEvidence(anchor, kind = "resolved") {
     if (readerState !== mounted) return;
   }
   mounted.els.leftPane.querySelector(".brief-navigation-notice")?.remove();
-  mounted.els.pdfContainer.querySelectorAll(".pdf-evidence-marker").forEach((marker) => marker.remove());
+  pdfviewer.clearEvidence();
   if (kind === "candidate" || kind === "page_only") {
     mounted.els.leftPane.prepend(el("p", { class: "brief-navigation-notice", role: "status" },
       kind === "candidate" ? "候補の閲覧中 · 根拠未確定。保存済みEvidenceは変更されません。" : "ページのみ表示 · 根拠未確定。"));

@@ -296,10 +296,12 @@ AI再生成・preview/confirm/commit・field provenance・user edit保護は実�
 - [ ] 日本語blockクリック → 原文確認
 
 ## T3-04 Original PDF View強化
-- [ ] zoom
-- [ ] page jump
-- [ ] fit width / fit page
-- [ ] current semantic position保持
+- [x] zoom（高DPI・75〜250%・PDF.js再描画）
+- [x] page jump（未描画ページも対応）
+- [x] fit width / fit page、全幅表示
+- [x] 原文PDF内のpage＋ページ内相対位置保持（言語間の意味対応はT3-06）
+
+実装・検証・制約・Windows手順: [原文Reader改善](reader_hidpi_zoom.md)。
 
 ## T3-05 Compare View
 - [ ] Original / Japanese左右表示
@@ -518,10 +520,10 @@ answersへ記録:
 - [ ] provenance
 
 ## T10-03 Reopen restore
-- [ ] reading mode
-- [ ] semantic position
-- [ ] zoom
-- [ ] side panel
+- [x] 原文PDF／テキスト表示モード（Japanese／Compareは後続）
+- [ ] semantic position（原文PDFのpage＋相対位置は対応済み、言語間対応は後続）
+- [x] zoom
+- [x] side panel（開閉・選択タブ・分割幅）
 - [ ] active thread
 
 ---

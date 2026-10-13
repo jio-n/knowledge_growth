@@ -8,6 +8,10 @@
 - 理解ノートはMarkdown / JSONでエクスポート可能(ロックインなし)
 - AI runtime交換可能(Codex app-server + ChatGPT plan / no-AI / オフラインmock、API key不要)
 
+原文PDF Readerは高DPI描画、75〜250%ズーム、幅／ページに合わせる、全幅表示、
+ページ内位置と表示状態の復元に対応しています。
+[実装・検証・Windows確認手順](docs/redesign/v0.4/reader_hidpi_zoom.md)を参照してください。
+
 ## Windows: ワンクリック起動
 
 アプリ起動の前提は **Python 3.11+** のみです。開発用のPhase 1 resolverテストにはNode.js 18+を使います。
