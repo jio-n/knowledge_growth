@@ -68,3 +68,5 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [原文PDF Reader高DPI・ズーム・全幅表示](reader_hidpi_zoom.md): T3-04、T10-03のPDF状態復元、生成fixtureとbrowser回帰、Windows確認手順。
 
 - [日本語PDF試作](japanese_pdf_prototype.md): T3-01／T3-03 PoC、schema v5、再組版・保存・block対応切替、図表/Caption保持、Cloud fixture品質とWindows受入手順。
+
+- [日本語PDF翻訳の失敗診断・部分成功](japanese_translation_failures.md): Windows p.1の失敗を受けた分離retry・safe code・実機再試行。

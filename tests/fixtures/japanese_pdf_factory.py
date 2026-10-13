@@ -68,3 +68,16 @@ def make_japanese_fixture(kind='layout', rotation=0, crop=False):
         if crop: doc[0].set_cropbox((20, 20, 575, 822))
         doc[0].set_rotation(rotation)
         return doc.tobytes(garbage=4, deflate=True)
+
+
+def make_translation_diagnostic_fixture():
+    from tests.fixtures.japanese_translation_cases import TITLE, PARAGRAPH, CAPTION
+    with fitz.open() as doc:
+        p=doc.new_page(width=595,height=842)
+        _text(p,(40,35,555,105),TITLE,size=18,bold=True)
+        _text(p,(40,135,555,230),PARAGRAPH,size=11)
+        p.draw_rect((40,280,555,355),color=(0,0,0))
+        _text(p,(60,305,500,335),'GPT-4o   91.012345   MMAD',size=11)
+        _text(p,(40,380,555,430),CAPTION,size=11)
+        _text(p,(40,480,300,525),'y = W x + b (1)',size=14)
+        return doc.tobytes()

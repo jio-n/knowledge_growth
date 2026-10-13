@@ -3,7 +3,8 @@
 更新: 2026-10-13。T3-01 / T3-03 PoC、Draft PR #9。
 固定bboxへの原文置換を廃止し、内容と原物を保持する再組版へ変更した。
 Cloudで使ったのは独自の生成PDFと決定的mock訳のみ。
-Windows実機・MMAD・このPRの実ChatGPT翻訳品質は未確認で、merge前に確認する。
+本修正後のWindows実機・MMAD・実ChatGPT翻訳品質は未確認で、merge前に確認する。
+Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再試行](japanese_translation_failures.md)を追加した。
 
 ## 方針と画面
 
@@ -60,7 +61,8 @@ created_at / updated_at / translation_status / reasonを保持する。
 AIRuntime → RuntimeProvider、Codex app-server + ChatGPT plan、既存security isolation、
 JSON schema・block ID・数値token検証、finite batch/retryを維持した。
 モデルをハードコードせず、従量課金APIやAPIキーを追加していない。
-`prompts/japanese_pdf_v0_1.md`はそのまま研究翻訳に使用する。
+翻訳promptは`prompts/japanese_pdf_v0_2.md`。旧訳は保持する。
+unit別の検証・成功保存・分割retry、48呼出し/600秒の共通上限と安全なdiagnosticsを追加した。
 本文はuntrusted user JSONで、通常ログへ原文・訳文・AI応答を出さない。
 
 ## 内容・原物・Captionの検出
@@ -165,7 +167,7 @@ Paper Brief・Note・Q&A・HighlightからのEvidenceは必ず原文へ切り替
 Caption継続、対応の曖昧な2つの図、罫線なし表、接近/重複、CropBox＋90/180/270度回転、
 注釈の表示保持、欠字、文字なしPDFも検証する。
 
-固定bbox版baseline pytestは**376 passed**。最終pytestは**390 passed**。既存Starlette/httpx非推奨通知1件。
+固定bbox版baseline pytestは**376 passed**。再組版時点のpytestは**390 passed**。翻訳診断追加後は**449 passed**。既存Starlette/httpx非推奨通知1件。
 Chromiumの新再組版browserは**17項目成功**、Reader回帰20、Import/Brief34、Structured Brief17項目成功。
 各suiteのpageerrorは0件。日本語検索、選択、原文p.2→日本語p.1の対応、Evidenceの原文p.3への復帰、
 artifact別の位置復元、download、長文改ページ、連続20回切替を確認した。

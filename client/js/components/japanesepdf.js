@@ -20,12 +20,26 @@ const REASONS = {
   table_detection_failed: "表領域を確認できない", text_extraction_mismatch: "文字抽出を確認できない",
 };
 
+const TRANSLATION_ERRORS = {
+  ai_runtime_error: "AI Runtimeエラー", ai_rpc_error: "AI RPCエラー",
+  ai_timeout: "AI timeout", ai_incomplete_turn: "AI turn未完了", ai_cancelled: "AI turn中断",
+  invalid_json: "JSON形式不正", schema_mismatch: "schema不一致", block_id_mismatch: "block ID不一致",
+  numbers_changed: "数値検証失敗", citations_changed: "引用番号検証失敗",
+  references_changed: "図表・数式参照検証失敗", terms_changed: "専門用語検証失敗",
+  japanese_required: "日本語未生成", ai_uncertain: "AI uncertain応答",
+  translation_validation_error: "その他の翻訳検証エラー", output_too_large: "AI応答サイズ上限",
+  translation_attempt_limit: "翻訳回数上限", translation_time_limit: "翻訳時間上限",
+};
+Object.assign(REASONS, TRANSLATION_ERRORS);
+const STAGES = {source_validation:"原文確認",content_detection:"翻訳候補検出",translation:"AI翻訳・応答検証",pdf_layout:"PDF再組版・品質検証",publication:"PDF保存"};
+
 export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) {
   let disposed = false, timer, current = null, busy = false, language = "original";
   const original = el("button", { type: "button", class: "btn btn--sm", onClick: () => switchTo("original") }, "原文PDF");
   const japanese = el("button", { type: "button", class: "btn btn--sm", disabled: true, onClick: () => switchTo("japanese") }, "日本語PDF（試作）");
   const download = el("a", { class: "btn btn--sm", hidden: true, download: true }, "日本語PDFを保存");
   const status = el("p", { role: "status", class: "japanese-pdf-status" }, "日本語PDFは未生成です。原文の最大3ページ相当を日本語で再組版します。");
+  const diagnostics = el("p", {class:"japanese-pdf-diagnostics", role:"status", hidden:true});
   const pages = el("input", { type: "text", placeholder: "例: 1, 3, 5 または 1-3", "aria-label": "翻訳対象の原文ページ", required: true });
   const submit = el("button", { type: "submit", class: "btn btn--sm" }, "日本語PDFを生成");
   const retry = el("input", { type: "checkbox" });
@@ -51,7 +65,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     el("label", {}, retry, " 失敗ブロックを再試行（成功した訳は再利用）"));
   const setup = el("details", {}, el("summary", {}, "日本語版を試作"), form);
   const root = el("div", { class: "japanese-pdf-controls" },
-    el("div", { class: "japanese-pdf-actions" }, original, japanese, download, history), status, setup, report);
+    el("div", { class: "japanese-pdf-actions" }, original, japanese, download, history), status, diagnostics, setup, report);
 
   async function switchTo(next) {
     if (disposed || (next === "japanese" && current?.state !== "preview_ready")) return;
@@ -73,8 +87,21 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       const r = current.report;
       status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · 翻訳対象 ${r.counts.translated || 0}/${r.text_blocks}本文・Caption（${Math.round(r.translated_ratio * 100)}%） · 原物保持 ${(r.counts.skipped_protected || 0)+(r.counts.skipped_unsafe || 0)}領域 · 未翻訳 ${r.counts.failed || 0}ブロック · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · ${r.counts.translated ? "AI翻訳・原文確認推奨" : ""}`;
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
+    const d = current?.report?.diagnostics;
+    diagnostics.hidden = !d;
+    diagnostics.textContent = d ? [
+      ...(d.failure_stage ? [`失敗段階：${STAGES[d.failure_stage] || "生成"}`] : []),
+      `翻訳候補：${d.translation_candidates}件`, `AI翻訳成功：${d.ai_translation_succeeded}件`,
+      `保存済み訳再利用：${d.cached_translations}件`,
+      ...Object.entries(d.translation_failures || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"}（${Object.hasOwn(TRANSLATION_ERRORS,code) ? code : "translation_validation_error"}）：${count}件`),
+      `PDF配置成功：${d.pdf_placement_succeeded}件`, `図表・数式保護：${d.protected_units}件`,
+      `領域未解決：${d.unsafe_units}件`,
+      ...(d.stopped_by ? [`${TRANSLATION_ERRORS[d.stopped_by] || "再試行上限"}で停止`] : []),
+    ].join(" · ") : "";
     reportBody.textContent = "";
     if (current?.report) {
+      if (d) reportBody.append(el("p", {}, `AI呼出し：${d.runtime_calls || 0}回 · バッチ分割：${d.split_batches || 0}回。再試行中の検出件数（最終失敗数とは別）：` +
+        Object.entries(d.attempt_errors || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"} ${count}件`).join("、")));
       reportBody.append(el("p", {}, `日本語を含む生成ページ: ${current.report.translated_pages?.join(", ") || "なし"}。選択した原文ページ相当のみを収録します。図表・数式と未翻訳の内容は原物を保持します。`));
       for (const asset of current.report.assets || []) {
         reportBody.append(el("p", {}, `${asset.kind} · ${asset.status === "unresolved" ? "未解決・原物保持" : asset.kind === "equation" ? "数式の原物保持" : asset.caption_status === "untranslated" ? "Caption対応済み・未翻訳" : "Caption対応済み"} · 原文p.${asset.source_page} → 日本語p.${asset.japanese_page} · ${REASONS[asset.reason] || (asset.vector_preserved ? "ベクター原物を保持" : "原物の表示内容を保持")}`,

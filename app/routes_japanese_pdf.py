@@ -14,7 +14,7 @@ from .config import files_dir, generated_dir
 from .db import get_db, new_id, now
 from .import_bridge.validator import canonical
 from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
-from .japanese_translation import PDFError, save_unit, translate_units
+from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -65,6 +65,8 @@ def public(job):
 
 def run_generation(token, runtime):
     units = []
+    translation_stats = {}
+    failure_stage = 'source_validation'
     temporary = output_path(token).with_suffix('.tmp.pdf')
     final = output_path(token)
     source = version = None
@@ -76,10 +78,17 @@ def run_generation(token, runtime):
             if not matches(job, saved): raise PDFError('source_changed')
             source, version, blocks, original, _ = saved
         with fitz.open(stream=original, filetype='pdf') as document:
+            failure_stage = 'content_detection'
             units = detect_units(document, blocks, json.loads(job['pages_json']))
-        translate_units(runtime, source, version, units)
+        failure_stage = 'translation'
+        translate_units(runtime, source, version, units, stats=translation_stats)
+        if not any(u.get('translation_succeeded') for u in units):
+            if not any(u.get('translation_candidate') for u in units): failure_stage = 'content_detection'
+            raise PDFError('no_safe_translated_blocks')
+        failure_stage = 'pdf_layout'
         final.parent.mkdir(parents=True, exist_ok=True)
         report = generate_pdf(original, units, temporary)
+        failure_stage = 'publication'
         with temporary.open('rb') as file:
             os.fsync(file.fileno())
         file_hash = digest(temporary.read_bytes())
@@ -90,6 +99,7 @@ def run_generation(token, runtime):
                 raise PDFError('source_changed')
             for unit in units: save_unit(con, source, version, unit)
             for row, unit in zip(report['units'], units): row['translation_id'] = unit['translation_id']
+            report['diagnostics'] = translation_diagnostics(units, translation_stats, published=True)
             os.replace(temporary, final)  # same filesystem; DB never exposes a partial PDF
             con.execute("UPDATE japanese_pdf_generations SET state='preview_ready',file_hash=?,report_json=?,updated_at=? WHERE id=?",
                         (file_hash, canonical(report), now(), token))
@@ -108,6 +118,7 @@ def run_generation(token, runtime):
                         save_unit(con, source, version, unit)
                 report = {'counts': dict(Counter(u['status'] for u in units)), 'units': [{'block_id': u['block']['id'], 'page': u['block']['page'],
                           'status': u['status'], 'reason': u['reason']} for u in units]}
+                report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
                 con.execute("UPDATE japanese_pdf_generations SET state='failed',error=?,report_json=?,updated_at=? WHERE id=? AND state='generating'",
                             (code, canonical(report), now(), token))
                 con.commit()

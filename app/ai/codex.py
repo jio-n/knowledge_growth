@@ -106,11 +106,11 @@ class CodexRuntime(AIRuntime):
             self._tool_overrides = {"mcp_servers": {name: {"enabled": False} for name in servers}}
         except (KeyError, TypeError, ValueError): raise AIError("malformed_config") from None
 
-    def _read_account(self):
+    def _read_account(self, *, deadline=None):
         revision = self._auth_revision
         # Reread account state without proactively refreshing OAuth tokens.
         # UI/API refresh, notifications and restart all share this contract.
-        result = self.transport.request("account/read", {"refreshToken": False})
+        result = self.transport.request("account/read", {"refreshToken": False}, **({"deadline": deadline} if deadline is not None else {}))
         if "account" not in result: raise AIError("malformed_account")
         account = result["account"]
         if account is not None and not isinstance(account, dict): raise AIError("malformed_account")
@@ -122,10 +122,10 @@ class CodexRuntime(AIRuntime):
         self._error = None
         self._auth_dirty = revision != self._auth_revision
 
-    def status(self, *, refresh=False):
+    def status(self, *, refresh=False, deadline=None):
         with self._auth_lock:
             if (refresh or self._auth_dirty) and self._state in ("ready", "auth_required"):
-                try: self._read_account()
+                try: self._read_account(deadline=deadline)
                 except AIError as error:
                     self._failure(error.code)
             return RuntimeStatus(self.name, self._state,
@@ -135,8 +135,9 @@ class CodexRuntime(AIRuntime):
         return Capabilities(inference=True, streaming=True, cancellation=True,
                             authentication=True, resume=True, model_catalog=True)
 
-    def _require_ready(self):
-        if self.status().state != "ready": raise AIError(self._state)
+    def _require_ready(self, *, deadline=None):
+        status = self.status(deadline=deadline)
+        if status.state != "ready": raise AIError(status.error or self._state)
 
     def login(self):
         with self._auth_lock:
@@ -211,40 +212,49 @@ class CodexRuntime(AIRuntime):
             return Session(session_id, model)
         except (KeyError, TypeError, ValueError): raise AIError("malformed_session") from None
 
-    def _request_session(self, method, params):
+    def _request_session(self, method, params, *, deadline=None):
         try:
-            return self._session_result(self.transport.request(method, params))
+            return self._session_result(self.transport.request(method, params, **({"deadline": deadline} if deadline is not None else {})))
         except AIError as error:
             # Never retry a rejected isolation config with MCP overrides removed.
             self._failure(error.code)
             self.transport.close()
             raise
 
-    def create_session(self, *, instructions="", model=None):
-        self._require_ready()
+    def create_session(self, *, instructions="", model=None, deadline=None):
+        self._require_ready(deadline=deadline)
         params = {**self._session_params(), "baseInstructions": instructions}
         if model is not None: params["model"] = model
-        return self._request_session("thread/start", params)
+        return self._request_session("thread/start", params, deadline=deadline)
+
+    def create_session_until(self, *, instructions, deadline):
+        if time.monotonic() >= deadline: raise AIError("turn_timeout")
+        return self.create_session(instructions=instructions, deadline=deadline)
+
+    def send_turn_until(self, session, text, *, hint=None, deadline):
+        yield from self.send_turn(session, text, hint=hint, deadline=deadline)
 
     def resume_session(self, session_id):
         self._require_ready()
         return self._request_session("thread/resume", {**self._session_params(), "threadId": session_id})
 
-    def send_turn(self, session, text, *, hint=None):
-        self._require_ready()
+    def send_turn(self, session, text, *, hint=None, deadline=None):
+        self._require_ready(deadline=deadline)
+        request_deadline = deadline
         active = None
         finished = False
         with self.transport.subscribe(session.id) as inbox:
             try:
                 result = self.transport.request("turn/start", {
                     "threadId": session.id, "input": [{"type": "text", "text": text, "text_elements": []}],
-                    "approvalPolicy": "never", "sandboxPolicy": {"type": "readOnly", "networkAccess": False}})
+                    "approvalPolicy": "never", "sandboxPolicy": {"type": "readOnly", "networkAccess": False}},
+                    **({"deadline": deadline} if deadline is not None else {}))
                 try:
                     active = result["turn"]["id"]
                     if not isinstance(active, str): raise ValueError()
                 except (KeyError, ValueError, TypeError): raise AIError("malformed_turn") from None
                 yield TurnEvent("started", session.id, active)
-                deadline = time.monotonic() + self.turn_timeout
+                deadline = min(deadline, time.monotonic()+self.turn_timeout) if deadline is not None else time.monotonic()+self.turn_timeout
                 while True:
                     try: event = inbox.get(timeout=max(0, deadline - time.monotonic()))
                     except queue.Empty: raise AIError("turn_timeout") from None
@@ -272,7 +282,9 @@ class CodexRuntime(AIRuntime):
                 raise
             finally:
                 if active and not finished:
-                    try: self.cancel(session.id, active)
+                    try:
+                        if request_deadline is None: self.cancel(session.id, active)
+                        else: self.transport.request("turn/interrupt", {"threadId":session.id,"turnId":active}, deadline=time.monotonic()+2)
                     except AIError:
                         # Timeout/broken transport: kill the owned process to stop work.
                         self.transport.close()

@@ -77,6 +77,7 @@ for line in sys.stdin:
             emit({'id': request['id'], 'error': {'code': 500, 'message': 'Authorization: Bearer SUPER_SECRET'}}); continue
         result = {'data': [{'id': 'catalog-id', 'model': 'catalog-model', 'displayName': 'Catalog model'}], 'nextCursor': None}
     elif method in ('thread/start', 'thread/resume'):
+        if mode == 'session_timeout': time.sleep(5); continue
         # Model just the isolation contract, not Codex's config parser. The old
         # dotted MCP leaf keys were accepted by this fake but rejected on Windows.
         config = params.get('config', {})
@@ -87,6 +88,7 @@ for line in sys.stdin:
         thread_started = True
         result = {'thread': {'id': 'thread-1'}, 'model': 'server-default'}
     elif method == 'turn/start':
+        if mode == 'turn_start_timeout': time.sleep(5); continue
         if not thread_started:
             emit({'id': request['id'], 'error': {'code': -32602, 'message': 'No isolated thread'}}); continue
         result = {'turn': {'id': 'turn-1', 'status': 'inProgress'}}

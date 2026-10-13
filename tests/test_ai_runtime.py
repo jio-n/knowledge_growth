@@ -641,3 +641,32 @@ def test_runtime_provider_bounds_output_and_requires_terminal_completion(mode):
             yield TurnEvent('delta',session.id,'turn','x'*(1024*1024+1) if mode=='oversize' else '{}')
     with pytest.raises(LLMError,match='output_too_large' if mode=='oversize' else 'incomplete_turn'):
         RuntimeProvider(InvalidTurn()).complete_json('trusted','untrusted')
+
+
+@pytest.mark.parametrize('mode,code',[('session_timeout','rpc_timeout'),('turn_start_timeout','rpc_timeout'),('turn_timeout','turn_timeout')])
+def test_translation_adapter_deadline_bounds_rpc_and_turn_with_large_runtime_timeouts(fake,mode,code):
+    runtime=fake(mode,authenticated=True,timeout=20)
+    runtime.turn_timeout=20
+    before=time.monotonic()
+    with pytest.raises(LLMError,match=code) as error:
+        RuntimeProvider(runtime).complete_json('trusted schema','untrusted fixture',deadline=before+.15)
+    assert getattr(error.value,'code')==code
+    assert time.monotonic()-before < 2
+    assert runtime.transport.timeout==20 and runtime.turn_timeout==20
+    messages=[json.loads(line) for line in runtime.record.read_text().splitlines()]
+    if mode=='turn_timeout':
+        assert any(m['method']=='turn/interrupt' for m in messages)
+    for message in messages:
+        if message['method']=='thread/start':
+            assert message['params']['sandbox']=='read-only'
+            assert message['params']['approvalPolicy']=='never'
+            assert 'model' not in message['params']
+        if message['method']=='turn/start':
+            assert message['params']['sandboxPolicy']=={'type':'readOnly','networkAccess':False}
+
+
+def test_translation_adapter_expired_deadline_starts_no_thread(fake):
+    runtime=fake(authenticated=True)
+    with pytest.raises(LLMError,match='turn_timeout'):
+        RuntimeProvider(runtime).complete_json('trusted','fixture',deadline=time.monotonic()-1)
+    assert not any(json.loads(line)['method']=='thread/start' for line in runtime.record.read_text().splitlines())

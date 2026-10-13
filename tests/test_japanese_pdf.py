@@ -155,7 +155,7 @@ def test_json_response_rejects_wrong_contract(bad):
 class FaultRuntime(MockRuntime):
     def __init__(self,mode): super().__init__(); self.mode=mode; self.inputs=[]
     def send_turn(self,session,text,*,hint=None):
-        if not self.sessions[session.id].startswith('# japanese-pdf-0.1'):
+        if not self.sessions[session.id].startswith('# japanese-pdf-0.2'):
             yield from super().send_turn(session,text,hint=hint); return
         context=json.loads(text); self.inputs.append(context)
         if self.mode=='overflow':
@@ -216,7 +216,9 @@ def test_bad_ai_fails_without_original_or_user_data_loss(client):
     client.app.state.ai_runtime=FaultRuntime('bad')
     status,r=generate(client,sid,[1])
     assert status['state']=='failed' and r.status_code==404
-    assert len(client.app.state.ai_runtime.inputs)==2
+    assert 2 < len(client.app.state.ai_runtime.inputs) <= 48
+    assert any(len(turn['blocks'])==1 for turn in client.app.state.ai_runtime.inputs[2:])
+    assert all(len(turn['blocks'])<len(client.app.state.ai_runtime.inputs[0]['blocks']) for turn in client.app.state.ai_runtime.inputs[2:])
     assert client.get(f'/api/sources/{sid}/file').content==original
     assert not list(generated_dir().glob('*.pdf'))
     client.app.state.ai_runtime=MockRuntime()
