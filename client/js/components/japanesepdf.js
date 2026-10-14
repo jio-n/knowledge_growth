@@ -33,6 +33,8 @@ const TRANSLATION_ERRORS = {
   translation_validation_error: "その他の翻訳検証エラー", output_too_large: "AI応答サイズ上限",
   translation_attempt_limit: "翻訳回数上限", translation_time_limit: "翻訳時間上限",
   assembled_user_edit_review:"構成blockにユーザー編集あり・全文確認が必要",
+  title_incomplete:"タイトルの意味要素が不足",title_review_invalid:"タイトル完全性の応答不正",
+  title_review_uncertain:"タイトルの意味対応が不確実",title_review_limit:"タイトル完全性の検証回数上限",
   urls_changed:"URL検証失敗",inline_math_changed:"本文内数式の検証失敗",
 };
 Object.assign(REASONS, TRANSLATION_ERRORS);
@@ -106,6 +108,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       if (c?.abstract.source_chars && !c.abstract_complete) status.textContent += " · PDF生成済み／要旨の日本語化は未完了";
       if (r.visual_quality_version !== "native-3") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
       if (r.assembly_version !== "semantic-1") status.textContent += " · 文章構造の再構成は未実施（再生成できます）";
+      if (r.overlap_version !== "glyph-ink-1") status.textContent += " · 文字重なり検証は旧方式（再生成できます）";
       if (r.extraction_version !== "glyph-spacing-1") status.textContent += " · 本文の抽出・空白復元は旧方式（再生成できます）";
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     const d = current?.report?.diagnostics;
@@ -126,6 +129,21 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
         Object.entries(d.attempt_errors || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"} ${count}件`).join("、")));
       if (current.report.coverage) reportBody.append(el("p", {},
         `本文の読み順を意味単位で構成。本文として識別した原物保持：${current.report.coverage.body_preserved_in_visuals}件（境界確認） · 周辺情報：${d?.metadata_units || 0}単位 · 元blockの対応重複：${current.report.quality?.source_mapping_duplicates ?? "未検査"}`));
+      for (const page of current.report.content_detection || []) {
+        reportBody.append(el("p",{class:"japanese-pdf-overlap-quality"},
+          `文字重なり検証 · 原文p.${page.source_page} · ` + Object.entries(page.pair_counts || {}).map(([kind,count])=>`${kind} ${count}組`).join("、") +
+          ` · 境界未解決 ${page.boundary_conflicts?.length || 0}件 · 比較上限 ${page.pair_limit_reached ? "到達" : "未到達"}`));
+        for (const pair of page.pairs || []) reportBody.append(el("p",{},
+          `${pair.classification} · baseline差 ${pair.minimum_baseline_difference_pt ?? "未確認"}pt · glyph数 ${(pair.glyph_counts || []).join(" / ")} · 交差ink ${pair.overlapping_ink_pixels ?? "未確認"}px · 原描画照合 ${pair.source_render_verified ? "一致" : "未確認"}`));
+        for (const region of page.regions || []) reportBody.append(el("p",{},
+          `保護領域 ${region.member_count}block · 種領域 ${(region.seed_size_pt || []).join("×")}pt → crop ${(region.crop_size_pt || []).join("×")}pt · 拡張 ${region.expansion_steps}回`));
+      }
+      const categories={research_subject:"研究対象",application_domain:"適用領域",method_model:"手法・モデル",research_positioning:"研究の位置付け",identifiers:"固有名詞・識別子"};
+      for (const group of current.report.semantic_units || []) if (group.title_review) {
+        const review=group.title_review;
+        reportBody.append(el("p",{class:"japanese-pdf-title-quality"},`タイトル意味検証 ${review.status} · 未対応語数 ${review.unmapped_source_tokens ?? "未再計測"} · ${review.reused ? "検証済み訳を再利用" : ""}`));
+        for (const check of review.checks || []) reportBody.append(el("p",{},`${categories[check.category] || "意味要素"}：${check.status} · 原文 ${check.source_chars}文字／訳文 ${check.translated_chars}文字`));
+      }
       const a=current.report.coverage?.abstract;
       if (a && a.candidate_source_chars != null) reportBody.append(el("p",{class:"japanese-pdf-abstract-quality"},
         `要旨本文（原文文字数）：原文 ${a.source_chars} · 翻訳候補 ${a.candidate_source_chars} · 日本語化 ${a.translated_source_chars} · 原物保護 ${a.protected_source_chars} · PDF配置 ${a.placed_source_chars}（日本語 ${a.placed_translated_source_chars}） · `+
@@ -169,7 +187,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = artifacts.find(a => a.generation_id === rememberedId) || artifacts[0] || result;
       const ready = artifacts.filter(a => a.state === "preview_ready");
       history.textContent = "";
-      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
+      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.overlap_version === "glyph-ink-1" ? "文字重なり検証版" : a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
       history.hidden = !ready.length;
       update();
       if (current.state === "generating") timer = setTimeout(refresh, 1500);

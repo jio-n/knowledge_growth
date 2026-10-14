@@ -1,0 +1,105 @@
+{
+  "head": "404b382a7290e9425ad748161dbdbee2ca3e566d",
+  "error": "visual_font_validation_unavailable",
+  "published": false,
+  "coverage": {
+    "body": {
+      "source_chars": 1467,
+      "translated_source_chars": 221,
+      "ratio": 0.15064758009543286,
+      "candidate_source_chars": 317,
+      "protected_source_chars": 1150,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "untranslated_reasons": {
+        "ai_uncertain": 96,
+        "visual_or_equation": 1150
+      }
+    },
+    "abstract": {
+      "source_chars": 1150,
+      "translated_source_chars": 0,
+      "ratio": 0.0,
+      "candidate_source_chars": 0,
+      "protected_source_chars": 1150,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "untranslated_reasons": {
+        "visual_or_equation": 1150
+      }
+    },
+    "caption": {
+      "source_chars": 56,
+      "translated_source_chars": 56,
+      "ratio": 1.0,
+      "candidate_source_chars": 56,
+      "protected_source_chars": 0,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "untranslated_reasons": {}
+    },
+    "title": {
+      "units": 1,
+      "source_blocks": 2,
+      "complete": true,
+      "translated": true
+    },
+    "abstract_complete": false,
+    "body_preserved_in_visuals": 7
+  },
+  "abstract_regions": [
+    {
+      "source_chars": 186,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 184,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text",
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 183,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text",
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 183,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text",
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 184,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text",
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 186,
+      "kind": "visual",
+      "reasons": [
+        "overlapping_text"
+      ]
+    },
+    {
+      "source_chars": 44,
+      "kind": "visual",
+      "reasons": [
+        "isolated_math_or_special_font"
+      ]
+    }
+  ]
+}

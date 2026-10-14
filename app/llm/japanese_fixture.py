@@ -42,3 +42,11 @@ def fixture_reply(context):
         blocks.append({'block_id': b['block_id'], 'translated_text': text or '',
                        'status': 'translated' if text else 'uncertain'})
     return {'blocks': blocks}
+def mock_title_review(payload):
+    """Demo-only semantic judgement. Real review remains behind AIRuntime."""
+    categories=('research_subject','application_domain','method_model','research_positioning','identifiers')
+    return {'block_id':payload['block_id'],'verdict':'complete','checks':[
+        {'category':category,'status':'covered' if i==0 else 'not_applicable',
+         'source_spans':[{'start':0,'end':len(payload['original_title'])}] if i==0 else [],
+         'translated_spans':[{'start':0,'end':len(payload['translated_title'])}] if i==0 else []}
+        for i,category in enumerate(categories)]}

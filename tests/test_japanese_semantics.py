@@ -28,7 +28,7 @@ def test_semantic_paper_has_complete_title_abstract_reading_order_and_provenance
     doc_before=client.get(f'/api/sources/{sid}/document').json()
     status,response=generate(client,sid,[1,2,3])
     assert status['state']=='preview_ready',status
-    r=status['report'];assert r['assembly_version']=='semantic-1' and r['layout_version']=='reflow-3'
+    r=status['report'];assert r['assembly_version']=='semantic-1' and r['layout_version']=='reflow-4'
     title=next(u for u in r['semantic_units'] if u['role']=='paper_title')
     assert len(title['original_block_ids'])==3 and title['status']=='translated'
     requests=[b for turn in runtime.inputs for b in turn]
@@ -36,7 +36,7 @@ def test_semantic_paper_has_complete_title_abstract_reading_order_and_provenance
     assert not any(b['text'] in TITLE_LINES for b in requests)
     assert next(b for b in requests if b['text']==TITLE)['role']=='paper_title'
     assert sum(b['text']==ABSTRACT_BODY for b in requests)==1
-    assert r['coverage']['title']=={'units':1,'source_blocks':3,'complete':True,'translated':True}
+    assert r['coverage']['title']=={'units':1,'source_blocks':3,'complete':True,'translated':True,'meaning_review':'complete'}
     assert r['coverage']['abstract_complete'] and r['coverage']['abstract']['ratio']==1
     assert r['coverage']['body']['translated_source_chars']==630
     assert r['coverage']['body']['source_chars']==773

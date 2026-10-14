@@ -13,8 +13,11 @@ from .db import get_db, new_id, now
 from .import_bridge.validator import canonical, _object, _constant
 from .llm.base import LLMError
 from .paper_brief import StrictModel
+from .japanese_title_review import TitleReview,TitleReviewFailure,validate_title_review,TITLE_REVIEW_VERSION
 
-PROMPT_VERSION = 'japanese-pdf-0.4'
+PROMPT_VERSION = 'japanese-pdf-0.5'
+VERIFIED_TITLE_PROMPT=PROMPT_VERSION+'/'+TITLE_REVIEW_VERSION
+MAX_TITLE_REVIEWS=4
 MAX_BATCH_CHARS = 6000
 MAX_BLOCK_CHARS = 5000
 MAX_BATCH_BLOCKS = 8
@@ -49,6 +52,7 @@ TRANSLATION_ERRORS = frozenset({
     'ai_uncertain', 'translation_validation_error', 'output_too_large',
     'translation_attempt_limit', 'translation_time_limit',
     'assembled_user_edit_review','urls_changed','inline_math_changed',
+    'title_incomplete','title_review_invalid','title_review_uncertain','title_review_limit',
 })
 
 
@@ -253,10 +257,33 @@ def save_unit(con, source, version, unit):
 
 def translate_units(runtime, source, version, units, *, stats=None):
     stats = stats if stats is not None else {}
-    stats.update(runtime_calls=0, split_batches=0, attempt_errors={}, stopped_by=None)
+    stats.update(runtime_calls=0, split_batches=0, title_reviews=0, attempt_errors={}, stopped_by=None)
     started = time.monotonic()
     deadline = started + MAX_TRANSLATION_SECONDS
     provider = RuntimeProvider(runtime)
+    attempt_errors = Counter()
+    def review_title(unit,text):
+        if time.monotonic()>=deadline:
+            stats['stopped_by']='translation_time_limit';raise TranslationFailure('translation_time_limit')
+        if stats['runtime_calls']>=MAX_RUNTIME_CALLS:
+            stats['stopped_by']='translation_attempt_limit';raise TranslationFailure('translation_attempt_limit')
+        if unit.get('title_review_attempts',0)>=MAX_TITLE_REVIEWS:raise TranslationFailure('title_review_limit')
+        unit['title_review_attempts']=unit.get('title_review_attempts',0)+1
+        stats['runtime_calls']+=1;stats['title_reviews']+=1
+        instructions=(PROMPTS_DIR/'japanese_title_review_v0_1.md').read_text(encoding='utf-8')+'\nJSON schema:\n'+canonical(TitleReview.model_json_schema())
+        try:
+            answer=provider.complete_json(instructions,canonical({'block_id':unit['block']['id'],
+                'original_title':unit['block']['text'],'translated_title':text}),
+                deadline=min(deadline,time.monotonic()+MAX_TURN_SECONDS))
+            unit['title_review']=validate_title_review(answer.text,unit['block']['id'],unit['block']['text'],text)
+        except TitleReviewFailure as error:
+            unit['title_review']=error.report;raise TranslationFailure(error.code) from None
+        except (LLMError,AIError,TimeoutError) as error:
+            unit['title_review']={'version':TITLE_REVIEW_VERSION,'status':'unverified','checks':[]}
+            raise TranslationFailure(runtime_failure(error)) from None
+        except (ValueError,TypeError,RecursionError):
+            unit['title_review']={'version':TITLE_REVIEW_VERSION,'status':'unverified','checks':[]}
+            raise TranslationFailure('title_review_invalid') from None
     pending = []
     with closing(get_db()) as con:
         for unit in units:
@@ -280,6 +307,20 @@ def translate_units(runtime, source, version, units, *, stats=None):
                 unit.update(text=row['translated_text'], provider=row['provider'], model=row['model'],
                             runtime=row['runtime'], prompt_version=row['prompt_version'], cached=True,
                             translation_succeeded=True)
+                if unit.get('semantic_role')=='paper_title':
+                    if row['user_edited']:
+                        unit['title_review']={'version':TITLE_REVIEW_VERSION,'status':'user_edited','checks':[]}
+                    elif row['prompt_version']==VERIFIED_TITLE_PROMPT:
+                        unit['title_review']={'version':TITLE_REVIEW_VERSION,'status':'complete','checks':[],'reused':True}
+                    else:
+                        try:
+                            validate_block(TranslatedBlock(block_id=b['id'],translated_text=row['translated_text'],status='translated'),b['text'])
+                            review_title(unit,row['translated_text'])
+                            unit['prompt_version']=VERIFIED_TITLE_PROMPT
+                            unit['status']='translated';save_unit(con,source,version,unit);con.commit();unit['status']='pending'
+                        except TranslationFailure as error:
+                            unit.update(translation_succeeded=False,cached=False,translation_error=error.code,reason=error.code)
+                            attempt_errors[error.code]+=1;pending.append(unit)
             else:
                 # A partial user edit cannot become a whole-group translation,
                 # nor may a new AI group silently supersede that edit. Keep it
@@ -294,10 +335,9 @@ def translate_units(runtime, source, version, units, *, stats=None):
     if batch: batches.append(batch)
     if len(batches) > MAX_BATCHES:
         raise PDFError('too_many_batches_select_fewer_pages')
-    prompt = (PROMPTS_DIR / 'japanese_pdf_v0_3.md').read_text(encoding='utf-8')
+    prompt = (PROMPTS_DIR / 'japanese_pdf_v0_5.md').read_text(encoding='utf-8')
     instructions = prompt + '\nJSON schema:\n' + canonical(TranslationOutput.model_json_schema())
     queue = deque(batches)
-    attempt_errors = Counter()
     while queue:
         unresolved = queue.popleft()
         for attempt in range(MAX_ATTEMPTS):
@@ -327,12 +367,16 @@ def translate_units(runtime, source, version, units, *, stats=None):
                 valid, errors = {}, {b['id']:'translation_validation_error' for b in blocks}
             for unit in active:
                 bid = unit['block']['id']
+                if bid in valid and unit.get('semantic_role')=='paper_title':
+                    try:review_title(unit,valid[bid].translated_text)
+                    except TranslationFailure as error:valid.pop(bid);errors[bid]=error.code
                 if bid in valid:
                     item = valid[bid]
                     unit.update(text=item.translated_text, provider=result.provider, model=result.model,
                                 runtime=provider.name, prompt_version=PROMPT_VERSION,
                                 status='translated', reason=None, translation_error=None,
                                 translation_succeeded=True)
+                    if unit.get('semantic_role')=='paper_title':unit['prompt_version']=VERIFIED_TITLE_PROMPT
                     # Commit before requesting another turn: retries/restarts reuse success.
                     with closing(get_db()) as con:
                         save_unit(con, source, version, unit); con.commit()

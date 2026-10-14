@@ -33,7 +33,7 @@ def test_reflow_content_visuals_mapping_and_original_hash(client,kind,pages):
     original=make_japanese_fixture(kind); sid=upload(client,original)
     status,response=generate(client,sid,pages)
     assert status['state']=='preview_ready',status
-    report=status['report']; assert report['layout_version']=='reflow-3'
+    report=status['report']; assert report['layout_version']=='reflow-4'
     assert report['quality']['missing_or_duplicate']==report['quality']['overlaps']==report['quality']['outside_page']==0
     assert report['quality']['reading_order_preserved']
     with closing(get_db()) as con:
@@ -336,7 +336,7 @@ def test_legacy_fixed_bbox_artifact_retained_but_not_reused_for_reflow(client):
         report=first['report'];report.pop('layout_version')
         con.execute('UPDATE japanese_pdf_generations SET report_json=? WHERE id=?',(json.dumps(report),token));con.commit()
     fresh,other=generate(client,sid,[1])
-    assert fresh['generation_id']!=token and fresh['report']['layout_version']=='reflow-3'
+    assert fresh['generation_id']!=token and fresh['report']['layout_version']=='reflow-4'
     assert client.get(f'/api/sources/{sid}/japanese-pdf/{token}/file').content==pdf.content
     assert len(fresh['artifacts'])==2
 

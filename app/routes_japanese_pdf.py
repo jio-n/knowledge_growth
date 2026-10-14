@@ -17,6 +17,7 @@ from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
 from .japanese_visual_quality import VisualQualityError, VISUAL_QUALITY_VERSION
 from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report,coverage
+from .japanese_overlap import content_report,OVERLAP_VERSION
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -82,6 +83,8 @@ def run_generation(token, runtime):
         with fitz.open(stream=original, filetype='pdf') as document:
             failure_stage = 'content_detection'
             units = detect_units(document, blocks, json.loads(job['pages_json']))
+        content_error=next((u['content_error'] for u in units if u.get('content_error')),None)
+        if content_error:raise PDFError(content_error)
         failure_stage = 'translation'
         translate_units(runtime, source, version, units, stats=translation_stats)
         if not any(u.get('translation_succeeded') for u in units):
@@ -116,13 +119,14 @@ def run_generation(token, runtime):
         with closing(get_db()) as con:
             job = con.execute('SELECT 1 FROM japanese_pdf_generations WHERE id=?', (token,)).fetchone()
             if job:
-                if source and version and con.execute('SELECT 1 FROM source_versions WHERE id=? AND source_id=?', (version['id'], source['id'])).fetchone():
+                if failure_stage!='content_detection' and source and version and con.execute('SELECT 1 FROM source_versions WHERE id=? AND source_id=?', (version['id'], source['id'])).fetchone():
                     for unit in units:
                         if unit['status'] in ('pending', 'translated'):
                             unit.update(status='failed', reason=code)
                         save_unit(con, source, version, unit)
                 report = {'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
-                          'units':report_units(units),'semantic_units':semantic_report(units),'coverage':coverage(units)}
+                          'units':report_units(units),'semantic_units':semantic_report(units),'coverage':coverage(units),
+                          'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units)}
                 report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
                 if isinstance(error, VisualQualityError):
                     report['quality'] = error.quality

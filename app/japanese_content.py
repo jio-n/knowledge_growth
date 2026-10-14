@@ -5,6 +5,8 @@ import fitz
 from .japanese_translation import MAX_BLOCK_CHARS, MAX_UNITS, PDFError
 from .japanese_semantics import classify_page,assemble_page,FRONT_ROLES
 from .japanese_extraction import decorative_drawings,prose_text
+from .japanese_overlap import InkProof,overlap_pairs,OVERLAP_VERSION
+from collections import Counter
 
 MATH = re.compile(r'[=∑∫√∞±×÷≤≥≠∂∇²³α-ωΑ-Ω]|[\^_{}]|\\(?:frac|sum|begin)')
 CAPTIONS = ('figure_caption', 'table_caption')
@@ -67,7 +69,13 @@ def plan_page(page, blocks):
             for box,_ in header[1:]: hr |= box
             if len(header)>=2 and 0 <= r.y0-hr.y1 < 25 and hr.x0<r.x1 and hr.x1>r.x0: r |= hr
         regions.append(padded(r,bounds))
-    # Math and genuinely overlapping text remain source display objects.
+    proof=InkProof(page)
+    overlaps,limit=overlap_pairs(proof,blocks)
+    diagnostics={'source_page':page.number+1,'version':OVERLAP_VERSION,'pairs':overlaps,
+                 'pair_counts':dict(Counter(p['classification'] for p in overlaps)),
+                 'pair_limit_reached':limit,'boundary_conflicts':[],'regions':[]}
+    # Isolated mathematics has its own positive evidence. Inspect only glyphs
+    # belonging to this block, not a neighbouring line's overlapping font box.
     for b in blocks:
         if not b.get('bbox'): warning = 'missing_geometry'; continue
         rect=fitz.Rect(b['bbox']['rect'])
@@ -75,33 +83,50 @@ def plan_page(page, blocks):
         if b.get('semantic_role') in FRONT_ROLES:continue
         if not b['text'].strip():continue
         text=b.get('_line_text',b['text'])
+        glyphs=proof.glyphs(b)
+        words=re.findall(r'\b[A-Za-z]{2,}\b',text)
+        fragment=(len(words)>=3 and sum(map(len,words))>=18 and not glyphs['error']
+                  and glyphs['math_glyphs']<=glyphs['glyph_count']*.25
+                  and not re.search(r'[∑∫√∂∇]|\\(?:frac|sum|begin)',text))
         prose=(prose_text(text) or b.get('semantic_role') in ('abstract_heading','section_heading')
-               or (b.get('semantic_role')=='abstract_body' and len(re.findall(r'\b[A-Za-z]{2,}\b',text))>=4))
-        if not prose and (MATH.search(text) or any(rect.intersects(fitz.Rect(line['bbox'])) and
-                (tuple(line['dir'])!=(1.,0.) or any(re.search(r'math|symbol|dingbat|cmmi|cmsy|cmex',s['font'],re.I) for s in line['spans'])) for line in lines)):
+               or fragment)
+        if not prose and (MATH.search(text) or glyphs['math_glyphs'] or glyphs['nonhorizontal_glyphs']):
             regions.append(padded(rect,bounds))
             b.setdefault('_protection_reasons',[]).append('isolated_math_or_special_font')
-        for other in blocks:
-            if other['id']!=b['id'] and other.get('bbox') and b['text'] and other['text']:
-                other_rect=fitz.Rect(other['bbox']['rect']);intersection=rect & other_rect
-                # Ascender/descender line boxes often overlap slightly in TeX.
-                # Large/actual overlap remains protected; no drawing is ignored.
-                if not intersection.is_empty and intersection.height>min(rect.height,other_rect.height)*.18:
-                    regions.append(padded(rect | other_rect,bounds))
-                    b.setdefault('_protection_reasons',[]).append('overlapping_text')
     regions=merge_regions(regions)
-    # Capture whole intersecting source blocks, not half a line inside a visual.
-    while True:
-        expanded=[]
-        for region in regions:
-            r=fitz.Rect(region)
-            for b in blocks:
-                if b['text'].strip() and b.get('bbox') and b.get('role') not in CAPTIONS and r.intersects(fitz.Rect(b['bbox']['rect'])):
-                    r |= padded(b['bbox']['rect'],bounds)
-            expanded.append(r)
-        joined=merge_regions(expanded)
-        if [tuple(r) for r in joined]==[tuple(r) for r in regions]: break
-        regions=joined
+    # Grow once from a positive seed, never from newly included font envelopes.
+    # Text-only collision groups merge by shared members, not rectangular contact.
+    groups=[]
+    by_id={b['id']:b for b in blocks}
+    for region in regions:
+        members={b['id'] for b in blocks if b['text'].strip() and b.get('bbox') and b.get('role') not in CAPTIONS
+                 and proof.touches(b,region) is not False}
+        groups.append({'rect':fitz.Rect(region),'seed':fitz.Rect(region),'members':members,'text_only':False})
+    for pair in overlaps:
+        if pair['classification']=='font_envelopes_only':continue
+        ids=set(pair['block_ids']);r=fitz.Rect(by_id[pair['block_ids'][0]]['bbox']['rect']) | fitz.Rect(by_id[pair['block_ids'][1]]['bbox']['rect'])
+        for bid in ids:by_id[bid].setdefault('_protection_reasons',[]).append(pair['classification'])
+        groups.append({'rect':padded(r,bounds),'seed':padded(r,bounds),'members':ids,'text_only':True})
+    merged=[]
+    for group in groups:
+        while True:
+            hits=[old for old in merged if old['members'] & group['members']]
+            if not hits:break
+            for old in hits:
+                group['rect'] |= old['rect'];group['seed'] |= old['seed'];group['members'] |= old['members']
+                group['text_only'] &= old['text_only'];merged.remove(old)
+        merged.append(group)
+    groups=merged
+    for group in groups:
+        for bid in group['members']:group['rect'] |= padded(by_id[bid]['bbox']['rect'],bounds)
+        for b in blocks:
+            if b['id'] in group['members'] or not b['text'].strip() or not b.get('bbox') or b.get('role') in CAPTIONS:continue
+            if proof.touches(b,group['rect']) is not False:
+                diagnostics['boundary_conflicts'].append({'block_id':b['id'],'region_members':len(group['members'])})
+        diagnostics['regions'].append({'seed_size_pt':[round(group['seed'].width,3),round(group['seed'].height,3)],
+            'crop_size_pt':[round(group['rect'].width,3),round(group['rect'].height,3)],
+            'member_count':len(group['members']),'expansion_steps':1,'text_only':group['text_only']})
+    regions=[g['rect'] for g in groups]
     captions=[u for u in units if u['block'].get('role') in CAPTIONS]
     associations={i:[] for i in range(len(regions))}
     for u in captions:
@@ -149,12 +174,12 @@ def plan_page(page, blocks):
             u.update(kind='metadata',status='skipped_protected',reason='decorative_rule')
     for i,r in enumerate(regions):
         members=[u for u in units if warning or (u['block'].get('bbox') and
-                 (candidate_owners.get(u['block']['id'])==i if not u['block']['text'].strip() else r.intersects(fitz.Rect(u['block']['bbox']['rect']))))]
+                 (candidate_owners.get(u['block']['id'])==i if not u['block']['text'].strip() else u['block']['id'] in groups[i]['members']))]
         attached=associations[i]
         ids=[u['block']['id'] for u in members]
         aid='V'+sha256(repr((page.number,tuple(r),ids)).encode()).hexdigest()[:24]
         role=next((u['block'].get('role') for u in members if u['block'].get('role') in ('table_candidate','equation_candidate')),None)
-        asset=dict(id=aid, source_page=page.number+1, source_bbox=list(r), kind='table' if role=='table_candidate' or any(u['block'].get('role')=='table_caption' for u in attached) else 'equation' if role=='equation_candidate' or (any(u['block']['text'] for u in members) and all(MATH.search(u['block']['text']) for u in members if u['block']['text'])) else 'figure',
+        asset=dict(id=aid, source_page=page.number+1, source_bbox=list(r), kind='original_text' if not warning and groups[i]['text_only'] else 'table' if role=='table_candidate' or any(u['block'].get('role')=='table_caption' for u in attached) else 'equation' if role=='equation_candidate' or (any(u['block']['text'] for u in members) and all(MATH.search(u['block']['text']) for u in members if u['block']['text'])) else 'figure',
                    original_block_ids=ids, caption_block_ids=[u['block']['id'] for u in attached],
                    rasterize_annotations=warning=='annotations_present',
                    status='unresolved' if warning or (not attached and role!='equation_candidate') else 'resolved',
@@ -179,6 +204,9 @@ def plan_page(page, blocks):
         if len(b['text'])>MAX_BLOCK_CHARS: u.update(status='failed',reason='block_too_long')
         if not b['text'].strip(): u.update(status='skipped_unsafe',reason='empty_block'); continue
         items.append(dict(kind='text',unit=u,order=b['idx']))
+    if units:
+        units[0]['_page_diagnostics']=diagnostics
+        if not warning and (limit or diagnostics['boundary_conflicts']):units[0]['content_error']='overlap_proof_limit' if limit else 'visual_text_boundary_unresolved'
     return units,sorted(items,key=lambda x:x['order'])
 
 
@@ -188,6 +216,8 @@ def detect_units(document,blocks,pages):
     for number in sorted(pages):
         tagged=classify_page(document[number-1],[b for b in blocks if b['page']==number])
         page_units,items=plan_page(document[number-1],tagged)
+        page_diagnostics=next((u['_page_diagnostics'] for u in page_units if '_page_diagnostics' in u),None)
+        content_error=next((u['content_error'] for u in page_units if u.get('content_error')),None)
         for unit in page_units:
             b=unit['block']
             if (unit['kind']=='visual' and b.get('semantic_role')=='paragraph'
@@ -195,6 +225,10 @@ def detect_units(document,blocks,pages):
                     and not b['text'].rstrip().endswith(('.', '?', '!'))):
                 b['semantic_role']='scientific_visual'
         page_units=assemble_page(document[number-1],page_units,items)
+        for unit in page_units:
+            unit.pop('_page_diagnostics',None);unit.pop('content_error',None)
+        if page_units and page_diagnostics:page_units[0]['_page_diagnostics']=page_diagnostics
+        if page_units and content_error:page_units[0]['content_error']=content_error
         owners=sorted((u for u in page_units if 'layout_item' in u),key=lambda u:u['layout_item']['order'])
         for owner in owners:
             owner['layout_item']['order']=order;order+=1

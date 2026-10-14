@@ -14,6 +14,9 @@ Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再�
 その後のvisual_content_changedに対し、[原物検証・safe asset診断](japanese_visual_quality.md)を追加した。
 さらにpixel差0のoriginal_text不一致に対し、[native-3のclip検証](japanese_clip_quality.md)を追加した。
 
+
+最新の追加修正は[Abstract 1,150文字の誤保護とタイトル完全性](japanese_overlap_quality.md)を参照。layout reflow-4 / glyph-ink-1 / title-meaning-1。
+
 ## 方針と画面
 
 優先順位は意味の正しい日本語化、Figure/Table/Equationの内容保持、Captionとの隣接、

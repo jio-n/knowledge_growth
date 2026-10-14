@@ -18,8 +18,9 @@ from .japanese_translation import PDFError
 from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQualityError,
     canonical_pixmap, safe_visual_metadata, VISUAL_QUALITY_VERSION, DPI, MAX_VISUAL_PIXELS)
 from .japanese_extraction import EXTRACTION_VERSION
+from .japanese_overlap import OVERLAP_VERSION,content_report
 
-LAYOUT_VERSION='reflow-3'
+LAYOUT_VERSION='reflow-4'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
@@ -277,6 +278,8 @@ def validate_output(original,pdf,units,assets,flow):
 
 
 def generate_pdf(original,units,output_path):
+    error=next((u['content_error'] for u in units if u.get('content_error')),None)
+    if error:raise PDFError(error)
     with fitz.open(stream=original,filetype='pdf') as source,fitz.open() as output:
         font=fitz.Font('cjk')
         with tempfile.TemporaryDirectory(prefix='kg-reflow-font-') as directory:
@@ -353,6 +356,7 @@ def generate_pdf(original,units,output_path):
             public_assets.append(public_asset)
         text_blocks=sum(bool(u['block']['text'].strip()) and u['kind']!='visual' for u in units)
         return {'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'extraction_version':EXTRACTION_VERSION,
+                'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units),
                 'reading_quality':{'abstract':'complete' if reading_coverage['abstract_complete'] else 'incomplete' if reading_coverage['abstract']['source_chars'] else 'not_selected',
                                    'pdf_generated':True},
                 'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),

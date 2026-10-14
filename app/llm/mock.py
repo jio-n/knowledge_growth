@@ -40,6 +40,9 @@ class MockProvider(LLMProvider):
         return LLMResult(text=text, provider=self.name, model="mock")
 
     def complete_json(self, system: str, user: str, *, max_tokens: int | None = None) -> LLMResult:
+        if system.startswith('# japanese-title-review-'):
+            from .japanese_fixture import mock_title_review
+            return LLMResult(text=json.dumps(mock_title_review(json.loads(user)),ensure_ascii=False),provider='mock',model='mock')
         if system.startswith('# japanese-pdf-'):
             from .japanese_fixture import fixture_reply
             return LLMResult(text=json.dumps(fixture_reply(json.loads(user)), ensure_ascii=False), provider='mock', model='mock')

@@ -201,7 +201,7 @@ def run(base,chromium,output,baseline,clip_repro=False):
         mode('translated');c.get_by_role('checkbox').check();c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(c.locator('.japanese-pdf-diagnostics')).to_contain_text('AI翻訳成功：2件',timeout=30000)
         fixed=status();assert fixed['report']['diagnostics']['cached_translations']==5
-        assert fixed['report']['diagnostics']['runtime_calls']==1
+        assert fixed['report']['diagnostics']['runtime_calls']==1+fixed['report']['diagnostics'].get('title_reviews',0)
         assert req.get(base+f'/api/sources/{sid}/file').body()==data
         cases.append('regeneration reuses five saved successes and requests only two failed IDs')
         # A page with FreeText annotations is retained once as an explicitly

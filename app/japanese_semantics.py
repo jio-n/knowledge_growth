@@ -301,6 +301,7 @@ def semantic_report(units):
              'role':u.get('semantic_role'),'group_hash':u.get('group_hash'),
              'assembly_version':ASSEMBLY_VERSION,'status':u['status'],'reason':u['reason'],
              'translation_id':u.get('translation_id'),'placements':u.get('placements',[]),
+             'title_review':u.get('title_review'),
              'source_chars':sum(len(re.sub(r'\s+','',b['text'])) for b in source_members(u)),
              'extraction':{'inferred_spaces':sum(b.get('_extraction',{}).get('inferred_spaces',0) for b in source_members(u)),
                            'glyph_text_matched':all(b.get('_extraction',{}).get('glyph_text_matched',True) for b in source_members(u)),
@@ -331,6 +332,7 @@ def coverage(units):
     return {'body':measure(body),'abstract':measure(abstract),'caption':measure([u for u in units if u.get('semantic_role')=='caption']),
             'title':{'units':len(title),'source_blocks':sum(len(source_members(u)) for u in title),
                      'complete':len(title)==1 and not title[0].get('assembly_uncertain'),
-                     'translated':len(title)==1 and title[0]['status']=='translated'},
+                     'translated':len(title)==1 and title[0]['status']=='translated',
+                     'meaning_review':title[0].get('title_review',{}).get('status','not_checked') if len(title)==1 else 'not_checked'},
             'abstract_complete':bool(abstract) and all(u['status']=='translated' for u in abstract),
             'body_preserved_in_visuals':sum(u['kind']=='visual' for u in body)}
