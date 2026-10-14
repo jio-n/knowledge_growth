@@ -1,0 +1,102 @@
+{
+  "asset_id": "synthetic-boundary",
+  "asset_kind": "original_text",
+  "source_page": 1,
+  "japanese_page": 1,
+  "source_size_pt": [
+    120.0,
+    14.0
+  ],
+  "output_size_pt": [
+    120.0,
+    14.0
+  ],
+  "dpi": 200,
+  "vector_preserved": true,
+  "annotations_present": false,
+  "quality_policy": "original_text",
+  "status": "failed",
+  "error": "visual_text_changed",
+  "classification": "text_missing_or_changed",
+  "source_rotation": 0,
+  "cropbox_size_pt": [
+    595.0,
+    842.0
+  ],
+  "native_size_preserved": true,
+  "source_image_size_px": [
+    334,
+    39
+  ],
+  "output_image_size_px": [
+    334,
+    39
+  ],
+  "source_ink_pixels": 3166,
+  "output_ink_pixels": 3085,
+  "mean_pixel_difference": 1.094043,
+  "raw_mean_pixel_difference": 2.944985,
+  "raw_source_image_size_px": [
+    334,
+    40
+  ],
+  "raw_output_image_size_px": [
+    334,
+    40
+  ],
+  "placed_text": {
+    "expected_chars": 22,
+    "actual_chars": 21,
+    "missing_chars": 1,
+    "extra_chars": 0,
+    "order_matches": false
+  },
+  "source_text_preserved": false,
+  "crop_text_diagnostics": {
+    "source_clip_chars": 22,
+    "boundary_straddling_glyphs": 1,
+    "after_outside_redaction": {
+      "expected_chars": 22,
+      "actual_chars": 21,
+      "missing_chars": 1,
+      "extra_chars": 0,
+      "order_matches": false
+    },
+    "native_crop": {
+      "expected_chars": 22,
+      "actual_chars": 21,
+      "missing_chars": 1,
+      "extra_chars": 0,
+      "order_matches": false
+    },
+    "native_crop_all_text": {
+      "expected_chars": 22,
+      "actual_chars": 21,
+      "missing_chars": 1,
+      "extra_chars": 0,
+      "order_matches": false
+    }
+  },
+  "original_block_chars": 38,
+  "crop_no_hidden_text": false,
+  "crop_text_complete": false,
+  "text_failure_stage": "outside_text_redaction",
+  "source_glyph_count": 24,
+  "output_glyph_count": 23,
+  "glyphs_preserved": false,
+  "glyph_codes_preserved": false,
+  "max_glyph_origin_difference_pt": null,
+  "fonts_preserved": true,
+  "source_drawing_count": 0,
+  "output_drawing_count": 0,
+  "drawings_preserved": true,
+  "source_image_count": 0,
+  "output_image_count": 0,
+  "images_preserved": true,
+  "visible_drawings_verified": true,
+  "visible_drawings_preserved": true,
+  "source_invisible_drawing_count": 0,
+  "output_invisible_drawing_count": 0,
+  "exact_pixels_preserved": false,
+  "nonvisible_drawing_difference_proven": false
+}

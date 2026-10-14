@@ -198,7 +198,7 @@ def test_every_failed_asset_is_reported_and_successful_ai_is_cached(client,monke
 def test_failed_crop_has_safe_asset_diagnostic(client,monkeypatch):
     import app.japanese_pdf as engine
     from app.japanese_translation import PDFError
-    def fail(*args):raise PDFError('visual_crop_failed')
+    def fail(*args,**kwargs):raise PDFError('visual_crop_failed')
     monkeypatch.setattr(engine,'cropped_visual',fail)
     client.app.state.ai_runtime=VisualFaultRuntime()
     status,_=generate(client,upload(client,make_visual_fixture()),[1])

@@ -10,6 +10,28 @@ def glyph_lines(page):
             if b['type']==0 for line in b['lines']]
 
 
+def member_lines(block,lines):
+    """Bind immutable ingest spans to native source spans, not neighbour boxes.
+
+    A tall font envelope can contain a neighbouring line's glyph centres.
+    Exact span text/geometry provenance avoids claiming those glyphs. Ambiguous
+    or changed span references never authorize recovery.
+    """
+    references=block.get('bbox',{}).get('spans',[])
+    if not references:return None
+    selected=[];used=set()
+    for ref in references:
+        hits=[(i,j) for i,line in enumerate(lines) for j,s in enumerate(line['spans'])
+              if all(abs(a-b)<.003 for a,b in zip(ref['rect'],s['bbox']))
+              and re.sub(r'\s+','',''.join(c['c'] for c in s['chars']))==re.sub(r'\s+','',ref['text'])]
+        if len(hits)!=1 or hits[0] in used:return None
+        used.add(hits[0])
+    for i,line in enumerate(lines):
+        spans=[s for j,s in enumerate(line['spans']) if (i,j) in used]
+        if spans:selected.append({**line,'spans':spans})
+    return selected
+
+
 def recover_text(block,lines):
     """Accept only the same non-whitespace characters, in the same order.
 
@@ -20,12 +42,13 @@ def recover_text(block,lines):
     """
     if not block.get('bbox') or not block['text']:return None,{}
     r=fitz.Rect(block['bbox']['rect']);strings=[];inferred=0;fonts=set()
-    for line in lines:
+    members=member_lines(block,lines)
+    for line in members if members is not None else lines:
         chars=[]
         for span in line['spans']:
             for c in span['chars']:
                 cr=fitz.Rect(c['bbox'])
-                if r.contains((cr.tl+cr.br)/2):chars.append((c,span))
+                if members is not None or r.contains((cr.tl+cr.br)/2):chars.append((c,span))
         if not chars:continue
         text='';previous=None
         horizontal=tuple(line['dir'])==(1.,0.)
@@ -44,6 +67,7 @@ def recover_text(block,lines):
     recovered='\n'.join(strings)
     same=re.sub(r'\s+','',recovered)==re.sub(r'\s+','',block['text'])
     safe={'glyph_text_matched':same,'inferred_spaces':inferred if same else 0,
+          'native_span_membership':members is not None,
           'glyph_lines':len(strings),'math_font_runs':sum(bool(re.search(r'math|symbol|cmmi|cmsy|cmex',f,re.I)) for f in fonts)}
     return (recovered if same else None),safe
 

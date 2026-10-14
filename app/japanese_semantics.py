@@ -281,6 +281,17 @@ def assemble_page(page,units,items):
 def source_members(unit):return unit.get('original_blocks',[unit['block']])
 
 
+def unit_states(unit):
+    """Independent job stages; artifact failure is never an AI rejection."""
+    ai=('succeeded' if unit.get('translation_succeeded') else 'failed' if unit.get('translation_error')
+        else 'not_requested' if unit['kind'] in ('visual','metadata') else 'not_completed')
+    return {'ai_translation_state':ai,'ai_translation_error':unit.get('translation_error'),
+            'placement_state':unit.get('_placement_state','rendered' if unit.get('placements') else 'not_placed'),
+            'visual_quality_state':unit.get('_visual_quality_state','not_checked' if unit['kind']=='visual' else 'not_applicable'),
+            'visual_quality_error':unit.get('_visual_quality_error'),
+            'publication_state':unit.get('_publication_state','not_published')}
+
+
 def report_units(units):
     """Compatibility rows point ONLY to real source blocks, never group IDs."""
     rows=[]
@@ -291,7 +302,7 @@ def report_units(units):
                 'page':b['page'],'bbox':{k:v for k,v in b['bbox'].items() if k!='spans'} if b.get('bbox') else None,
                 'section':u.get('section',''),
                 'semantic_role':u.get('semantic_role'),'kind':u['kind'],'asset_id':u['asset_id'],
-                'status':u['status'],'reason':u['reason'],'font_size':u.get('placed_font_size'),
+                **unit_states(u),'status':u['status'],'reason':u['reason'],'font_size':u.get('placed_font_size'),
                 'placements':u.get('placements',[]),'untranslated':u['kind']!='visual' and u['status']!='translated'})
     return rows
 
@@ -299,7 +310,7 @@ def report_units(units):
 def semantic_report(units):
     return [{'id':u['block']['id'],'original_block_ids':[b['id'] for b in source_members(u)],
              'role':u.get('semantic_role'),'group_hash':u.get('group_hash'),
-             'assembly_version':ASSEMBLY_VERSION,'status':u['status'],'reason':u['reason'],
+             **unit_states(u),'assembly_version':ASSEMBLY_VERSION,'status':u['status'],'reason':u['reason'],
              'translation_id':u.get('translation_id'),'placements':u.get('placements',[]),
              'title_review':u.get('title_review'),
              'source_chars':sum(len(re.sub(r'\s+','',b['text'])) for b in source_members(u)),
@@ -313,7 +324,7 @@ def coverage(units):
     def measure(selected):
         size=lambda u:sum(len(re.sub(r'\s+','',b['text'])) for b in source_members(u))
         converted=lambda u:u['status']=='translated' or (bool(u.get('translation_succeeded')) and bool(re.search(r'[\u3040-\u30ff\u3400-\u9fff]',u.get('text',''))))
-        placed=lambda u:bool(u.get('_placement_verified'))
+        placed=lambda u:bool(u.get('_placement_verified')) or u.get('_placement_state')=='validated'
         total=sum(size(u) for u in selected)
         done=sum(size(u) for u in selected if converted(u))
         reasons={}

@@ -86,7 +86,24 @@ def plan_page(page, blocks):
         if not prose and (MATH.search(text) or glyphs['math_glyphs'] or glyphs['nonhorizontal_glyphs']):
             seeds.append(seed('isolated_math_or_special_font',rect,bounds,len(seeds),owner=b['id']))
             b.setdefault('_protection_reasons',[]).append('isolated_math_or_special_font')
-    groups,boundaries=groups_for(proof,blocks,seeds,overlaps,bounds,CAPTIONS)
+    # Native crop fidelity and ordinary-text recovery have different contracts.
+    # Preserve the original overlap diagnosis; record the independent proof used
+    # to keep recoverable prose out of a text-only native crop.
+    by_id={b['id']:b for b in blocks}
+    planned=[];recoveries=[]
+    for pair in overlaps:
+        members=[by_id[bid] for bid in pair['block_ids']]
+        recovered=(pair['classification']=='overlap_unproven'
+                   and all(b.get('semantic_role') in ('abstract_body','paragraph') for b in members)
+                   and proof.prose_separated(*members,seeds))
+        if recovered:
+            recoveries.append({'block_ids':pair['block_ids'],'classification':'verified_prose_outlines_separated',
+                               'glyph_counts':pair['glyph_counts'],
+                               'source_chars':sum(len(re.sub(r'\s+','',b['text'])) for b in members)})
+            planned.append({**pair,'classification':'font_envelopes_only'})
+        else:planned.append(pair)
+    diagnostics['prose_recovery']=recoveries
+    groups,boundaries=groups_for(proof,blocks,seeds,planned,bounds,CAPTIONS)
     diagnostics.update(boundaries)
     regions=[g['rect'] for g in groups]
     captions=[u for u in units if u['block'].get('role') in CAPTIONS]
@@ -167,6 +184,15 @@ def plan_page(page, blocks):
         if not b['text'].strip(): u.update(status='skipped_unsafe',reason='empty_block'); continue
         items.append(dict(kind='text',unit=u,order=b['idx']))
     if units:
+        diagnostics['text_units']=[{'block_id':u['block']['id'],'role':u['block'].get('semantic_role'),
+            'source_chars':len(re.sub(r'\s+','',u['block']['text'])),
+            'bbox_pt':[round(v,3) for v in u['block']['bbox']['rect']],
+            'kind':u['kind'],'asset_id':u['asset_id'],'reason':u['reason'],
+            'glyph_proof_error':proof.glyphs(u['block'])['error'],
+            'glyph_count':proof.glyphs(u['block'])['glyph_count'],
+            'math_glyph_count':proof.glyphs(u['block'])['math_glyphs'],
+            'native_span_membership':u['block'].get('_extraction',{}).get('native_span_membership',False)
+            } for u in units if u['block']['text'].strip() and u['block'].get('bbox')]
         units[0]['_page_diagnostics']=diagnostics
         if not warning and (limit or diagnostics['boundary_conflicts']):units[0]['content_error']='overlap_proof_limit' if limit else 'visual_text_boundary_unresolved'
     return units,sorted(items,key=lambda x:x['order'])

@@ -250,3 +250,5 @@ Cloudのfixture成功を実論文の品質確認済みとは扱わない。
 既存Paper Briefの「日本語版で読む・今後対応」CTAは変更せず、Reader toolbarから試作する。
 
 次はWindowsのMMADで品質を確認し、問題を独自の最小fixtureへ再現して改善する。
+
+最新の本文復元・crop診断・段階別状態は[Abstractの残存保護と原文テキスト再組版](japanese_text_recovery.md)を参照（reflow-6、schema v5のまま）。

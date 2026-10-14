@@ -204,6 +204,8 @@ def translation_diagnostics(units, stats, *, published=False, failure_stage=None
             'ai_translation_succeeded':sum(bool(u.get('translation_succeeded')) and not u.get('cached') for u in candidates),
             'cached_translations':sum(bool(u.get('cached')) for u in candidates),
             'pdf_placement_succeeded':sum(u['status']=='translated' for u in units) if published else 0,
+            'pdf_placement_validated':sum(u.get('_placement_state')=='validated' for u in units),
+            'publication_state':'published' if published else 'failed' if failure_stage else 'not_published',
             'protected_units':sum(u['status']=='skipped_protected' and u['kind']=='visual' for u in units),
             'metadata_units':sum(u['kind']=='metadata' for u in units),
             'unsafe_units':sum(u['status']=='skipped_unsafe' for u in units),

@@ -20,7 +20,7 @@ from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQual
 from .japanese_extraction import EXTRACTION_VERSION
 from .japanese_overlap import OVERLAP_VERSION,content_report
 
-LAYOUT_VERSION='reflow-5'
+LAYOUT_VERSION='reflow-6'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
@@ -194,7 +194,10 @@ class Reflow:
         y=clip.y0+math.ceil((self.y-clip.y0)*scale)/scale
         target=fitz.Rect(x,y,x+clip.width,y+clip.height)
         try:
-            with cropped_visual(source,clip) as visual_pdf:
+            crop_diagnostics={}
+            asset['crop_text_diagnostics']=crop_diagnostics
+            asset['original_block_chars']=sum(len(norm(b['text'])) for bid in asset['original_block_ids'] for b in source_members(self.by_id[bid]))
+            with cropped_visual(source,clip,diagnostics=crop_diagnostics) as visual_pdf:
                 if asset.get('rasterize_annotations'):
                     with fitz.open() as annotation_free:
                         annotation_free.insert_pdf(self.original,from_page=source.number,to_page=source.number,annots=False)
@@ -264,10 +267,18 @@ def validate_output(original,pdf,units,assets,flow):
         for bid in asset['caption_block_ids']:
             unit=next(u for u in units if u['block']['id']==bid)
             if any(p['japanese_page']!=asset['japanese_page'] for p in unit['placements']): raise PDFError('caption_group_split')
+    for unit in units:
+        if unit['kind']!='visual':unit['_placement_state']='validated'
     quality=[]
     for asset in assets:
         try: quality.append(visual_quality(original,pdf,asset))
         except VisualQualityError as error: quality.extend(error.quality['visuals'])
+    by_asset={q['asset_id']:q for q in quality}
+    for unit in units:
+        if unit['kind']=='visual' and unit['asset_id'] in by_asset:
+            q=by_asset[unit['asset_id']]
+            unit.update(_visual_quality_state=q['status'],_visual_quality_error=q['error'],
+                        _placement_state='validated' if q['status']=='passed' else 'failed')
     if any(q['status']=='failed' for q in quality): raise VisualQualityError(quality)
     source_ids=[b['id'] for u in units for b in source_members(u)]
     if len(source_ids)!=len(set(source_ids)):raise PDFError('duplicate_source_mapping')

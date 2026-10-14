@@ -6,6 +6,7 @@ are compared in memory; no source text, image, hash or vendor payload is reporte
 import hashlib
 import math
 import re
+from collections import Counter
 import fitz
 from PIL import Image, ImageChops
 from .japanese_translation import PDFError
@@ -28,7 +29,15 @@ class VisualQualityError(PDFError):
                       'failed_visuals':len(failed),'passed_visuals':len(visuals)-len(failed)}
 
 
-def cropped_visual(source,clip):
+def text_counts(expected,actual):
+    """Counts only. No source strings, glyph codes or text hashes escape."""
+    a,b=Counter(norm(expected)),Counter(norm(actual))
+    return {'expected_chars':sum(a.values()),'actual_chars':sum(b.values()),
+            'missing_chars':sum((a-b).values()),'extra_chars':sum((b-a).values()),
+            'order_matches':norm(expected)==norm(actual)}
+
+
+def cropped_visual(source,clip,*,diagnostics=None):
     """Copy original font/image/vector resources, suppress hidden outside text.
 
     DocumentWriter re-encodes embedded fonts and can change raster hinting/phase.
@@ -40,6 +49,12 @@ def cropped_visual(source,clip):
     try:
         copy.insert_pdf(source.parent,from_page=source.number,to_page=source.number,annots=False)
         page=copy[0]; page.set_rotation(0)
+        expected=page.get_text('text',clip=clip)
+        if diagnostics is not None:
+            diagnostics['source_clip_chars']=len(norm(expected))
+            diagnostics['boundary_straddling_glyphs']=sum(
+                fitz.Rect(bbox).intersects(clip) and not clip.contains(fitz.Rect(bbox))
+                for trace in page.get_texttrace() for _,_,_,bbox in trace['chars'])
         spans=[s for b in page.get_text('dict',clip=fitz.INFINITE_RECT())['blocks'] if b['type']==0
                for line in b['lines'] for s in line['spans']]
         if any(not clip.contains(fitz.Rect(s['bbox'])) for s in spans):
@@ -51,8 +66,13 @@ def cropped_visual(source,clip):
             for area in outside:
                 if not area.is_empty: page.add_redact_annot(area,fill=False,cross_out=False)
             page.apply_redactions(images=0,graphics=0,text=0)
+        if diagnostics is not None:
+            diagnostics['after_outside_redaction']=text_counts(expected,page.get_text('text',clip=clip))
         target=cropped.new_page(width=clip.width,height=clip.height)
         target.show_pdf_page(target.rect,copy,0,clip=clip)
+        if diagnostics is not None:
+            diagnostics['native_crop']=text_counts(expected,target.get_text('text'))
+            diagnostics['native_crop_all_text']=text_counts(expected,target.get_text('text',clip=fitz.INFINITE_RECT()))
         return cropped
     except Exception:
         cropped.close()
@@ -251,13 +271,23 @@ def inspect_visual(source,output,asset):
             annotation_free=fitz.open()
             annotation_free.insert_pdf(source,from_page=page.number,to_page=page.number,annots=False)
             content_page=annotation_free[0]
-        report['source_text_preserved']=norm(content_page.get_text('text',clip=clip))==norm(dest.get_text('text',clip=target))
+        report['placed_text']=text_counts(content_page.get_text('text',clip=clip),dest.get_text('text',clip=target))
+        report['source_text_preserved']=report['placed_text']['order_matches']
+        report['crop_text_diagnostics']=asset.get('crop_text_diagnostics',{})
+        report['original_block_chars']=asset.get('original_block_chars')
         report['crop_no_hidden_text']=asset.get('crop_no_hidden_text',True)
         report['crop_text_complete']=asset.get('crop_text_complete',True)
         sg,sn=glyphs(content_page,clip);dg,dn=glyphs(dest,target)
         sp,dp=paths(content_page,clip),paths(dest,target)
         si,di=images(content_page,clip),images(dest,target)
         glyph_codes_preserved=[g[:2] for g in sg]==[g[:2] for g in dg]
+        crop_checks=report['crop_text_diagnostics']
+        report['text_failure_stage']=(
+            'outside_text_redaction' if crop_checks.get('after_outside_redaction',{}).get('order_matches') is False else
+            'native_crop' if crop_checks.get('native_crop',{}).get('order_matches') is False else
+            'hidden_crop_text' if crop_checks.get('native_crop_all_text',{}).get('order_matches') is False else
+            'pdf_placement' if not report['source_text_preserved'] else
+            'glyph_mapping' if not glyph_codes_preserved else None)
         delta=max((abs(x-y) for a,b in zip(sg,dg) for x,y in zip(a[2],b[2])),default=0.) if len(sg)==len(dg) else None
         report.update(source_glyph_count=len(sg),output_glyph_count=len(dg),glyphs_preserved=close_values(sg,dg),
                       glyph_codes_preserved=glyph_codes_preserved,
@@ -288,7 +318,12 @@ def inspect_visual(source,output,asset):
         if not report['native_size_preserved'] or mean is None:
             report.update(error='visual_geometry_changed',classification='clip_geometry')
         elif not report['crop_no_hidden_text']:
-            report.update(error='visual_text_changed',classification='unexpected_text')
+            # The legacy flag is an equality check: missing text also makes it
+            # false. Do not misdiagnose a boundary deletion as text contamination.
+            counts=crop_checks.get('native_crop_all_text',{})
+            classification=('unexpected_text' if counts.get('extra_chars',0)>0 or not counts else
+                            'text_missing_or_changed' if counts.get('missing_chars',0)>0 else 'text_order_changed')
+            report.update(error='visual_text_changed',classification=classification)
         elif not report['crop_text_complete'] or not report['source_text_preserved']:
             report.update(error='visual_text_changed',classification='text_missing_or_changed')
         elif not report['fonts_preserved']:

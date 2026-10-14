@@ -116,7 +116,8 @@ def test_genuine_scientific_collision_remains_original_not_translated(client):
     assert all(not u.get('translation_candidate') for u in units if u['block']['id'] in unsafe['block_ids'])
 
 
-def test_local_diagnostic_identifies_seed_contact_and_padding_without_text_or_db_changes(client):
+def test_local_diagnostic_identifies_seed_contact_and_padding_without_text_or_db_changes(client,monkeypatch):
+    monkeypatch.setattr("app.routes_sources._schedule_analysis",lambda *args:None)
     sid=upload(client,make_boundary_fixture())
     with closing(get_db()) as con:before=list(con.iterdump())
     run=subprocess.run([sys.executable,'scripts/diagnose_japanese_overlap.py','--source-id',sid,'--pages','1,2,3'],capture_output=True,text=True,check=True)

@@ -106,7 +106,8 @@ def test_unavailable_glyph_proof_and_comparison_limit_fail_closed(client,monkeyp
     with closing(get_db()) as con:assert con.execute('SELECT count(*) FROM translations WHERE source_id=?',(sid,)).fetchone()[0]==0
 
 
-def test_local_numeric_diagnostic_is_read_only_and_never_emits_content(client):
+def test_local_numeric_diagnostic_is_read_only_and_never_emits_content(client,monkeypatch):
+    monkeypatch.setattr("app.routes_sources._schedule_analysis",lambda *args:None)
     from app.config import db_path
     sid=upload(client,make_overlap_fixture())
     with closing(get_db()) as con:original=list(con.iterdump())

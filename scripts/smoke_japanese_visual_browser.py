@@ -37,6 +37,7 @@ from tests.fixtures.japanese_visual_factory import VisualFaultRuntime,add_hidden
 runtime=VisualFaultRuntime()
 app=create_app(runtime=runtime)
 new_generate=engine.generate_pdf
+new_detect=routes.detect_units
 visual=engine.Reflow.visual
 state={'mode':'after'}
 before_metrics=[]
@@ -55,6 +56,7 @@ before_metrics=[]
 engine.Reflow.visual=with_faults(visual)
 '''
         if baseline_ref:
+            program+=f"legacy_content=types.ModuleType('app._legacy_visual_content');legacy_content.__package__='app'\nexec(subprocess.check_output(['git','show',{baseline_ref!r}+':app/japanese_content.py'],text=True),legacy_content.__dict__)\n"
             program+=f"legacy=types.ModuleType('app._legacy_visual_engine');legacy.__package__='app'\nexec(subprocess.check_output(['git','show',{baseline_ref!r}+':app/japanese_pdf.py'],text=True),legacy.__dict__)\n"
             if clip_repro:
                 program+=f"legacy_q=types.ModuleType('app._legacy_visual_quality');legacy_q.__package__='app'\nexec(subprocess.check_output(['git','show',{baseline_ref!r}+':app/japanese_visual_quality.py'],text=True),legacy_q.__dict__)\nlegacy_q.VisualQualityError=engine.VisualQualityError\nlegacy.visual_quality=legacy_q.visual_quality\nlegacy.Reflow.visual=with_faults(legacy.Reflow.visual)\n"
@@ -70,6 +72,7 @@ def change(mode: str=Body(embed=True)):
     state['mode']=mode
     runtime.all_translated=mode=='translated'
     routes.generate_pdf=legacy.generate_pdf if mode=='before' else new_generate
+    routes.detect_units=legacy_content.detect_units if mode=='before' else new_detect
     return {'mode':mode}
 app.router.routes.insert(0,app.router.routes.pop())
 @app.get('/test/baseline-quality')
@@ -141,7 +144,7 @@ def run(base,chromium,output,baseline,clip_repro=False):
         if baseline:
             mode('before');c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
             expect(c.locator('.japanese-pdf-status')).to_contain_text('visual_content_changed',timeout=30000)
-            old=status();assert old['report']['diagnostics']['ai_translation_succeeded']==5
+            old=status();assert old['report']['diagnostics']['ai_translation_succeeded']==6
             old['baseline_asset_metrics']=req.get(base+'/test/baseline-quality').json()
             assert old['baseline_asset_metrics'][0]['asset_kind']=='original_text'
             if clip_repro:
@@ -152,7 +155,7 @@ def run(base,chromium,output,baseline,clip_repro=False):
                 assert failed[0]['images_preserved'] and failed[0]['source_text_preserved']
             else:assert old['baseline_asset_metrics'][0]['raw_mean_pixel_difference']>.2
             page.screenshot(path=str(output/'before-rejected.png'))
-            cases.append('old committed engine reproduces visual_content_changed with five successful AI units')
+            cases.append('old committed detector and engine reproduce visual_content_changed with six successful AI units')
         mode('after');c.get_by_role('checkbox').check()
         c.get_by_role('button',name='日本語PDFを生成',exact=True).click()
         expect(c.locator('.japanese-pdf-status')).to_contain_text('日本語再組版',timeout=30000)

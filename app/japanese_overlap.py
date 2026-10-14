@@ -14,7 +14,9 @@ def folded(text):return re.sub(r'\s+','',text)
 
 class InkProof:
     def __init__(self,page):
+        from .japanese_extraction import glyph_lines
         self.page=page;self.traces=page.get_texttrace();self.fonts={};self.cached={};self.resolved_fonts={}
+        self.source_lines=glyph_lines(page)
         key=lambda n:re.sub(r'[^a-z0-9]','',re.sub(r'^[A-Z]{6}\+','',n).lower())
         for record in page.get_fonts(full=True)[:512]:
             try:
@@ -41,13 +43,20 @@ class InkProof:
         self.resolved_fonts[k]=result;return result
 
     def glyphs(self,block):
+        from .japanese_extraction import member_lines
         bid=block['id']
         if bid in self.cached:return self.cached[bid]
         box=fitz.Rect(block['bbox']['rect']);selected=[];characters=[];baselines=[];math=0;vertical=0;error=None
+        members=member_lines(block,self.source_lines)
+        keys=None if members is None else [(ord(c['c']),tuple(c['origin'])) for line in members for span in line['spans'] for c in span['chars'] if not c['c'].isspace()]
+        seen=[]
         for trace in self.traces:
             for code,gid,origin,bbox in trace['chars']:
                 r=fitz.Rect(bbox)
-                if not box.contains((r.tl+r.br)/2):continue
+                if keys is not None:
+                    if (code,tuple(origin)) not in keys:continue
+                    seen.append((code,tuple(origin)))
+                elif not box.contains((r.tl+r.br)/2):continue
                 if code<0 or code>0x10ffff:error='unsupported_glyph';continue
                 c=chr(code)
                 if c.isspace():continue
@@ -60,6 +69,7 @@ class InkProof:
                 if abs(font.glyph_advance(code)*trace['size']-r.width)>.05:error='unsupported_text_transform';continue
                 selected.append((origin,c,font,trace['size']))
         if ''.join(characters)!=folded(block.get('_line_text',block['text'])):error='glyph_membership_ambiguous'
+        if keys is not None and (len(seen)!=len(keys) or len(set(seen))!=len(seen)):error='glyph_membership_ambiguous'
         if len(selected)>5000:error='glyph_limit'
         result={'glyphs':selected,'baselines':sorted(set(round(v,3) for v in baselines)),
                 'glyph_count':len(characters),'math_glyphs':math,'nonhorizontal_glyphs':vertical,'error':error}
@@ -130,6 +140,51 @@ class InkProof:
         report['classification']='visible_text_collision' if count else 'font_envelopes_only'
         report['comparison_size_px']=list(left.size)
         return report
+
+    def prose_separated(self,a,b,seeds):
+        """Text reflow proof, independent of a native crop's raster equivalence.
+
+        Only known, visible, ordinary source glyphs with disjoint outline bounds
+        qualify. A rule elsewhere in the envelope can invalidate compare()'s
+        union-of-two-text-masks without changing either paragraph. Positive
+        scientific seeds, unsupported glyphs and unavailable masks still veto.
+        This does not authorize changing/cropping any scientific visual.
+        """
+        from .japanese_extraction import prose_text
+        boxes=[]
+        for block in (a,b):
+            text=block.get('_line_text',block['text'])
+            words=re.findall(r'\b[A-Za-z]{2,}\b',text)
+            if not (prose_text(text) or (len(words)>=3 and sum(map(len,words))>=18)):
+                return False
+            evidence=self.glyphs(block)
+            if evidence['error'] or not evidence['glyphs']:return False
+            current=[]
+            for origin,c,font,size in evidence['glyphs']:
+                if c in '□■�' or ord(c)<32 or not font.has_glyph(ord(c)):return False
+                r=font.glyph_bbox(ord(c))
+                # Outline bounds, not the PDF's deliberately broad ascender /
+                # descender envelope. Expand, never shrink, outline geometry.
+                r=fitz.Rect(origin[0]+r.x0*size-.25,origin[1]-r.y1*size-.25,
+                            origin[0]+r.x1*size+.25,origin[1]-r.y0*size+.25)
+                if not self.page.rect.contains(r) or any(r.intersects(s['core']) for s in seeds):return False
+                current.append(r)
+            boxes.append(current)
+        if any(x.intersects(y) for x in boxes[0] for y in boxes[1]):return False
+        area=fitz.Rect(a['bbox']['rect']) & fitz.Rect(b['bbox']['rect'])
+        left,right=self.mask(a,area),self.mask(b,area)
+        if left is None or right is None or left.size!=right.size:return False
+        if ImageChops.multiply(left,right).getbbox() is not None:return False
+        # A native page can contain a clip that removes source glyphs. Reflow
+        # must not resurrect such text. Only rectangular, enclosing clip scopes
+        # are supported; unknown/nonrectangular scopes remain protected.
+        for path in self.page.get_drawings(extended=True):
+            if path['type']=='group':return False
+            if path['type']=='clip':
+                if len(path['items'])!=1 or path['items'][0][0]!='re':return False
+                scissor=fitz.Rect(path['scissor'])
+                if any(not scissor.contains(r) for group in boxes for r in group):return False
+        return True
 
 
 def overlap_pairs(proof,blocks):

@@ -1,0 +1,936 @@
+{
+  "head": "1a38ab9bbf8c9774856fee91fe3720d03398b123",
+  "coverage_before_ai": {
+    "source_chars": 1150,
+    "translated_source_chars": 0,
+    "ratio": 0.0,
+    "candidate_source_chars": 44,
+    "protected_source_chars": 1106,
+    "placed_source_chars": 0,
+    "placed_translated_source_chars": 0,
+    "untranslated_reasons": {
+      "not_translated": 44,
+      "visual_or_equation": 1106
+    }
+  },
+  "state": "preview_ready",
+  "error": null,
+  "content_detection": [
+    {
+      "source_page": 1,
+      "version": "glyph-ink-2",
+      "pairs": [
+        {
+          "block_ids": [
+            "f93be35a9bfe13c611357ab636abfd9576fa4f4174830ff03b250a162fd0879d",
+            "959a73dbbc51c15f62786491e870a24d9b531d6c0a5db68dc5cb2915d80e1748"
+          ],
+          "source_page": 1,
+          "bbox_intersection_size_pt": [
+            682.302,
+            8.76
+          ],
+          "minimum_baseline_difference_pt": 13.0,
+          "glyph_counts": [
+            186,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "proof_dpi": 288,
+          "classification": "overlap_unproven",
+          "overlapping_ink_pixels": null,
+          "source_render_verified": false
+        },
+        {
+          "block_ids": [
+            "959a73dbbc51c15f62786491e870a24d9b531d6c0a5db68dc5cb2915d80e1748",
+            "b8c9b7e6c6a49c5624a63f7fa3ae525f007f565e5fa789f668204e89c01ad0b5"
+          ],
+          "source_page": 1,
+          "bbox_intersection_size_pt": [
+            681.784,
+            8.76
+          ],
+          "minimum_baseline_difference_pt": 15.0,
+          "glyph_counts": [
+            184,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "proof_dpi": 288,
+          "classification": "overlap_unproven",
+          "overlapping_ink_pixels": null,
+          "source_render_verified": false
+        },
+        {
+          "block_ids": [
+            "b8c9b7e6c6a49c5624a63f7fa3ae525f007f565e5fa789f668204e89c01ad0b5",
+            "d8232d8df5f80b80159f6cc8fcc4b6c9c90062496036fb2884e527ee04b88cda"
+          ],
+          "source_page": 1,
+          "bbox_intersection_size_pt": [
+            676.022,
+            8.76
+          ],
+          "minimum_baseline_difference_pt": 15.0,
+          "glyph_counts": [
+            183,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "proof_dpi": 288,
+          "classification": "overlap_unproven",
+          "overlapping_ink_pixels": null,
+          "source_render_verified": false
+        },
+        {
+          "block_ids": [
+            "d8232d8df5f80b80159f6cc8fcc4b6c9c90062496036fb2884e527ee04b88cda",
+            "440dee32f4b5336c64d238c45ba4b5845aeff71ad07bfe68d175dd119b725ff9"
+          ],
+          "source_page": 1,
+          "bbox_intersection_size_pt": [
+            668.362,
+            8.76
+          ],
+          "minimum_baseline_difference_pt": 15.0,
+          "glyph_counts": [
+            183,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "proof_dpi": 288,
+          "classification": "overlap_unproven",
+          "overlapping_ink_pixels": null,
+          "source_render_verified": false
+        },
+        {
+          "block_ids": [
+            "440dee32f4b5336c64d238c45ba4b5845aeff71ad07bfe68d175dd119b725ff9",
+            "f46a630f5211c0bdacd8f8e155474298733c66b79cf701f85f9c3dbfad500377"
+          ],
+          "source_page": 1,
+          "bbox_intersection_size_pt": [
+            668.362,
+            8.76
+          ],
+          "minimum_baseline_difference_pt": 15.0,
+          "glyph_counts": [
+            184,
+            186
+          ],
+          "glyph_membership_verified": true,
+          "proof_dpi": 288,
+          "classification": "overlap_unproven",
+          "overlapping_ink_pixels": null,
+          "source_render_verified": false
+        }
+      ],
+      "pair_counts": {
+        "overlap_unproven": 5
+      },
+      "pair_limit_reached": false,
+      "boundary_conflicts": [],
+      "regions": [
+        {
+          "group_id": "R1",
+          "seed_ids": [
+            "G550124283dc66d47e5c5",
+            "G216851eee7dbb43b362d",
+            "Gfc3c230583cb9fc7ab14",
+            "Ge7e649f3117a93b508f7",
+            "Gbb7331b7eee3bc260f06"
+          ],
+          "seed_size_pt": [
+            690.194,
+            98.762
+          ],
+          "before_crop_size_pt": [
+            694.192,
+            102.76
+          ],
+          "crop_size_pt": [
+            694.192,
+            102.76
+          ],
+          "member_count": 6,
+          "expansion_steps": 1,
+          "text_only": true,
+          "crop_adjustment": "unchanged",
+          "mandatory_seed_and_font_boxes_preserved": true
+        }
+      ],
+      "seeds": [
+        {
+          "id": "G550124283dc66d47e5c5",
+          "kind": "text_collision",
+          "object_index": 4,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            43.999,
+            297.039,
+            724.684,
+            335.801
+          ],
+          "display_bbox_pt": [
+            42.0,
+            295.04,
+            726.683,
+            337.8
+          ]
+        },
+        {
+          "id": "G216851eee7dbb43b362d",
+          "kind": "text_collision",
+          "object_index": 3,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            43.999,
+            282.039,
+            720.0229,
+            320.801
+          ],
+          "display_bbox_pt": [
+            42.0,
+            280.04,
+            722.022,
+            322.8
+          ]
+        },
+        {
+          "id": "Gfc3c230583cb9fc7ab14",
+          "kind": "text_collision",
+          "object_index": 2,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            43.999,
+            267.039,
+            725.785,
+            305.801
+          ],
+          "display_bbox_pt": [
+            42.0,
+            265.04,
+            727.784,
+            307.8
+          ]
+        },
+        {
+          "id": "Ge7e649f3117a93b508f7",
+          "kind": "text_collision",
+          "object_index": 1,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            43.999,
+            252.039,
+            726.303,
+            290.801
+          ],
+          "display_bbox_pt": [
+            42.0,
+            250.04,
+            728.302,
+            292.8
+          ]
+        },
+        {
+          "id": "Gbb7331b7eee3bc260f06",
+          "kind": "text_collision",
+          "object_index": 0,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            43.999,
+            237.039,
+            734.193,
+            275.801
+          ],
+          "display_bbox_pt": [
+            42.0,
+            235.04,
+            736.192,
+            277.8
+          ]
+        }
+      ],
+      "seed_contacts": [],
+      "boundary_checks": []
+    },
+    {
+      "source_page": 2,
+      "version": "glyph-ink-2",
+      "pairs": [],
+      "pair_counts": {},
+      "pair_limit_reached": false,
+      "boundary_conflicts": [],
+      "regions": [
+        {
+          "group_id": "R1",
+          "seed_ids": [
+            "Gec0bdf0a73284450ce3d",
+            "G0311f4cf21f5533c1ac5"
+          ],
+          "seed_size_pt": [
+            511.0,
+            49.0
+          ],
+          "before_crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "member_count": 1,
+          "expansion_steps": 1,
+          "text_only": false,
+          "crop_adjustment": "unchanged",
+          "mandatory_seed_and_font_boxes_preserved": true
+        },
+        {
+          "group_id": "R2",
+          "seed_ids": [
+            "G6d4b0525a09734613fb5",
+            "G62c5924a9145bc5b4e4c",
+            "G3075c037baae913c42c8",
+            "G9b0b4e2f4e34c7e228f5",
+            "Gce3616b06519d1d80f02",
+            "G2dfd816d3731d786006a",
+            "Gb14bd32caefb95e07566"
+          ],
+          "seed_size_pt": [
+            511.0,
+            54.0
+          ],
+          "before_crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "member_count": 4,
+          "expansion_steps": 1,
+          "text_only": false,
+          "crop_adjustment": "unchanged",
+          "mandatory_seed_and_font_boxes_preserved": true
+        },
+        {
+          "group_id": "R3",
+          "seed_ids": [
+            "Gb79be328f7933f66d1c0",
+            "G8ef494c80e6e80a7ad96"
+          ],
+          "seed_size_pt": [
+            85.256,
+            17.864
+          ],
+          "before_crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "member_count": 1,
+          "expansion_steps": 1,
+          "text_only": false,
+          "crop_adjustment": "unchanged",
+          "mandatory_seed_and_font_boxes_preserved": true
+        }
+      ],
+      "seeds": [
+        {
+          "id": "Gec0bdf0a73284450ce3d",
+          "kind": "drawing",
+          "object_index": 1,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ]
+        },
+        {
+          "id": "G0311f4cf21f5533c1ac5",
+          "kind": "drawing",
+          "object_index": 0,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ]
+        },
+        {
+          "id": "G6d4b0525a09734613fb5",
+          "kind": "detected_table",
+          "object_index": 0,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ]
+        },
+        {
+          "id": "G62c5924a9145bc5b4e4c",
+          "kind": "drawing",
+          "object_index": 7,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ]
+        },
+        {
+          "id": "G3075c037baae913c42c8",
+          "kind": "drawing",
+          "object_index": 6,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ]
+        },
+        {
+          "id": "G9b0b4e2f4e34c7e228f5",
+          "kind": "drawing",
+          "object_index": 5,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ]
+        },
+        {
+          "id": "Gce3616b06519d1d80f02",
+          "kind": "drawing",
+          "object_index": 2,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ]
+        },
+        {
+          "id": "G2dfd816d3731d786006a",
+          "kind": "drawing",
+          "object_index": 3,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ]
+        },
+        {
+          "id": "Gb14bd32caefb95e07566",
+          "kind": "drawing",
+          "object_index": 4,
+          "owner_block_id": null,
+          "core_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ]
+        },
+        {
+          "id": "Gb79be328f7933f66d1c0",
+          "kind": "isolated_math_or_special_font",
+          "object_index": 10,
+          "owner_block_id": "f82aac94b2bea8ae63e8ad3467424a4eacf92b70b0d4c7bac9fc6c76dfdcedb3",
+          "core_bbox_pt": [
+            119.999,
+            596.024,
+            205.255,
+            613.888
+          ],
+          "display_bbox_pt": [
+            118.0,
+            594.025,
+            207.254,
+            615.887
+          ]
+        },
+        {
+          "id": "G8ef494c80e6e80a7ad96",
+          "kind": "equation",
+          "object_index": 13,
+          "owner_block_id": "f82aac94b2bea8ae63e8ad3467424a4eacf92b70b0d4c7bac9fc6c76dfdcedb3",
+          "core_bbox_pt": [
+            119.999,
+            596.024,
+            205.255,
+            613.888
+          ],
+          "display_bbox_pt": [
+            118.0,
+            594.025,
+            207.254,
+            615.887
+          ]
+        }
+      ],
+      "seed_contacts": [
+        {
+          "seed_id": "G0311f4cf21f5533c1ac5",
+          "block_id": "99a9af323540b10a8a0730544ecbbf2db62477f6b97fb0e9513d1a77ff1fed2d",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            57.25,
+            13.74
+          ],
+          "ink_pixels": 4107
+        },
+        {
+          "seed_id": "G8ef494c80e6e80a7ad96",
+          "block_id": "f82aac94b2bea8ae63e8ad3467424a4eacf92b70b0d4c7bac9fc6c76dfdcedb3",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            85.254,
+            17.862
+          ],
+          "ink_pixels": 4804
+        },
+        {
+          "seed_id": "G6d4b0525a09734613fb5",
+          "block_id": "0c5cbe6d93b87953aa0d8a6bc66662fa3f75a9c43edaba9b0c5aa8b80afb158b",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            27.23,
+            13.74
+          ],
+          "ink_pixels": 2258
+        },
+        {
+          "seed_id": "G6d4b0525a09734613fb5",
+          "block_id": "a2a52596afc461e16741ec312ff840139820e7444eef41db32e086cf277da266",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            41.12,
+            13.74
+          ],
+          "ink_pixels": 2909
+        },
+        {
+          "seed_id": "G6d4b0525a09734613fb5",
+          "block_id": "33fef0e21f2f6ce5f41b005e01926df909af3193d580dd3d004a2b6cf1952c54",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            35.01,
+            13.74
+          ],
+          "ink_pixels": 2344
+        },
+        {
+          "seed_id": "G6d4b0525a09734613fb5",
+          "block_id": "b452c076bed1e5d00d371de9be018b0c6ae78aad74821b9dc0c31810b578799c",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            47.26,
+            13.74
+          ],
+          "ink_pixels": 3317
+        },
+        {
+          "seed_id": "Gb79be328f7933f66d1c0",
+          "block_id": "f82aac94b2bea8ae63e8ad3467424a4eacf92b70b0d4c7bac9fc6c76dfdcedb3",
+          "touches": true,
+          "classification": "ink_contact",
+          "proof_error": null,
+          "intersection_size_pt": [
+            85.254,
+            17.862
+          ],
+          "ink_pixels": 4804
+        }
+      ],
+      "boundary_checks": []
+    }
+  ],
+  "quality": {
+    "failed_visuals": 0,
+    "missing_or_duplicate": 0,
+    "outside_page": 0,
+    "overlaps": 0,
+    "passed_visuals": 4,
+    "reading_order_preserved": true,
+    "source_blocks_mapped": 32,
+    "source_mapping_duplicates": 0,
+    "text_blocks_validated": 18,
+    "untranslated_text_validated": 8,
+    "visual_quality_version": "native-3",
+    "visuals": [
+      {
+        "annotations_present": false,
+        "asset_id": "Ve876f5ae58c449f7adeca0e8",
+        "asset_kind": "original_text",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          792.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "exact_pixels_preserved": false,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 2,
+        "max_glyph_origin_difference_pt": 7.8e-05,
+        "mean_pixel_difference": 0.004149,
+        "native_size_preserved": true,
+        "nonvisible_drawing_difference_proven": false,
+        "output_drawing_count": 0,
+        "output_glyph_count": 1278,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1929,
+          286
+        ],
+        "output_ink_pixels": 62255,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          694.192,
+          102.76
+        ],
+        "quality_policy": "original_text",
+        "raw_mean_pixel_difference": 0.005077,
+        "raw_output_image_size_px": [
+          1929,
+          287
+        ],
+        "raw_source_image_size_px": [
+          1929,
+          287
+        ],
+        "source_drawing_count": 0,
+        "source_glyph_count": 1278,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1929,
+          286
+        ],
+        "source_ink_pixels": 62253,
+        "source_invisible_drawing_count": 0,
+        "source_page": 1,
+        "source_rotation": 0,
+        "source_size_pt": [
+          694.192,
+          102.76
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V945db19e8fe070d50d0009e6",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 4,
+        "max_glyph_origin_difference_pt": 2.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 2,
+        "output_glyph_count": 12,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          137
+        ],
+        "output_ink_pixels": 7408,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          49.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          1421,
+          137
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          137
+        ],
+        "source_drawing_count": 2,
+        "source_glyph_count": 12,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          137
+        ],
+        "source_ink_pixels": 7408,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          49.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V83546b134b1a73b9b8f7344d",
+        "asset_kind": "table",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 5,
+        "max_glyph_origin_difference_pt": 1.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 6,
+        "output_glyph_count": 28,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          150
+        ],
+        "output_ink_pixels": 10065,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          54.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.00013,
+        "raw_output_image_size_px": [
+          1421,
+          151
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          151
+        ],
+        "source_drawing_count": 6,
+        "source_glyph_count": 28,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          150
+        ],
+        "source_ink_pixels": 10065,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          54.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V65e8c6a7ee7aafbb99174d92",
+        "asset_kind": "equation",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 6,
+        "max_glyph_origin_difference_pt": 0.000119,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 0,
+        "output_glyph_count": 15,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          248,
+          61
+        ],
+        "output_ink_pixels": 1711,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          89.254,
+          21.862
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          249,
+          61
+        ],
+        "raw_source_image_size_px": [
+          249,
+          61
+        ],
+        "source_drawing_count": 0,
+        "source_glyph_count": 15,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          248,
+          61
+        ],
+        "source_ink_pixels": 1711,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          89.254,
+          21.862
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      }
+    ]
+  },
+  "diagnostics": {
+    "ai_translation_succeeded": 10,
+    "attempt_errors": {
+      "ai_uncertain": 2
+    },
+    "cached_translations": 0,
+    "elapsed_seconds": 0.021,
+    "failure_stage": null,
+    "metadata_units": 7,
+    "pdf_placement_succeeded": 10,
+    "protected_units": 13,
+    "runtime_calls": 4,
+    "split_batches": 0,
+    "stopped_by": null,
+    "title_reviews": 1,
+    "translation_candidates": 11,
+    "translation_failures": {
+      "ai_uncertain": 1
+    },
+    "translation_succeeded": 10,
+    "unsafe_units": 0
+  }
+}

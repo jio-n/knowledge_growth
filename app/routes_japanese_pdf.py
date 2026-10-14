@@ -104,7 +104,9 @@ def run_generation(token, runtime):
             current = con.execute('SELECT * FROM japanese_pdf_generations WHERE id=?', (token,)).fetchone()
             if not current or current['state'] != 'generating' or not matches(job, snapshot(con, source['id'])):
                 raise PDFError('source_changed')
-            for unit in units: save_unit(con, source, version, unit)
+            for unit in units:
+                unit['_publication_state']='published'
+                save_unit(con, source, version, unit)
             report['units']=report_units(units)
             report['semantic_units']=semantic_report(units)
             report['diagnostics'] = translation_diagnostics(units, translation_stats, published=True)
@@ -115,21 +117,29 @@ def run_generation(token, runtime):
     except Exception as error:
         code = str(error) if isinstance(error, PDFError) else 'generation_failed'
         final.unlink(missing_ok=True)
-        # Preserve completed AI text for a retry, but never mark unsafe placement translated.
+        # AI success was committed before layout. A failure to publish a PDF
+        # must never rewrite that row (or a user edit) as a translation failure.
+        for unit in units:unit['_publication_state']='failed'
         with closing(get_db()) as con:
             job = con.execute('SELECT 1 FROM japanese_pdf_generations WHERE id=?', (token,)).fetchone()
             if job:
                 if failure_stage!='content_detection' and source and version and con.execute('SELECT 1 FROM source_versions WHERE id=? AND source_id=?', (version['id'], source['id'])).fetchone():
                     for unit in units:
-                        if unit['status'] in ('pending', 'translated'):
-                            unit.update(status='failed', reason=code)
-                        save_unit(con, source, version, unit)
+                        if not unit.get('translation_succeeded') and not unit.get('cached'):
+                            save_unit(con, source, version, unit)
                 report = {'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
                           'units':report_units(units),'semantic_units':semantic_report(units),'coverage':coverage(units),
                           'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units)}
                 report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
                 if isinstance(error, VisualQualityError):
                     report['quality'] = error.quality
+                    by_asset={row['asset_id']:row for row in error.quality['visuals']}
+                    for unit in units:
+                        if unit['kind']=='visual' and unit['asset_id'] in by_asset:
+                            q=by_asset[unit['asset_id']]
+                            unit.update(_visual_quality_state=q['status'],_visual_quality_error=q['error'])
+                    report['units']=report_units(units)
+                    report['semantic_units']=semantic_report(units)
                     report['diagnostics']['visual_failures'] = dict(Counter(
                         'annotated_page' if row['annotations_present'] else row['asset_kind']
                         for row in error.quality['visuals'] if row['status']=='failed'))
