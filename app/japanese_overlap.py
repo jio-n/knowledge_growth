@@ -49,7 +49,7 @@ class InkProof:
         box=fitz.Rect(block['bbox']['rect']);selected=[];characters=[];baselines=[];math=0;vertical=0;error=None
         members=member_lines(block,self.source_lines)
         keys=None if members is None else [(ord(c['c']),tuple(c['origin'])) for line in members for span in line['spans'] for c in span['chars'] if not c['c'].isspace()]
-        seen=[]
+        seen=[];native=[];text_error=None
         for trace in self.traces:
             for code,gid,origin,bbox in trace['chars']:
                 r=fitz.Rect(bbox)
@@ -57,7 +57,7 @@ class InkProof:
                     if (code,tuple(origin)) not in keys:continue
                     seen.append((code,tuple(origin)))
                 elif not box.contains((r.tl+r.br)/2):continue
-                if code<0 or code>0x10ffff:error='unsupported_glyph';continue
+                if code<0 or code>0x10ffff:error=text_error='unsupported_glyph';continue
                 c=chr(code)
                 if c.isspace():continue
                 characters.append(c);baselines.append(origin[1])
@@ -65,13 +65,16 @@ class InkProof:
                 vertical+=tuple(trace['dir'])!=(1.,0.)
                 font=self.font_for(trace['font'])
                 if (font is None or trace['type']!=0 or trace.get('opacity',1)!=1 or tuple(trace['dir'])!=(1.,0.)
-                        or font.has_glyph(code)!=gid):error='unsupported_glyph_rendering';continue
-                if abs(font.glyph_advance(code)*trace['size']-r.width)>.05:error='unsupported_text_transform';continue
+                        or font.has_glyph(code)!=gid):error=text_error='unsupported_glyph_rendering';continue
+                advance=font.glyph_advance(code)*trace['size']
+                if not advance or not gid or c in '□■�':error=text_error='unsupported_glyph';continue
+                native.append((origin,c,font,trace['size'],r.width/advance))
+                if abs(advance-r.width)>.05:error='unsupported_text_transform';continue
                 selected.append((origin,c,font,trace['size']))
-        if ''.join(characters)!=folded(block.get('_line_text',block['text'])):error='glyph_membership_ambiguous'
-        if keys is not None and (len(seen)!=len(keys) or len(set(seen))!=len(seen)):error='glyph_membership_ambiguous'
-        if len(selected)>5000:error='glyph_limit'
-        result={'glyphs':selected,'baselines':sorted(set(round(v,3) for v in baselines)),
+        if ''.join(characters)!=folded(block.get('_line_text',block['text'])):error=text_error='glyph_membership_ambiguous'
+        if keys is not None and (len(seen)!=len(keys) or len(set(seen))!=len(seen)):error=text_error='glyph_membership_ambiguous'
+        if len(selected)>5000:error=text_error='glyph_limit'
+        result={'glyphs':selected,'native_glyphs':native,'text_error':text_error,'baselines':sorted(set(round(v,3) for v in baselines)),
                 'glyph_count':len(characters),'math_glyphs':math,'nonhorizontal_glyphs':vertical,'error':error}
         self.cached[bid]=result;return result
 
@@ -105,7 +108,7 @@ class InkProof:
                 'ink_pixels':0}
         if area.is_empty:return report
         evidence=self.glyphs(block)
-        mask=self.mask(block,area)
+        mask=self.text_mask(block,area) if not evidence['text_error'] else self.mask(block,area)
         if mask is None:
             report.update(touches=None,classification='contact_unproven',ink_pixels=None,
                           proof_error=evidence['error'] or 'mask_unavailable')
@@ -141,43 +144,46 @@ class InkProof:
         report['comparison_size_px']=list(left.size)
         return report
 
-    def prose_separated(self,a,b,seeds):
-        """Text reflow proof, independent of a native crop's raster equivalence.
+    def outlines(self,block):
+        result=[]
+        for origin,c,font,size,sx in self.glyphs(block)['native_glyphs']:
+            r=font.glyph_bbox(ord(c))
+            result.append(fitz.Rect(origin[0]+r.x0*size*sx-.25,origin[1]-r.y1*size-.25,
+                                    origin[0]+r.x1*size*sx+.25,origin[1]-r.y0*size+.25))
+        return result
 
-        Only known, visible, ordinary source glyphs with disjoint outline bounds
-        qualify. A rule elsewhere in the envelope can invalidate compare()'s
-        union-of-two-text-masks without changing either paragraph. Positive
-        scientific seeds, unsupported glyphs and unavailable masks still veto.
-        This does not authorize changing/cropping any scientific visual.
-        """
-        from .japanese_extraction import prose_text
-        boxes=[]
-        for block in (a,b):
-            text=block.get('_line_text',block['text'])
-            words=re.findall(r'\b[A-Za-z]{2,}\b',text)
-            if not (prose_text(text) or (len(words)>=3 and sum(map(len,words))>=18)):
-                return False
-            evidence=self.glyphs(block)
-            if evidence['error'] or not evidence['glyphs']:return False
-            current=[]
-            for origin,c,font,size in evidence['glyphs']:
-                if c in '□■�' or ord(c)<32 or not font.has_glyph(ord(c)):return False
-                r=font.glyph_bbox(ord(c))
-                # Outline bounds, not the PDF's deliberately broad ascender /
-                # descender envelope. Expand, never shrink, outline geometry.
-                r=fitz.Rect(origin[0]+r.x0*size-.25,origin[1]-r.y1*size-.25,
-                            origin[0]+r.x1*size+.25,origin[1]-r.y0*size+.25)
-                if not self.page.rect.contains(r) or any(r.intersects(s['core']) for s in seeds):return False
-                current.append(r)
-            boxes.append(current)
-        if any(x.intersects(y) for x in boxes[0] for y in boxes[1]):return False
+    def text_mask(self,block,clip):
+        evidence=self.glyphs(block)
+        if evidence['text_error']:return None
+        if not evidence['error']:return self.mask(block,clip)
+        scale=PROOF_DPI/72
+        if clip.width*clip.height*scale*scale>MAX_PROOF_PIXELS:return None
+        try:
+            with fitz.open() as doc:
+                p=doc.new_page(width=self.page.cropbox.width,height=self.page.cropbox.height)
+                fonts={}
+                for origin,c,font,size,sx in evidence['native_glyphs']:
+                    key=font.buffer
+                    if key not in fonts:
+                        fonts[key]='F'+str(len(fonts));p.insert_font(fontname=fonts[key],fontbuffer=key)
+                    p.insert_text(origin,c,fontname=fonts[key],fontsize=size,
+                                  morph=(fitz.Point(origin),fitz.Matrix(sx,1)))
+                pix=p.get_pixmap(matrix=fitz.Matrix(scale,scale),clip=clip,alpha=True,colorspace=fitz.csGRAY)
+                return Image.frombytes('LA',(pix.width,pix.height),pix.samples).getchannel('A').point(lambda v:255 if v else 0).filter(ImageFilter.MaxFilter(3))
+        except Exception:return None
+
+    def text_separated(self,a,b,seeds):
+        """One geometry proof for all decoded text, independent of font/words."""
+        if any(self.glyphs(block)['text_error'] for block in (a,b)):return False
+        boxes=[self.outlines(block) for block in (a,b)]
+        # Font.glyph_bbox() may be the whole font bbox (not the outline) for
+        # some embedded TeX programs. It cannot decide a text collision. Use
+        # the native-code/font/origin mask, expanded by one proof pixel, instead.
+        if any(self.contact(block,s['core'])['touches'] is not False for block in (a,b) for s in seeds):return False
         area=fitz.Rect(a['bbox']['rect']) & fitz.Rect(b['bbox']['rect'])
-        left,right=self.mask(a,area),self.mask(b,area)
+        left,right=self.text_mask(a,area),self.text_mask(b,area)
         if left is None or right is None or left.size!=right.size:return False
         if ImageChops.multiply(left,right).getbbox() is not None:return False
-        # A native page can contain a clip that removes source glyphs. Reflow
-        # must not resurrect such text. Only rectangular, enclosing clip scopes
-        # are supported; unknown/nonrectangular scopes remain protected.
         for path in self.page.get_drawings(extended=True):
             if path['type']=='group':return False
             if path['type']=='clip':
@@ -185,6 +191,9 @@ class InkProof:
                 scissor=fitz.Rect(path['scissor'])
                 if any(not scissor.contains(r) for group in boxes for r in group):return False
         return True
+
+    # Compatibility for callers/tests from the earlier pair-specific planner.
+    def prose_separated(self,a,b,seeds):return self.text_separated(a,b,seeds)
 
 
 def overlap_pairs(proof,blocks):

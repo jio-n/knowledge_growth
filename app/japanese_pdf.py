@@ -13,14 +13,15 @@ import tempfile
 import fitz
 from .config import ROOT
 from .japanese_content import detect_units
-from .japanese_semantics import (ASSEMBLY_VERSION,source_members,report_units,semantic_report,coverage)
+from .japanese_semantics import (ASSEMBLY_VERSION,source_members,report_units,semantic_report,coverage,reading_quality)
 from .japanese_translation import PDFError
 from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQualityError,
     canonical_pixmap, safe_visual_metadata, VISUAL_QUALITY_VERSION, DPI, MAX_VISUAL_PIXELS)
 from .japanese_extraction import EXTRACTION_VERSION
+from .japanese_textflow import CLASSIFICATION_VERSION
 from .japanese_overlap import OVERLAP_VERSION,content_report
 
-LAYOUT_VERSION='reflow-6'
+LAYOUT_VERSION='reflow-7'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
@@ -366,10 +367,9 @@ def generate_pdf(original,units,output_path):
             for key in ('original_block_ids','caption_block_ids'):public_asset[key]=source_ids(a[key])
             public_assets.append(public_asset)
         text_blocks=sum(bool(u['block']['text'].strip()) and u['kind']!='visual' for u in units)
-        return {'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'extraction_version':EXTRACTION_VERSION,
+        return {'classification_version':CLASSIFICATION_VERSION,'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'extraction_version':EXTRACTION_VERSION,
                 'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units),
-                'reading_quality':{'abstract':'complete' if reading_coverage['abstract_complete'] else 'incomplete' if reading_coverage['abstract']['source_chars'] else 'not_selected',
-                                   'pdf_generated':True},
+                'reading_quality':reading_quality(units,pdf_generated=True,quality_validated=True),
                 'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
                 'japanese_page_count':len(completed),'original_page_count':len(source),
                 'counts':dict(Counter(u['status'] for u in units)),'text_blocks':text_blocks,

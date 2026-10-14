@@ -29,7 +29,8 @@ def test_conference_abstract_is_translated_not_cropped_and_source_is_immutable(c
     assert abstract['source_chars']==size
     assert abstract['candidate_source_chars']==abstract['translated_source_chars']==abstract['placed_source_chars']==abstract['placed_translated_source_chars']==size
     assert abstract['protected_source_chars']==0 and abstract['untranslated_reasons']=={}
-    assert report['reading_quality']=={'pdf_generated':True,'abstract':'complete'}
+    assert report['reading_quality']['pdf_generated'] and report['reading_quality']['quality_validated']
+    assert report['reading_quality']['abstract']=='complete' and report['reading_quality']['abstract_required_ratio']==1
     assert report['coverage']['title']['translated'] and report['coverage']['body_preserved_in_visuals']==0
     assert [b['text'] for b in runtime.inputs].count(ABSTRACT)==1
     assert not any(b['text'] in (FOOTNOTE,'1','2') for b in runtime.inputs)
@@ -74,7 +75,8 @@ def test_untranslated_abstract_is_readable_text_and_incomplete_not_success(clien
     assert a['translated_source_chars']==a['protected_source_chars']==a['placed_translated_source_chars']==0
     assert a['untranslated_reasons']=={'ai_uncertain':size}
     assert not status['report']['coverage']['abstract_complete']
-    assert status['report']['reading_quality']=={'pdf_generated':True,'abstract':'incomplete'}
+    assert status['report']['reading_quality']['pdf_generated'] and status['report']['reading_quality']['abstract']=='incomplete'
+    assert not status['report']['reading_quality']['accepted']
     assert not status['report']['assets']
     with fitz.open(stream=res.content,filetype='pdf') as pdf:
         text=' '.join(p.get_text() for p in pdf)
@@ -222,10 +224,10 @@ def test_short_abstract_keeps_its_role_and_never_disappears_from_quality_denomin
     sid=upload(client,data);blocks=client.get(f'/api/sources/{sid}/document').json()['blocks']
     with fitz.open(stream=data,filetype='pdf') as d:units=detect_units(d,blocks,[1])
     a=next(u for u in units if u.get('semantic_role')=='abstract_body')
-    assert (a['kind']=='visual')==border
+    assert a['kind']=='text'  # A fully separated plain text enclosure is layout, not a scientific object.
     result=coverage(units)['abstract']
     assert result['source_chars']==len(norm(text))
-    assert result['protected_source_chars']==(len(norm(text)) if border else 0)
+    assert result['protected_source_chars']==0
 
 
 def test_cached_english_user_edit_is_protected_but_not_counted_as_japanese_abstract(client):

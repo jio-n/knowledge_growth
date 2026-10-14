@@ -3,6 +3,7 @@ import { api } from "../api.js";
 import { el, toast } from "../util.js";
 
 const REASONS = {
+  text_provenance_or_overlap_unresolved:"本文の文字対応・描画境界が未解決（図表判定とは別）",
   visual_or_equation: "図表・数式", math_or_symbols: "数式・記号を含む",
   image_drawing_table_or_annotation: "画像・線・表・注釈と接近／交差",
   missing_geometry: "原文座標なし", overlapping_or_ambiguous_text: "文字領域が曖昧",
@@ -24,6 +25,7 @@ const REASONS = {
 };
 
 const TRANSLATION_ERRORS = {
+  not_requested_for_retry:"今回の再試行対象外",
   ai_runtime_error: "AI Runtimeエラー", ai_rpc_error: "AI RPCエラー",
   ai_timeout: "AI timeout", ai_incomplete_turn: "AI turn未完了", ai_cancelled: "AI turn中断",
   invalid_json: "JSON形式不正", schema_mismatch: "schema不一致", block_id_mismatch: "block ID不一致",
@@ -68,21 +70,24 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
     event.preventDefault();
     const selected = parsePages(pages.value);
     if (!selected) { toast("1〜3ページを指定してください。例: 1,3,5（重複・範囲外は不可）"); return; }
-    busy = true; update();
-    try {
-      await switchTo("original");
-      if (disposed) return;
-      const result = await api.generateJapanesePdf(sourceId, selected, retry.checked);
-      if (disposed) return;
-      current = result; rememberedId = result.generation_id; update(); await refresh();
-    } catch (error) { if (!disposed) status.textContent = error.message; }
-    finally { busy = false; if (!disposed) updateButtons(); }
+    await generateSelection(selected);
   } }, el("label", {}, "原文ページ（最大3） ", pages), submit,
     el("label", {}, retry, " 失敗ブロックを再試行（成功した訳は再利用）"));
   const setup = el("details", {}, el("summary", {}, "日本語版を試作"), form);
   const root = el("div", { class: "japanese-pdf-controls" },
     el("div", { class: "japanese-pdf-actions" }, original, japanese, download, history), status, diagnostics, setup, report);
 
+  async function generateSelection(selected, unitIds = null) {
+    busy = true; update();
+    try {
+      await switchTo("original");
+      if (disposed) return;
+      const result = await api.generateJapanesePdf(sourceId, selected, unitIds ? true : retry.checked, unitIds);
+      if (disposed) return;
+      current = result; rememberedId = result.generation_id; update(); await refresh();
+    } catch (error) { if (!disposed) status.textContent = error.message; }
+    finally { busy = false; if (!disposed) updateButtons(); }
+  }
   async function switchTo(next) {
     if (disposed || (next === "japanese" && current?.state !== "preview_ready")) return;
     await onSwitch(next, current);
@@ -91,6 +96,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
   function updateButtons() {
     japanese.disabled = current?.state !== "preview_ready";
     submit.disabled = busy || current?.state === "generating";
+    for (const b of reportBody.querySelectorAll(".japanese-pdf-retry-unit")) b.disabled = busy || current?.state === "generating";
     original.setAttribute("aria-pressed", String(language === "original"));
     japanese.setAttribute("aria-pressed", String(language === "japanese"));
   }
@@ -105,6 +111,8 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       const c=r.coverage;
       const coverage=c ? `本文の日本語カバレッジ ${percent(c.body.ratio)}（原文文字数 ${c.body.translated_source_chars}/${c.body.source_chars}） · 要旨 ${percent(c.abstract.ratio)} · タイトル ${!c.title.units ? "対象なし" : c.title.translated && c.title.complete ? "全文を日本語化" : "全文を原文保持・確認対象"}` : `旧指標：翻訳block件数 ${r.counts.translated || 0}/${r.text_blocks}（${Math.round(r.translated_ratio*100)}%・本文カバレッジとは異なります）`;
       status.textContent = `日本語試作・一部ページのみ翻訳済み · ${r.layout_version ? "日本語再組版" : "旧座標版"} · 原文 p.${current.pages.join(", ")} → 日本語 ${r.japanese_page_count || "同数"}ページ · ${coverage} · 未翻訳 ${r.counts.failed || 0}意味単位 · 未解決原物 ${(r.assets || []).filter(a=>a.status === "unresolved").length}件 · AI翻訳・原文確認推奨`;
+      if (r.reading_quality?.accepted === false) status.textContent += " · 読書品質未達（本文と要旨を個別確認）";
+      if (r.reading_quality?.accepted === true) status.textContent += " · 読書品質ゲート通過";
       if (c?.abstract.source_chars && !c.abstract_complete) status.textContent += " · PDF生成済み／要旨の日本語化は未完了";
       if (r.visual_quality_version !== "native-3") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
       if (r.assembly_version !== "semantic-1") status.textContent += " · 文章構造の再構成は未実施（再生成できます）";
@@ -119,6 +127,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       `保存済み訳再利用：${d.cached_translations}件`,
       ...Object.entries(d.translation_failures || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"}（${Object.hasOwn(TRANSLATION_ERRORS,code) ? code : "translation_validation_error"}）：${count}件`),
       `PDF配置成功：${d.pdf_placement_succeeded}件`,
+      ...(d.quality_validation_state ? [`PDF品質検証：${d.quality_validation_state === "passed" ? "成功" : d.quality_validation_state === "failed" ? "失敗" : "未完了"}`] : []),
       ...(d.pdf_placement_validated != null ? [`配置検証済み：${d.pdf_placement_validated}件`, `PDF公開：${d.publication_state === "published" ? "完了" : d.publication_state === "failed" ? "失敗" : "未完了"}`] : []), `図表・数式保護：${d.protected_units}件`,
       `領域未解決：${d.unsafe_units}件`,
       ...Object.entries(d.visual_failures || {}).map(([kind,count])=>`原物検証失敗（${VISUAL_KINDS[kind] || "原物"}）：${count}件`),
@@ -172,6 +181,18 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
         (group.extraction ? ` · 空白復元 ${group.extraction.inferred_spaces}箇所 · 原文字照合 ${group.extraction.glyph_text_matched ? "一致" : "要確認"}` : "")+
         (group.protection_reasons?.length ? ` · 保護判定 ${group.protection_reasons.join(", ")}` : ""),
         el("button",{type:"button",class:"btn btn--sm",onClick:()=>onSwitch("original",current,group.original_block_ids[0])},"原文の意味単位を見る")));
+      for (const group of current.report.semantic_units || []) {
+        for (const check of group.translation_validation || []) reportBody.append(el("p",{class:"japanese-pdf-translation-proof"},
+          `翻訳応答検証 · ${group.id} · 試行${check.attempt} · AI申告 ${check.declared_status || "応答未検証"} · 出力${check.output_chars ?? "?"}文字／日本語${check.japanese_chars ?? "?"}文字 · ${TRANSLATION_ERRORS[check.error] || (check.error ? "検証未成功" : "検証成功")}`));
+        if (current.report.layout_version === "reflow-7" && group.ai_translation_state === "failed" && group.ai_translation_error !== "assembled_user_edit_review")
+          reportBody.append(el("button",{type:"button",class:"btn btn--sm japanese-pdf-retry-unit",disabled:busy || current.state === "generating",
+            "data-unit-id":group.id,onClick:()=>generateSelection(current.pages,[group.id])},`この翻訳だけ再試行（${semanticRoles[group.role] || "意味単位"}・原文${group.source_chars}文字）`));
+      }
+      for (const page of current.report.content_detection || []) for (const unit of page.text_units || [])
+        if (unit.role === "abstract_body") reportBody.append(el("p",{class:"japanese-pdf-abstract-classification"},
+          `要旨分類 · 原文p.${page.source_page} · ${unit.block_id} · ${unit.source_chars}文字 · ${unit.classification} · glyph照合 ${unit.text_flow?.glyph_verified ? "一致" : "未証明"} · `+
+          `根拠 ${unit.text_flow?.evidence || "未分類"} · 数学font ${unit.math_glyph_count}glyph（font単独では原物分類しない） · `+
+          `科学的関連 ${(unit.scientific_relations || []).map(r=>`${r.seed_id}:${r.classification}`).join(", ") || (unit.positive_seed_ids?.join(", ") || "なし")} · ${unit.text_flow?.glyph_error || ""}`));
       for (const q of current.report.quality?.visuals || []) {
         reportBody.append(el("p", {class:"japanese-pdf-visual-quality"},
           `${VISUAL_KINDS[q.annotations_present ? "annotated_page" : q.asset_kind] || "原物"} · ${q.asset_id} · 原文p.${q.source_page ?? "?"} · ${q.status === "failed" ? "検証失敗" : "内容照合済み"} · ${VISUAL_CLASSES[q.classification] || "原物検証"} · ` +
@@ -212,7 +233,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = artifacts.find(a => a.generation_id === rememberedId) || artifacts[0] || result;
       const ready = artifacts.filter(a => a.state === "preview_ready");
       history.textContent = "";
-      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.layout_version === "reflow-6" ? "本文再組版改善版（境界分離検証版）" : a.report?.overlap_version === "glyph-ink-2" ? "境界分離検証版（文字重なり検証版）" : a.report?.overlap_version === "glyph-ink-1" ? "旧文字重なり検証版" : a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
+      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.layout_version === "reflow-7" ? "本文・原物経路分離版" : a.report?.layout_version === "reflow-6" ? "本文再組版改善版（境界分離検証版）" : a.report?.overlap_version === "glyph-ink-2" ? "境界分離検証版（文字重なり検証版）" : a.report?.overlap_version === "glyph-ink-1" ? "旧文字重なり検証版" : a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
       history.hidden = !ready.length;
       update();
       if (current.state === "generating") timer = setTimeout(refresh, 1500);

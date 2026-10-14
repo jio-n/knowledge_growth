@@ -16,8 +16,9 @@ from .import_bridge.validator import canonical
 from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
 from .japanese_visual_quality import VisualQualityError, VISUAL_QUALITY_VERSION
-from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report,coverage
+from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report,coverage,reading_quality
 from .japanese_overlap import content_report,OVERLAP_VERSION
+from .japanese_textflow import CLASSIFICATION_VERSION
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -66,13 +67,15 @@ def public(job):
             'error': job['error'], 'updated_at': job['updated_at']}
 
 
-def run_generation(token, runtime):
+def run_generation(token, runtime, retry_unit_ids=None):
     units = []
     translation_stats = {}
     failure_stage = 'source_validation'
     temporary = output_path(token).with_suffix('.tmp.pdf')
     final = output_path(token)
     source = version = None
+    previous_checks={}
+    quality_validated=False
     try:
         with closing(get_db()) as con:
             job = con.execute('SELECT * FROM japanese_pdf_generations WHERE id=?', (token,)).fetchone()
@@ -80,19 +83,26 @@ def run_generation(token, runtime):
             saved = snapshot(con, job['source_id'])
             if not matches(job, saved): raise PDFError('source_changed')
             source, version, blocks, original, _ = saved
+            if retry_unit_ids is not None:
+                prior=con.execute('SELECT * FROM japanese_pdf_generations WHERE source_id=? AND pages_json=? AND id<>? ORDER BY rowid DESC LIMIT 1',
+                                  (source['id'],job['pages_json'],token)).fetchone()
+                if prior and matches(prior,saved):previous_checks={u['id']:u.get('translation_validation',[]) for u in json.loads(prior['report_json'] or '{}').get('semantic_units',[])}
         with fitz.open(stream=original, filetype='pdf') as document:
             failure_stage = 'content_detection'
             units = detect_units(document, blocks, json.loads(job['pages_json']))
         content_error=next((u['content_error'] for u in units if u.get('content_error')),None)
         if content_error:raise PDFError(content_error)
         failure_stage = 'translation'
-        translate_units(runtime, source, version, units, stats=translation_stats)
+        translate_units(runtime, source, version, units, stats=translation_stats,retry_unit_ids=retry_unit_ids)
+        for unit in units:
+            if unit.get('retry_deferred'):unit['translation_validation']=previous_checks.get(unit['block']['id'],[])[-8:]
         if not any(u.get('translation_succeeded') for u in units):
             if not any(u.get('translation_candidate') for u in units): failure_stage = 'content_detection'
             raise PDFError('no_safe_translated_blocks')
         failure_stage = 'pdf_layout'
         final.parent.mkdir(parents=True, exist_ok=True)
         report = generate_pdf(original, units, temporary)
+        quality_validated=True
         failure_stage = 'publication'
         # Windows os.fsync uses _commit / FlushFileBuffers, which requires write access.
         # Read-only 'rb' succeeds on POSIX but can fail with PermissionError on Windows.
@@ -106,7 +116,7 @@ def run_generation(token, runtime):
                 raise PDFError('source_changed')
             for unit in units:
                 unit['_publication_state']='published'
-                save_unit(con, source, version, unit)
+                if not unit.get('translation_succeeded') and not unit.get('retry_deferred'):save_unit(con, source, version, unit)
             report['units']=report_units(units)
             report['semantic_units']=semantic_report(units)
             report['diagnostics'] = translation_diagnostics(units, translation_stats, published=True)
@@ -125,14 +135,16 @@ def run_generation(token, runtime):
             if job:
                 if failure_stage!='content_detection' and source and version and con.execute('SELECT 1 FROM source_versions WHERE id=? AND source_id=?', (version['id'], source['id'])).fetchone():
                     for unit in units:
-                        if not unit.get('translation_succeeded') and not unit.get('cached'):
+                        if not unit.get('translation_succeeded') and not unit.get('cached') and not unit.get('retry_deferred'):
                             save_unit(con, source, version, unit)
-                report = {'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
+                report = {'classification_version':CLASSIFICATION_VERSION,'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
                           'units':report_units(units),'semantic_units':semantic_report(units),'coverage':coverage(units),
-                          'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units)}
-                report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
+                          'overlap_version':OVERLAP_VERSION,'content_detection':content_report(units),
+                          'reading_quality':reading_quality(units,quality_validated=quality_validated)}
+                report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage,quality_validated=quality_validated)
                 if isinstance(error, VisualQualityError):
                     report['quality'] = error.quality
+                    report['diagnostics']['quality_validation_state']='failed'
                     by_asset={row['asset_id']:row for row in error.quality['visuals']}
                     for unit in units:
                         if unit['kind']=='visual' and unit['asset_id'] in by_asset:
@@ -153,6 +165,7 @@ def run_generation(token, runtime):
 class GenerateIn(StrictModel):
     pages: list[Annotated[int, Field(strict=True, ge=1)]] = Field(min_length=1, max_length=3)
     retry_failed: bool = False
+    retry_unit_ids: list[Annotated[str,Field(min_length=1,max_length=64,pattern=r'^[A-Za-z0-9]+$')]] | None = Field(default=None,min_length=1,max_length=160)
 
 
 @router.post('/{source_id}/japanese-pdf/generate', status_code=202)
@@ -166,6 +179,16 @@ def start(source_id: str, body: GenerateIn, request: Request, tasks: BackgroundT
             source, version, _, original, document_digest = saved
             with fitz.open(stream=original, filetype='pdf') as doc:
                 if max(body.pages) > len(doc): raise HTTPException(422, 'ページ番号が範囲外です')
+            if body.retry_unit_ids is not None:
+                if not body.retry_failed or len(set(body.retry_unit_ids))!=len(body.retry_unit_ids):
+                    raise HTTPException(422,'対象単位の再試行指定が不正です')
+                # A retry can only target failed semantic units belonging to a
+                # current-source job for these selected pages, never a source ID
+                # from another version/artifact or an already successful edit.
+                previous=con.execute('SELECT * FROM japanese_pdf_generations WHERE source_id=? AND pages_json=? ORDER BY rowid DESC LIMIT 1',(source_id,pages)).fetchone()
+                prior=json.loads(previous['report_json'] or '{}') if previous and matches(previous,saved) else {}
+                eligible={u['id'] for u in prior.get('semantic_units',[]) if u.get('ai_translation_state')=='failed'} if prior.get('layout_version')==LAYOUT_VERSION else set()
+                if not set(body.retry_unit_ids)<=eligible:raise HTTPException(422,'現在の生成結果で翻訳未成功の意味単位を指定してください')
             active = con.execute("SELECT * FROM japanese_pdf_generations WHERE source_id=? AND state='generating'", (source_id,)).fetchone()
             if active:
                 if active['pages_json'] == pages and matches(active, saved): return public(active)
@@ -188,7 +211,7 @@ def start(source_id: str, body: GenerateIn, request: Request, tasks: BackgroundT
             con.commit()
         except PDFError as error:
             raise HTTPException(409, str(error)) from None
-    tasks.add_task(run_generation, token, runtime)
+    tasks.add_task(run_generation, token, runtime, body.retry_unit_ids)
     return {'generation_id': token, 'state': 'generating', 'pages': sorted(body.pages)}
 
 

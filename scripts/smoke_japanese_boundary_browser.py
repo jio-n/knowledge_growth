@@ -31,7 +31,7 @@ def run(base,chromium,output):
         c.get_by_role('textbox',name='翻訳対象の原文ページ').fill('1,2,3')
         generate=c.get_by_role('button',name='日本語PDFを生成',exact=True);generate.click()
         expect(c.locator('.japanese-pdf-status')).to_contain_text('要旨 100%')
-        expect(c.get_by_role('combobox',name='生成済み日本語PDF')).to_contain_text('境界分離検証版')
+        expect(c.get_by_role('combobox',name='生成済み日本語PDF')).to_contain_text('本文・原物経路分離版')
         ready=req.get(base+f'/api/sources/{sid}/japanese-pdf').json();r=ready['report'];b=r['content_detection'][1]
         assert b['pair_counts']=={'font_envelopes_only':5} and [p['glyph_counts'] for p in b['pairs']]==[list(p) for p in PAIRS]
         assert len(b['boundary_checks'])==5 and not b['boundary_conflicts']

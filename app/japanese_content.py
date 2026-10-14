@@ -4,12 +4,12 @@ import re
 import fitz
 from .japanese_translation import MAX_BLOCK_CHARS, MAX_UNITS, PDFError
 from .japanese_semantics import classify_page,assemble_page,FRONT_ROLES
-from .japanese_extraction import decorative_drawings,prose_text
+from .japanese_textflow import TextFlow,CLASSIFICATION_VERSION
+from .japanese_science import scientific_objects
 from .japanese_overlap import InkProof,overlap_pairs,OVERLAP_VERSION
 from .japanese_boundaries import seed,groups_for
 from collections import Counter
 
-MATH = re.compile(r'[=∑∫√∞±×÷≤≥≠∂∇²³α-ωΑ-Ω]|[\^_{}]|\\(?:frac|sum|begin)')
 CAPTIONS = ('figure_caption', 'table_caption')
 
 
@@ -21,71 +21,19 @@ def padded(rect, bounds, margin=2):
 def plan_page(page, blocks):
     bounds = fitz.Rect(0, 0, page.cropbox.width, page.cropbox.height)
     units = [dict(block=b, status='pending', reason=None, kind='text', asset_id=None) for b in blocks]
-    raw = page.get_text('dict', flags=fitz.TEXTFLAGS_DICT & ~fitz.TEXT_PRESERVE_IMAGES)
-    nonbody=[padded(b['bbox']['rect'],bounds,.2) for b in blocks if b.get('bbox') and b.get('semantic_role') in FRONT_ROLES]
-    lines = [line for b in raw['blocks'] if b['type']==0 for line in b['lines']
-             if not any(r.contains(fitz.Rect(line['bbox'])) for r in nonbody)]
-    drawings,decorations=decorative_drawings(page,blocks)
-    seeds=[seed('image',image['bbox'],bounds,i) for i,image in enumerate(page.get_image_info())]
-    # Keep the existing graphics safety margin mandatory; only optional text
-    # padding can be removed by boundary separation.
-    seeds += [seed('drawing',d['rect'],bounds,i,core_margin=2)
-              for i,d in enumerate(drawings) if i not in decorations]
-    # Ingest's figure/table bbox is a candidate, not a scientific boundary. Re-
-    # derive graphics from actual objects; a legacy oversized candidate must not
-    # expand a small rule to include an entire prose column.
-    seeds += [seed('equation',b['bbox']['rect'],bounds,i,owner=b['id']) for i,b in enumerate(blocks)
-              if b.get('bbox') and b.get('role')=='equation_candidate' and b.get('semantic_role')=='scientific_visual']
-    warning = 'annotations_present' if any(page.annots() or []) else None
-    try:
-        seeds += [seed('detected_table',t.bbox,bounds,i,core_margin=2) for i,t in enumerate(page.find_tables().tables)]
-    except Exception:
-        warning = 'table_detection_failed'
-    # Unruled tables: aligned numeric rows plus their nearby header. Keep model
-    # names with the numbers, including names printed in a different font size.
-    rows = []
-    for line in lines:
-        r = fitz.Rect(line['bbox']); text = ''.join(s['text'] for s in line['spans']).strip()
-        row = next((row for row in rows if abs(row[0][0].y0-r.y0)<6), None)
-        if row is None: rows.append([(r,text)])
-        else: row.append((r,text))
-    numeric_count=lambda row:sum(bool(re.fullmatch(r'[+-]?\d+(?:\.\d+)?%?',t)) for _,t in row)
-    numeric_candidates=[row for row in rows if len(row)>=2 and all(len(t)<80 for _,t in row) and numeric_count(row)]
-    numeric=[row for row in numeric_candidates if numeric_count(row)>=2 or any(
-        other is not row and len(other)==len(row) and abs(row[0][0].y0-other[0][0].y0)<40
-        and all(abs(a.x0-b.x0)<5 for (a,_),(b,_) in zip(sorted(row,key=lambda v:v[0].x0),sorted(other,key=lambda v:v[0].x0))) for other in numeric_candidates)]
-    for row in numeric:
-        r=fitz.Rect(row[0][0])
-        for box,_ in row[1:]: r |= box
-        for header in rows:
-            hr=fitz.Rect(header[0][0])
-            for box,_ in header[1:]: hr |= box
-            if len(header)>=2 and 0 <= r.y0-hr.y1 < 25 and hr.x0<r.x1 and hr.x1>r.x0: r |= hr
-        seeds.append(seed('numeric_table',r,bounds,len(seeds),core_margin=2))
     proof=InkProof(page)
+    text_flow=TextFlow(proof,blocks)
+    for unit in units:unit['content_lane']=text_flow.facts.get(unit['block']['id'],{}).get('lane','metadata')
+    seeds,drawings,decorations,warning=scientific_objects(page,blocks,text_flow,bounds)
     overlaps,limit=overlap_pairs(proof,blocks)
-    diagnostics={'source_page':page.number+1,'version':OVERLAP_VERSION,'pairs':overlaps,
+    diagnostics={'classification_version':CLASSIFICATION_VERSION,'source_page':page.number+1,'version':OVERLAP_VERSION,'pairs':overlaps,
                  'pair_counts':dict(Counter(p['classification'] for p in overlaps)),
-                 'pair_limit_reached':limit,'boundary_conflicts':[],'regions':[]}
-    # Isolated mathematics has its own positive evidence. Inspect only glyphs
-    # belonging to this block, not a neighbouring line's overlapping font box.
+                 'pair_limit_reached':limit,'boundary_conflicts':[],'regions':[],
+                 'layout_decoration_objects':sorted(decorations)}
     for b in blocks:
-        if not b.get('bbox'): warning = 'missing_geometry'; continue
-        rect=fitz.Rect(b['bbox']['rect'])
-        if not bounds.contains(rect) or rect.is_empty: warning='invalid_geometry'; continue
-        if b.get('semantic_role') in FRONT_ROLES:continue
-        if not b['text'].strip():continue
-        text=b.get('_line_text',b['text'])
-        glyphs=proof.glyphs(b)
-        words=re.findall(r'\b[A-Za-z]{2,}\b',text)
-        fragment=(len(words)>=3 and sum(map(len,words))>=18 and not glyphs['error']
-                  and glyphs['math_glyphs']<=glyphs['glyph_count']*.25
-                  and not re.search(r'[∑∫√∂∇]|\\(?:frac|sum|begin)',text))
-        prose=(prose_text(text) or b.get('semantic_role') in ('abstract_heading','section_heading')
-               or fragment)
-        if not prose and (MATH.search(text) or glyphs['math_glyphs'] or glyphs['nonhorizontal_glyphs']):
-            seeds.append(seed('isolated_math_or_special_font',rect,bounds,len(seeds),owner=b['id']))
-            b.setdefault('_protection_reasons',[]).append('isolated_math_or_special_font')
+        if not b.get('bbox'):warning='missing_geometry';continue
+        r=fitz.Rect(b['bbox']['rect'])
+        if r.is_empty or not bounds.contains(r):warning='invalid_geometry'
     # Native crop fidelity and ordinary-text recovery have different contracts.
     # Preserve the original overlap diagnosis; record the independent proof used
     # to keep recoverable prose out of a text-only native crop.
@@ -94,8 +42,7 @@ def plan_page(page, blocks):
     for pair in overlaps:
         members=[by_id[bid] for bid in pair['block_ids']]
         recovered=(pair['classification']=='overlap_unproven'
-                   and all(b.get('semantic_role') in ('abstract_body','paragraph') for b in members)
-                   and proof.prose_separated(*members,seeds))
+                   and text_flow.separated(*members,seeds))
         if recovered:
             recoveries.append({'block_ids':pair['block_ids'],'classification':'verified_prose_outlines_separated',
                                'glyph_counts':pair['glyph_counts'],
@@ -103,7 +50,8 @@ def plan_page(page, blocks):
             planned.append({**pair,'classification':'font_envelopes_only'})
         else:planned.append(pair)
     diagnostics['prose_recovery']=recoveries
-    groups,boundaries=groups_for(proof,blocks,seeds,planned,bounds,CAPTIONS)
+    unresolved=[b for b in blocks if text_flow.facts.get(b['id'],{}).get('lane')=='unresolved_text']
+    groups,boundaries=groups_for(proof,blocks,seeds,planned,bounds,CAPTIONS,unresolved=unresolved)
     diagnostics.update(boundaries)
     regions=[g['rect'] for g in groups]
     captions=[u for u in units if u['block'].get('role') in CAPTIONS]
@@ -157,8 +105,14 @@ def plan_page(page, blocks):
         attached=associations[i]
         ids=[u['block']['id'] for u in members]
         aid='V'+sha256(repr((page.number,tuple(r),ids)).encode()).hexdigest()[:24]
-        role=next((u['block'].get('role') for u in members if u['block'].get('role') in ('table_candidate','equation_candidate')),None)
-        asset=dict(id=aid, source_page=page.number+1, source_bbox=list(r), kind='original_text' if not warning and groups[i]['text_only'] else 'table' if role=='table_candidate' or any(u['block'].get('role')=='table_caption' for u in attached) else 'equation' if role=='equation_candidate' or (any(u['block']['text'] for u in members) and all(MATH.search(u['block']['text']) for u in members if u['block']['text'])) else 'figure',
+        kinds={v['kind'] for v in groups[i]['seeds']} if not warning else set()
+        caption_role=attached[0]['block'].get('role') if attached else None
+        role=('table_candidate' if caption_role=='table_caption' else 'figure_candidate' if caption_role=='figure_caption' else
+              'table_candidate' if kinds & {'detected_table','numeric_table'} else 'equation_candidate' if 'equation' in kinds else
+              next((u['block'].get('role') for u in members if u['block'].get('role') in ('table_candidate','equation_candidate')),None))
+        asset=dict(id=aid, source_page=page.number+1, source_bbox=list(r), kind='original_text' if not warning and groups[i]['text_only'] else 'table' if role=='table_candidate' or any(u['block'].get('role')=='table_caption' for u in attached) else 'equation' if role=='equation_candidate' else 'figure',
+                   classification='unresolved_page' if warning else 'unresolved_text' if groups[i]['text_only'] else 'scientific_visual',
+                   seed_ids=[] if warning else [v['id'] for v in groups[i]['seeds']],
                    original_block_ids=ids, caption_block_ids=[u['block']['id'] for u in attached],
                    rasterize_annotations=warning=='annotations_present',
                    status='unresolved' if warning or (not attached and role!='equation_candidate') else 'resolved',
@@ -169,7 +123,10 @@ def plan_page(page, blocks):
                 u['block'].setdefault('_protection_reasons',[]).append('drawing_region')
             if any(r.intersects(fitz.Rect(image['bbox'])) for image in page.get_image_info()):
                 u['block'].setdefault('_protection_reasons',[]).append('image_region')
-            u.update(status='skipped_unsafe' if warning else 'skipped_protected', reason=warning or 'visual_or_equation', kind='visual', asset_id=aid)
+            u.update(status='skipped_unsafe' if warning or groups[i]['text_only'] else 'skipped_protected',
+                     reason=warning or ('text_provenance_or_overlap_unresolved' if groups[i]['text_only'] else 'visual_or_equation'),
+                     kind='visual',asset_id=aid)
+            u['content_lane']=asset['classification']
             consumed.add(u['block']['id'])
         for u in attached:
             u.update(kind='caption',asset_id=aid); consumed.add(u['block']['id'])
@@ -191,7 +148,11 @@ def plan_page(page, blocks):
             'glyph_proof_error':proof.glyphs(u['block'])['error'],
             'glyph_count':proof.glyphs(u['block'])['glyph_count'],
             'math_glyph_count':proof.glyphs(u['block'])['math_glyphs'],
-            'native_span_membership':u['block'].get('_extraction',{}).get('native_span_membership',False)
+            'native_span_membership':u['block'].get('_extraction',{}).get('native_span_membership',False),
+            'text_flow':text_flow.facts.get(u['block']['id'],{}),
+            'classification':u.get('content_lane','metadata' if u['kind']=='metadata' else 'text'),
+            'scientific_relations':[c for c in diagnostics['seed_contacts'] if c['block_id']==u['block']['id']],
+            'positive_seed_ids':[v['id'] for v in seeds if v.get('owner_block_id')==u['block']['id']]
             } for u in units if u['block']['text'].strip() and u['block'].get('bbox')]
         units[0]['_page_diagnostics']=diagnostics
         if not warning and (limit or diagnostics['boundary_conflicts']):units[0]['content_error']='overlap_proof_limit' if limit else 'visual_text_boundary_unresolved'
@@ -208,9 +169,7 @@ def detect_units(document,blocks,pages):
         content_error=next((u['content_error'] for u in page_units if u.get('content_error')),None)
         for unit in page_units:
             b=unit['block']
-            if (unit['kind']=='visual' and b.get('semantic_role')=='paragraph'
-                    and b.get('_font_size',11)<=11 and len(b['text'])<80
-                    and not b['text'].rstrip().endswith(('.', '?', '!'))):
+            if unit.get('content_lane')=='scientific_visual' and b.get('semantic_role')=='paragraph':
                 b['semantic_role']='scientific_visual'
         page_units=assemble_page(document[number-1],page_units,items)
         for unit in page_units:

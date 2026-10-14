@@ -1,6 +1,10 @@
 # 選択ページ相当の日本語PDF再組版 — Phase 3-2
 
-最新の`reflow-3 / semantic-1`では、文章構造に加え通常Abstract・glyph間space・脚注/folioを改善した。
+最新の`reflow-7 / content-lanes-1`は[通常本文と科学的原物の経路分離](japanese_content_lanes.md)を参照。
+共通glyph/ink proof、Abstractの独立ゲート、失敗単位だけの再試行を追加した。
+以下の各版は過去の設計・検証記録である。
+
+`reflow-3 / semantic-1`では、文章構造に加え通常Abstract・glyph間space・脚注/folioを改善した。
 [Abstract・英文抽出・品質ゲート](japanese_abstract_reading_quality.md)を参照。
 翻訳前に文章を意味単位へ組み立てる。
 [タイトル・Abstract・周辺情報・本文カバレッジの改善](japanese_semantic_reflow.md)を参照。
@@ -15,7 +19,7 @@ Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再�
 さらにpixel差0のoriginal_text不一致に対し、[native-3のclip検証](japanese_clip_quality.md)を追加した。
 
 
-最新の追加修正は[保護領域の余白と境界分離](japanese_boundary_quality.md)を参照。layout reflow-5 / glyph-ink-2 / title-meaning-1。
+`reflow-5`の[保護領域の余白と境界分離](japanese_boundary_quality.md)、`reflow-6`の[残存保護とテキスト復元](japanese_text_recovery.md)も参照。
 
 ## 方針と画面
 

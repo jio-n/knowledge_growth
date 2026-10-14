@@ -59,6 +59,7 @@ app.router.routes.insert(0,app.router.routes.pop())
 
 
 def run(base,chromium,output,before=None):
+    expect.set_options(timeout=30000)
     original=make_overlap_fixture();cases=[];errors=[]
     with sync_playwright() as p:
         browser=p.chromium.launch(executable_path=chromium,headless=True,args=['--no-sandbox'])

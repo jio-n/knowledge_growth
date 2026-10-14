@@ -98,9 +98,9 @@ export const api = {
   getJapanesePdf(id) {
     return request(`/api/sources/${id}/japanese-pdf`, { silent: true });
   },
-  generateJapanesePdf(id, pages, retryFailed = false) {
+  generateJapanesePdf(id, pages, retryFailed = false, retryUnitIds = null) {
     return request(`/api/sources/${id}/japanese-pdf/generate`, {
-      method: "POST", body: { pages, retry_failed: retryFailed }, silent: true,
+      method: "POST", body: { pages, retry_failed: retryFailed, ...(retryUnitIds ? { retry_unit_ids: retryUnitIds } : {}) }, silent: true,
     });
   },
   japanesePdfFileUrl(id, generationId, download = false) {

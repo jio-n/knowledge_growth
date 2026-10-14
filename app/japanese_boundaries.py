@@ -21,7 +21,7 @@ def public_seed(s):
         'display_bbox_pt':[round(v,4) for v in s['display']]}
 
 
-def groups_for(proof,blocks,seeds,overlaps,bounds,captions):
+def groups_for(proof,blocks,seeds,overlaps,bounds,captions,*,unresolved=()):
     by_id={b['id']:b for b in blocks}
     eligible=[b for b in blocks if b['text'].strip() and b.get('bbox') and b.get('role') not in captions]
     groups=[];contacts=[]
@@ -45,6 +45,11 @@ def groups_for(proof,blocks,seeds,overlaps,bounds,captions):
         for bid in ids:by_id[bid].setdefault('_protection_reasons',[]).append(pair['classification'])
         groups.append({'rect':fitz.Rect(s['display']),'seed':fitz.Rect(s['core']),
                        'members':ids,'text_only':True,'seeds':[s]})
+    for block in unresolved:
+        # Unknown text is not positive Figure/Table/Equation evidence.
+        r=fitz.Rect(block['bbox']['rect']);s=seed('unresolved_text',r,bounds,len(groups))
+        groups.append({'rect':fitz.Rect(s['display']),'seed':fitz.Rect(s['core']),
+                       'members':{block['id']},'text_only':True,'seeds':[s]})
     merged=[]
     for g in groups:
         while True:

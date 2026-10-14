@@ -11,6 +11,7 @@ import re
 import statistics
 import fitz
 from .japanese_extraction import glyph_lines,recover_text,prose_text
+from .japanese_textflow import equation_structure
 
 ASSEMBLY_VERSION='semantic-1'
 FRONT_ROLES=frozenset({'paper_title','authors','affiliations','contact','bibliographic','marginal_metadata','running_header','footer','footnote','page_decoration'})
@@ -67,7 +68,7 @@ def classify_page(page,blocks):
         b['semantic_role']='paragraph' if b['kind']=='para' else 'section_heading' if b['kind']=='heading' else 'scientific_visual'
         r=rect(b);text=restore_line_words(b.get('_line_text',b['text']))
         if b.get('role') in ('figure_caption','table_caption'):b['semantic_role']='caption'
-        elif b.get('role') in ('figure_candidate','table_candidate') or (b.get('role')=='equation_candidate' and not prose_text(text)):b['semantic_role']='scientific_visual'
+        elif b.get('role') in ('figure_candidate','table_candidate') or (b.get('role')=='equation_candidate' and equation_structure(text)):b['semantic_role']='scientific_visual'
         elif r and text:
             vertical=any(tuple(line['dir'])!=(1.,0.) for line in lines)
             if vertical and (r.x0<width*.12 or r.x1>width*.88):b['semantic_role']='marginal_metadata'
@@ -170,7 +171,7 @@ def assembled(unit_members,role):
     if any(b.get('_semantic_uncertain') for b in originals):
         result.update(status='failed',reason='title_assembly_ambiguous',assembly_uncertain=True)
     if role in METADATA_ROLES:
-        result.update(kind='metadata',status='skipped_protected',reason='metadata_preserved',asset_id=None)
+        result.update(kind='metadata',status='skipped_protected',reason='metadata_preserved',asset_id=None,content_lane='metadata')
     return result
 
 
@@ -225,7 +226,11 @@ def assemble_page(page,units,items):
             if not ra or not rb:break
             title=role=='paper_title'
             gap=rb.y0-ra.y1;size=max(a.get('_font_size',11),b.get('_font_size',11))
-            if not title and (a['text'].rstrip().endswith(('.', '?', '!', ';')) or abs(ra.x0-rb.x0)>8 or not 0<=gap<=size*.7):break
+            fa,fb=a.get('_text_flow',{}),b.get('_text_flow',{})
+            baselines=(min(fb['baselines_pt'])-max(fa['baselines_pt'])
+                       if fa.get('baselines_pt') and fb.get('baselines_pt') else None)
+            contiguous=(fa.get('lane')==fb.get('lane')=='text' and baselines is not None and 0<baselines<=size*1.7)
+            if not title and (a['text'].rstrip().endswith(('.', '?', '!', ';')) or abs(ra.x0-rb.x0)>8 or not (0<=gap<=size*.7 or contiguous)):break
             if not title and sum(len(u['block']['text']) for u in members)+len(b['text'])>5000:break
             members.append(following);index+=1
         group=assembled(members,role);result.append(group)
@@ -285,7 +290,9 @@ def unit_states(unit):
     """Independent job stages; artifact failure is never an AI rejection."""
     ai=('succeeded' if unit.get('translation_succeeded') else 'failed' if unit.get('translation_error')
         else 'not_requested' if unit['kind'] in ('visual','metadata') else 'not_completed')
-    return {'ai_translation_state':ai,'ai_translation_error':unit.get('translation_error'),
+    return {'content_lane':unit.get('content_lane','unresolved_text' if unit['kind']=='visual' else 'metadata' if unit['kind']=='metadata' else 'text'),
+            'translation_validation':unit.get('translation_validation',[]),'retry_deferred':bool(unit.get('retry_deferred')),
+            'ai_translation_state':ai,'ai_translation_error':unit.get('translation_error'),
             'placement_state':unit.get('_placement_state','rendered' if unit.get('placements') else 'not_placed'),
             'visual_quality_state':unit.get('_visual_quality_state','not_checked' if unit['kind']=='visual' else 'not_applicable'),
             'visual_quality_error':unit.get('_visual_quality_error'),
@@ -334,6 +341,8 @@ def coverage(units):
         return {'source_chars':total,'translated_source_chars':done,'ratio':done/total if total else None,
                 'candidate_source_chars':sum(size(u) for u in selected if u.get('translation_candidate')),
                 'protected_source_chars':sum(size(u) for u in selected if u['kind']=='visual'),
+                'scientific_source_chars':sum(size(u) for u in selected if u.get('content_lane')=='scientific_visual'),
+                'unresolved_text_source_chars':sum(size(u) for u in selected if u.get('content_lane') in ('unresolved_text','unresolved_page')),
                 'placed_source_chars':sum(size(u) for u in selected if placed(u)),
                 'placed_translated_source_chars':sum(size(u) for u in selected if placed(u) and u['status']=='translated'),
                 'untranslated_reasons':reasons}
@@ -347,3 +356,18 @@ def coverage(units):
                      'meaning_review':title[0].get('title_review',{}).get('status','not_checked') if len(title)==1 else 'not_checked'},
             'abstract_complete':bool(abstract) and all(u['status']=='translated' for u in abstract),
             'body_preserved_in_visuals':sum(u['kind']=='visual' for u in body)}
+
+
+def reading_quality(units,*,pdf_generated=False,quality_validated=False):
+    """Publication is technical success, never a Japanese-reading acceptance."""
+    c=coverage(units);a=c['abstract'];b=c['body'];t=c['title']
+    abstract_complete=(c['abstract_complete'] and a['placed_translated_source_chars']==a['source_chars']
+                       and a['protected_source_chars']==0) if a['source_chars'] else None
+    body_complete=(b['translated_source_chars']==b['source_chars'] and b['placed_translated_source_chars']==b['source_chars']) if b['source_chars'] else True
+    title_complete=t['translated'] and t['complete'] if t['units'] else True
+    accepted=bool(pdf_generated and quality_validated and abstract_complete is not False and body_complete and title_complete)
+    return {'pdf_generated':pdf_generated,'quality_validated':quality_validated,
+            'accepted':accepted,'status':'passed' if accepted else 'incomplete',
+            'abstract':'complete' if abstract_complete else 'incomplete' if a['source_chars'] else 'not_selected',
+            'abstract_required_ratio':1.0,'abstract_ratio':a['ratio'],'body_ratio':b['ratio'],
+            'abstract_classification_complete':a['candidate_source_chars']==a['source_chars'] and not a['protected_source_chars'] if a['source_chars'] else None}

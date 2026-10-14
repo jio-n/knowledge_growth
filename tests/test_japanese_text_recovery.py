@@ -24,7 +24,7 @@ def detect(client,data):
 def test_old_native_envelope_policy_loses_prose_new_policy_recovers_1150(client,monkeypatch):
     data=make_recovery_fixture()
     with monkeypatch.context() as old:
-        old.setattr(InkProof,'prose_separated',lambda *args:False)
+        old.setattr(InkProof,'text_separated',lambda *args:False)
         _,before=detect(client,data)
     protected=sum(len(norm(u['block']['text'])) for u in before if u.get('semantic_role')=='abstract_body' and u['kind']=='visual')
     assert protected==1106

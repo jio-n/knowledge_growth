@@ -51,7 +51,7 @@ TRANSLATION_ERRORS = frozenset({
     'citations_changed', 'references_changed', 'terms_changed', 'japanese_required',
     'ai_uncertain', 'translation_validation_error', 'output_too_large',
     'translation_attempt_limit', 'translation_time_limit',
-    'assembled_user_edit_review','urls_changed','inline_math_changed',
+    'assembled_user_edit_review','not_requested_for_retry','urls_changed','inline_math_changed',
     'title_incomplete','title_review_invalid','title_review_uncertain','title_review_limit',
 })
 
@@ -162,7 +162,7 @@ def parse_reply(text):
     return value['blocks']
 
 
-def validate_batch(text, batch):
+def validate_batch(text, batch, *, diagnostics=None):
     """Malformed envelope fails the batch; individually invalid rows cannot taint peers."""
     rows = parse_reply(text)
     expected = {b['id']: b['text'] for b in batch}
@@ -174,6 +174,10 @@ def validate_batch(text, batch):
         row = next(r for r in rows if isinstance(r, dict) and r.get('block_id') == bid)
         try:
             item = TranslatedBlock.model_validate(row)
+            if diagnostics is not None:
+                diagnostics[bid]={'declared_status':item.status,'source_chars':len(re.sub(r'\s+','',original)),
+                                  'output_chars':len(item.translated_text),
+                                  'japanese_chars':len(re.findall(r'[\u3040-\u30ff\u3400-\u9fff]',item.translated_text))}
             validate_block(item, original)
             valid[bid] = item
         except ValidationError:
@@ -196,7 +200,7 @@ def validate_reply(text, batch):
     return TranslationOutput(blocks=list(valid.values()))
 
 
-def translation_diagnostics(units, stats, *, published=False, failure_stage=None):
+def translation_diagnostics(units, stats, *, published=False, failure_stage=None, quality_validated=False):
     candidates = [u for u in units if u.get('translation_candidate')]
     failures = Counter(u['translation_error'] for u in candidates if u.get('translation_error'))
     return {'translation_candidates':len(candidates),
@@ -205,10 +209,12 @@ def translation_diagnostics(units, stats, *, published=False, failure_stage=None
             'cached_translations':sum(bool(u.get('cached')) for u in candidates),
             'pdf_placement_succeeded':sum(u['status']=='translated' for u in units) if published else 0,
             'pdf_placement_validated':sum(u.get('_placement_state')=='validated' for u in units),
+            'quality_validation_state':'passed' if published or quality_validated else 'not_completed',
             'publication_state':'published' if published else 'failed' if failure_stage else 'not_published',
             'protected_units':sum(u['status']=='skipped_protected' and u['kind']=='visual' for u in units),
             'metadata_units':sum(u['kind']=='metadata' for u in units),
             'unsafe_units':sum(u['status']=='skipped_unsafe' for u in units),
+            'retry_deferred':sum(bool(u.get('retry_deferred')) for u in candidates),
             'translation_failures':dict(failures), 'failure_stage':failure_stage,
             **stats}
 
@@ -228,7 +234,7 @@ def save_unit(con, source, version, unit):
         AND source_text=? ORDER BY user_edited DESC,updated_at DESC,rowid DESC LIMIT 1''',
         (source['id'], version['id'], b['id'], b['text'])).fetchone()
     ts = now()
-    if row and row['translated_text'] and unit['kind'] in ('metadata','visual'):
+    if row and (row['user_edited'] or (row['translated_text'] and unit['kind'] in ('metadata','visual'))):
         # Reclassification/display policy must not rewrite an earlier successful
         # translation (including user edits). Reports carry the current policy.
         unit['translation_id']=row['id']
@@ -239,13 +245,14 @@ def save_unit(con, source, version, unit):
         text = row['translated_text'] if row['user_edited'] else unit.get('text', row['translated_text'])
         provider = row['provider'] if row['user_edited'] else unit.get('provider', row['provider'])
         model = row['model'] if row['user_edited'] else unit.get('model', row['model'])
-        con.execute('''UPDATE translations SET translated_text=?,provider=?,model=?,original_page=?,
-            original_bbox=?,source_hash=?,runtime=?,prompt_version=?,
-            translation_status=?,reason=?,updated_at=? WHERE id=?''',
-            (text, provider, model, b['page'], b['bbox_json'], version['content_hash'],
-             unit.get('runtime', row['runtime']),
-             row['prompt_version'] if row['user_edited'] else unit.get('prompt_version', row['prompt_version']),
-             unit['status'], unit['reason'], ts, tid))
+        columns=('translated_text','provider','model','original_page','original_bbox','source_hash',
+                 'runtime','prompt_version','translation_status','reason')
+        values=(text,provider,model,b['page'],b['bbox_json'],version['content_hash'],
+                unit.get('runtime',row['runtime']),unit.get('prompt_version',row['prompt_version']),
+                unit['status'],unit['reason'])
+        if any(row[key]!=value for key,value in zip(columns,values)):
+            con.execute('UPDATE translations SET '+','.join(key+'=?' for key in columns)+',updated_at=? WHERE id=?',
+                        (*values,ts,tid))
     else:
         tid = new_id()
         con.execute('''INSERT INTO translations(id,source_id,version_id,block_id,source_text,translated_text,
@@ -257,7 +264,7 @@ def save_unit(con, source, version, unit):
     unit['translation_id'] = tid
 
 
-def translate_units(runtime, source, version, units, *, stats=None):
+def translate_units(runtime, source, version, units, *, stats=None, retry_unit_ids=None):
     stats = stats if stats is not None else {}
     stats.update(runtime_calls=0, split_batches=0, title_reviews=0, attempt_errors={}, stopped_by=None)
     started = time.monotonic()
@@ -294,10 +301,13 @@ def translate_units(runtime, source, version, units, *, stats=None):
             b = unit['block']
             row = cached_translation(con, source, version, b)
             originals=unit.get('original_blocks',[b])
-            # Whitespace repair can change a prior S<hash> without changing its
-            # lexical content. Do not supersede an edited older semantic unit.
+            # Assembly / whitespace recovery can change S<hash> and merge an
+            # older edited fragment. Keep it for review rather than superseding
+            # it with a new whole-paragraph AI translation. Containment is
+            # deliberately conservative when older group provenance is absent.
             earlier_edit=not (row and row['user_edited']) and any(
-                old['block_id']!=b['id'] and re.sub(r'\s+','',old['source_text'])==re.sub(r'\s+','',b['text'])
+                old['block_id']!=b['id'] and bool(re.sub(r'\s+','',old['source_text']))
+                and re.sub(r'\s+','',old['source_text']) in re.sub(r'\s+','',b['text'])
                 for old in con.execute("SELECT block_id,source_text FROM translations WHERE source_id=? AND version_id=? AND block_id LIKE 'S%' AND user_edited=1 AND translated_text<>''",(source['id'],version['id'])))
             partial_edit=(not row or not row['user_edited']) and any(con.execute('''SELECT 1 FROM translations
                 WHERE source_id=? AND version_id=? AND block_id=? AND user_edited=1 AND translated_text<>'' ''',
@@ -308,7 +318,7 @@ def translate_units(runtime, source, version, units, *, stats=None):
             if row:
                 unit.update(text=row['translated_text'], provider=row['provider'], model=row['model'],
                             runtime=row['runtime'], prompt_version=row['prompt_version'], cached=True,
-                            translation_succeeded=True)
+                            translation_succeeded=True,translation_id=row['id'])
                 if unit.get('semantic_role')=='paper_title':
                     if row['user_edited']:
                         unit['title_review']={'version':TITLE_REVIEW_VERSION,'status':'user_edited','checks':[]}
@@ -323,6 +333,13 @@ def translate_units(runtime, source, version, units, *, stats=None):
                         except TranslationFailure as error:
                             unit.update(translation_succeeded=False,cached=False,translation_error=error.code,reason=error.code)
                             attempt_errors[error.code]+=1;pending.append(unit)
+            elif retry_unit_ids is not None and b['id'] not in retry_unit_ids:
+                prior=con.execute('''SELECT id,reason FROM translations WHERE source_id=? AND version_id=?
+                    AND block_id=? AND source_text=? ORDER BY user_edited DESC,updated_at DESC,rowid DESC LIMIT 1''',
+                    (source['id'],version['id'],b['id'],b['text'])).fetchone()
+                code=prior['reason'] if prior and prior['reason'] in TRANSLATION_ERRORS else 'not_requested_for_retry'
+                unit.update(status='failed',reason=code,translation_error=code,retry_deferred=True)
+                if prior:unit['translation_id']=prior['id']
             else:
                 # A partial user edit cannot become a whole-group translation,
                 # nor may a new AI group silently supersede that edit. Keep it
@@ -354,12 +371,13 @@ def translate_units(runtime, source, version, units, *, stats=None):
                 unit['translation_attempts'] += 1
                 unit.update(runtime=provider.name, provider=provider.name, prompt_version=PROMPT_VERSION)
             blocks = [u['block'] for u in active]
+            validation={}
             try:
                 result = provider.complete_json(instructions, canonical({'blocks': [
                     {'block_id': b['id'], 'text': b['text'],'role':b.get('semantic_role','paragraph')} for b in blocks]}),
                     deadline=min(deadline, time.monotonic()+MAX_TURN_SECONDS))
                 for unit in active: unit.update(provider=result.provider, model=result.model)
-                valid, errors, anomaly = validate_batch(result.text, blocks)
+                valid, errors, anomaly = validate_batch(result.text, blocks,diagnostics=validation)
                 if anomaly: attempt_errors[anomaly] += 1
             except TranslationFailure as error:
                 valid, errors = {}, {b['id']:error.code for b in blocks}
@@ -369,9 +387,13 @@ def translate_units(runtime, source, version, units, *, stats=None):
                 valid, errors = {}, {b['id']:'translation_validation_error' for b in blocks}
             for unit in active:
                 bid = unit['block']['id']
+                unit.setdefault('translation_validation',[]).append({
+                    'attempt':unit['translation_attempts'],**validation.get(bid,{}),
+                    'error':errors.get(bid),'protected_content':'passed' if bid in valid else 'not_accepted'})
                 if bid in valid and unit.get('semantic_role')=='paper_title':
                     try:review_title(unit,valid[bid].translated_text)
                     except TranslationFailure as error:valid.pop(bid);errors[bid]=error.code
+                unit['translation_validation'][-1].update(error=errors.get(bid),protected_content='passed' if bid in valid else 'not_accepted')
                 if bid in valid:
                     item = valid[bid]
                     unit.update(text=item.translated_text, provider=result.provider, model=result.model,
