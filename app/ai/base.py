@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
 from typing import Iterator
+import time
 
 
 class AIError(RuntimeError):
@@ -82,6 +83,21 @@ class AIRuntime(ABC):
     def send_turn(self, session: Session, text: str, *, hint: str | None = None) -> Iterator[TurnEvent]: ...
     @abstractmethod
     def cancel(self, session_id: str, turn_id: str) -> None: ...
+    def create_session_until(self, *, instructions: str, deadline: float) -> Session:
+        """Offline runtimes are immediate; blocking runtimes must enforce deadline."""
+        if time.monotonic() >= deadline: raise AIError("turn_timeout")
+        session = self.create_session(instructions=instructions)
+        if time.monotonic() >= deadline: raise AIError("turn_timeout")
+        return session
+
+    def send_turn_until(self, session, text, *, hint=None, deadline):
+        if time.monotonic() >= deadline: raise AIError("turn_timeout")
+        for event in self.send_turn(session, text, hint=hint):
+            if time.monotonic() >= deadline:
+                self.cancel(event.session_id, event.turn_id)
+                raise AIError("turn_timeout")
+            yield event
+
     def login(self) -> dict:
         raise AIError("authentication_unsupported")
     def cancel_login(self) -> None:

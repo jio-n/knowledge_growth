@@ -1,0 +1,80 @@
+{
+  "suites": [
+    {
+      "suite": "japanese_pdf",
+      "passed": 17,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_reading",
+      "passed": 10,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_semantic",
+      "passed": 11,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_overlap",
+      "passed": 6,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_boundary",
+      "passed": 7,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_translation",
+      "passed": 8,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_visual_baseline",
+      "passed": 10,
+      "pageerrors": []
+    },
+    {
+      "suite": "reader",
+      "passed": 20,
+      "pageerrors": []
+    },
+    {
+      "suite": "import_brief",
+      "passed": 34,
+      "pageerrors": []
+    },
+    {
+      "suite": "brief_generation",
+      "passed": 17,
+      "pageerrors": []
+    },
+    {
+      "suite": "ai_runtime",
+      "passed": 12,
+      "pageerrors": []
+    },
+    {
+      "suite": "japanese_recovery",
+      "passed": 7,
+      "pageerrors": []
+    }
+  ],
+  "passed": 159,
+  "phase1": {
+    "browser": "Chromium",
+    "canvas_pages": 2,
+    "pdf_selection": "right column + rotated crop",
+    "anchor_provenance": "version/hash/bbox persisted",
+    "highlight_reload": "passed",
+    "mock_qa": "passed",
+    "fallbacks": [
+      "quote",
+      "bbox",
+      "candidates",
+      "page_only"
+    ],
+    "pageerrors": []
+  }
+}

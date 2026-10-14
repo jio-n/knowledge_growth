@@ -95,6 +95,18 @@ export const api = {
     return `/api/sources/${id}/file`;
   },
 
+  getJapanesePdf(id) {
+    return request(`/api/sources/${id}/japanese-pdf`, { silent: true });
+  },
+  generateJapanesePdf(id, pages, retryFailed = false, retryUnitIds = null) {
+    return request(`/api/sources/${id}/japanese-pdf/generate`, {
+      method: "POST", body: { pages, retry_failed: retryFailed, ...(retryUnitIds ? { retry_unit_ids: retryUnitIds } : {}) }, silent: true,
+    });
+  },
+  japanesePdfFileUrl(id, generationId, download = false) {
+    return `/api/sources/${id}/japanese-pdf/${generationId}/file?download=${download}`;
+  },
+
   // --- kgpack / Paper Brief (all validation and import decisions stay on the server) ---
   validateKgpack(file) {
     const fd = new FormData();

@@ -1,0 +1,1250 @@
+{
+  "passed": 9,
+  "cases": [
+    "old committed engine reproduces visual_content_changed with six successful AI units",
+    "partial eight-candidate PDF publishes six translations and two safe originals",
+    "preserves 26 protected units and original font/vector resources",
+    "per-asset kind, geometry, fidelity, text and vector diagnostics visible",
+    "unchanged table precision remains searchable in derived PDF",
+    "partial PDF download and reload survive",
+    "actual four-asset damage rejected with all causes and no published file",
+    "regeneration reuses six saved successes and requests only two failed IDs",
+    "annotation fallback verifies real pixels and explicitly declares loss of vector appearance"
+  ],
+  "pageerrors": [],
+  "before": {
+    "generation_id": "898393b4d18f49e8",
+    "state": "failed",
+    "pages": [
+      1
+    ],
+    "error": "visual_content_changed",
+    "report": {
+      "diagnostics": {
+        "ai_translation_succeeded": 6,
+        "attempt_errors": {
+          "ai_uncertain": 4,
+          "japanese_required": 4
+        },
+        "cached_translations": 0,
+        "elapsed_seconds": 0.015,
+        "failure_stage": "pdf_layout",
+        "pdf_placement_succeeded": 0,
+        "protected_units": 26,
+        "runtime_calls": 6,
+        "split_batches": 1,
+        "stopped_by": null,
+        "translation_candidates": 8,
+        "translation_failures": {
+          "ai_uncertain": 1,
+          "japanese_required": 1
+        },
+        "translation_succeeded": 6,
+        "unsafe_units": 0
+      },
+      "counts": {
+        "failed": 8,
+        "skipped_protected": 26
+      }
+    },
+    "baseline_asset_metrics": [
+      {
+        "asset_id": "U3113526ce67d6afd4754e759",
+        "asset_kind": "original_text",
+        "source_page": 1,
+        "japanese_page": 1,
+        "source_size_pt": [
+          387.816,
+          33.982
+        ],
+        "output_size_pt": [
+          387.816,
+          33.982
+        ],
+        "dpi": 200,
+        "vector_preserved": true,
+        "annotations_present": false,
+        "quality_policy": "original_text",
+        "status": "failed",
+        "error": "visual_content_changed",
+        "classification": "glyph_geometry_changed",
+        "source_rotation": 0,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "native_size_preserved": true,
+        "source_image_size_px": [
+          1078,
+          95
+        ],
+        "output_image_size_px": [
+          1078,
+          95
+        ],
+        "source_ink_pixels": 19077,
+        "output_ink_pixels": 19077,
+        "mean_pixel_difference": 6.328073,
+        "raw_mean_pixel_difference": 8.002617,
+        "raw_source_image_size_px": [
+          1078,
+          95
+        ],
+        "raw_output_image_size_px": [
+          1078,
+          95
+        ],
+        "source_text_preserved": true,
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "source_glyph_count": 30,
+        "output_glyph_count": 30,
+        "glyphs_preserved": false,
+        "glyph_codes_preserved": true,
+        "max_glyph_origin_difference_pt": 0.519998,
+        "fonts_preserved": true,
+        "source_drawing_count": 0,
+        "output_drawing_count": 0,
+        "drawings_preserved": true,
+        "source_image_count": 0,
+        "output_image_count": 0,
+        "images_preserved": true
+      }
+    ]
+  },
+  "after": {
+    "generation_id": "b4b737dbf8ee4bdc",
+    "state": "preview_ready",
+    "pages": [
+      1
+    ],
+    "error": null,
+    "report": {
+      "diagnostics": {
+        "ai_translation_succeeded": 0,
+        "attempt_errors": {
+          "ai_uncertain": 4,
+          "japanese_required": 4
+        },
+        "cached_translations": 6,
+        "elapsed_seconds": 0.003,
+        "failure_stage": null,
+        "pdf_placement_succeeded": 6,
+        "protected_units": 26,
+        "runtime_calls": 6,
+        "split_batches": 1,
+        "stopped_by": null,
+        "translation_candidates": 8,
+        "translation_failures": {
+          "ai_uncertain": 1,
+          "japanese_required": 1
+        },
+        "translation_succeeded": 6,
+        "unsafe_units": 0
+      },
+      "quality": {
+        "failed_visuals": 0,
+        "missing_or_duplicate": 0,
+        "outside_page": 0,
+        "overlaps": 0,
+        "passed_visuals": 6,
+        "reading_order_preserved": true,
+        "text_blocks_validated": 6,
+        "visual_quality_version": "native-2",
+        "visuals": [
+          {
+            "annotations_present": false,
+            "asset_id": "U3113526ce67d6afd4754e759",
+            "asset_kind": "original_text",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 1,
+            "max_glyph_origin_difference_pt": 0.001392,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 30,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              1078,
+              95
+            ],
+            "output_ink_pixels": 19077,
+            "output_size_pt": [
+              387.816,
+              33.982
+            ],
+            "quality_policy": "original_text",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              1078,
+              95
+            ],
+            "raw_source_image_size_px": [
+              1078,
+              95
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 30,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              1078,
+              95
+            ],
+            "source_ink_pixels": 19077,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              387.816,
+              33.982
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V135b2eabeb5a715d32a347c4",
+            "asset_kind": "figure",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 1,
+            "max_glyph_origin_difference_pt": 0.000964,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 17,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              300,
+              55
+            ],
+            "output_ink_pixels": 2375,
+            "output_size_pt": [
+              107.85,
+              19.684
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              301,
+              56
+            ],
+            "raw_source_image_size_px": [
+              301,
+              56
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 17,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              300,
+              55
+            ],
+            "source_ink_pixels": 2375,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              107.85,
+              19.684
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V48a3bf234c779885ea567aee",
+            "asset_kind": "figure",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 2,
+            "max_glyph_origin_difference_pt": 1.7e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 1,
+            "output_glyph_count": 80,
+            "output_image_count": 1,
+            "output_image_size_px": [
+              1428,
+              275
+            ],
+            "output_ink_pixels": 379140,
+            "output_size_pt": [
+              514.0,
+              99.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.026553,
+            "raw_output_image_size_px": [
+              1429,
+              276
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              276
+            ],
+            "source_drawing_count": 1,
+            "source_glyph_count": 80,
+            "source_image_count": 1,
+            "source_image_size_px": [
+              1428,
+              275
+            ],
+            "source_ink_pixels": 379140,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              99.0
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "Vd60b73f613e13c8664d4fca7",
+            "asset_kind": "table",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 3,
+            "max_glyph_origin_difference_pt": 1.2e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 9,
+            "output_glyph_count": 81,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              1428,
+              178
+            ],
+            "output_ink_pixels": 29902,
+            "output_size_pt": [
+              514.0,
+              64.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.00018,
+            "raw_output_image_size_px": [
+              1429,
+              179
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              179
+            ],
+            "source_drawing_count": 9,
+            "source_glyph_count": 81,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              1428,
+              178
+            ],
+            "source_ink_pixels": 29902,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              64.0
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V8e50d8b354db674a9deafc29",
+            "asset_kind": "equation",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 4,
+            "max_glyph_origin_difference_pt": 3.7e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 15,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              255,
+              62
+            ],
+            "output_ink_pixels": 1933,
+            "output_size_pt": [
+              91.794,
+              22.298
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              256,
+              63
+            ],
+            "raw_source_image_size_px": [
+              256,
+              63
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 15,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              255,
+              62
+            ],
+            "source_ink_pixels": 1933,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              91.794,
+              22.298
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "U7502f614a9831b265ccb1c9c",
+            "asset_kind": "original_text",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 4,
+            "max_glyph_origin_difference_pt": 0.00019,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 66,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              861,
+              42
+            ],
+            "output_ink_pixels": 7664,
+            "output_size_pt": [
+              309.958,
+              15.114
+            ],
+            "quality_policy": "original_text",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              862,
+              43
+            ],
+            "raw_source_image_size_px": [
+              862,
+              43
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 66,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              861,
+              42
+            ],
+            "source_ink_pixels": 7664,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              309.958,
+              15.114
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          }
+        ]
+      },
+      "counts": {
+        "failed": 2,
+        "skipped_protected": 26,
+        "translated": 6
+      },
+      "japanese_page_count": 4,
+      "visual_quality_version": "native-2"
+    }
+  },
+  "damaged": {
+    "generation_id": "be22fa0fe50b4bcd",
+    "state": "failed",
+    "pages": [
+      1
+    ],
+    "error": "visual_content_changed",
+    "report": {
+      "diagnostics": {
+        "ai_translation_succeeded": 0,
+        "attempt_errors": {
+          "ai_uncertain": 4,
+          "japanese_required": 4
+        },
+        "cached_translations": 6,
+        "elapsed_seconds": 0.006,
+        "failure_stage": "pdf_layout",
+        "pdf_placement_succeeded": 0,
+        "protected_units": 26,
+        "runtime_calls": 6,
+        "split_batches": 1,
+        "stopped_by": null,
+        "translation_candidates": 8,
+        "translation_failures": {
+          "ai_uncertain": 1,
+          "japanese_required": 1
+        },
+        "translation_succeeded": 6,
+        "unsafe_units": 0,
+        "visual_failures": {
+          "equation": 1,
+          "figure": 2,
+          "table": 1
+        }
+      },
+      "quality": {
+        "failed_visuals": 4,
+        "passed_visuals": 2,
+        "visual_quality_version": "native-2",
+        "visuals": [
+          {
+            "annotations_present": false,
+            "asset_id": "U3113526ce67d6afd4754e759",
+            "asset_kind": "original_text",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 1,
+            "max_glyph_origin_difference_pt": 0.001392,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 30,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              1078,
+              95
+            ],
+            "output_ink_pixels": 19077,
+            "output_size_pt": [
+              387.816,
+              33.982
+            ],
+            "quality_policy": "original_text",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              1078,
+              95
+            ],
+            "raw_source_image_size_px": [
+              1078,
+              95
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 30,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              1078,
+              95
+            ],
+            "source_ink_pixels": 19077,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              387.816,
+              33.982
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V135b2eabeb5a715d32a347c4",
+            "asset_kind": "figure",
+            "classification": "drawing_or_image_changed",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": false,
+            "error": "visual_content_changed",
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 1,
+            "max_glyph_origin_difference_pt": 0.000964,
+            "mean_pixel_difference": 0.114424,
+            "native_size_preserved": true,
+            "output_drawing_count": 1,
+            "output_glyph_count": 17,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              300,
+              55
+            ],
+            "output_ink_pixels": 2404,
+            "output_size_pt": [
+              107.85,
+              19.684
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.112245,
+            "raw_output_image_size_px": [
+              301,
+              56
+            ],
+            "raw_source_image_size_px": [
+              301,
+              56
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 17,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              300,
+              55
+            ],
+            "source_ink_pixels": 2375,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              107.85,
+              19.684
+            ],
+            "source_text_preserved": true,
+            "status": "failed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V48a3bf234c779885ea567aee",
+            "asset_kind": "figure",
+            "classification": "drawing_or_image_changed",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": false,
+            "error": "visual_content_changed",
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 2,
+            "max_glyph_origin_difference_pt": 1.7e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 2,
+            "output_glyph_count": 80,
+            "output_image_count": 1,
+            "output_image_size_px": [
+              1428,
+              275
+            ],
+            "output_ink_pixels": 379140,
+            "output_size_pt": [
+              514.0,
+              99.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.026553,
+            "raw_output_image_size_px": [
+              1429,
+              276
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              276
+            ],
+            "source_drawing_count": 1,
+            "source_glyph_count": 80,
+            "source_image_count": 1,
+            "source_image_size_px": [
+              1428,
+              275
+            ],
+            "source_ink_pixels": 379140,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              99.0
+            ],
+            "source_text_preserved": true,
+            "status": "failed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "Vd60b73f613e13c8664d4fca7",
+            "asset_kind": "table",
+            "classification": "drawing_or_image_changed",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": false,
+            "error": "visual_content_changed",
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 3,
+            "max_glyph_origin_difference_pt": 1.2e-05,
+            "mean_pixel_difference": 3.5e-05,
+            "native_size_preserved": true,
+            "output_drawing_count": 10,
+            "output_glyph_count": 81,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              1428,
+              178
+            ],
+            "output_ink_pixels": 29902,
+            "output_size_pt": [
+              514.0,
+              64.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.000184,
+            "raw_output_image_size_px": [
+              1429,
+              179
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              179
+            ],
+            "source_drawing_count": 9,
+            "source_glyph_count": 81,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              1428,
+              178
+            ],
+            "source_ink_pixels": 29902,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              64.0
+            ],
+            "source_text_preserved": true,
+            "status": "failed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V8e50d8b354db674a9deafc29",
+            "asset_kind": "equation",
+            "classification": "drawing_or_image_changed",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": false,
+            "error": "visual_content_changed",
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 4,
+            "max_glyph_origin_difference_pt": 3.7e-05,
+            "mean_pixel_difference": 0.119418,
+            "native_size_preserved": true,
+            "output_drawing_count": 1,
+            "output_glyph_count": 15,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              255,
+              62
+            ],
+            "output_ink_pixels": 1962,
+            "output_size_pt": [
+              91.794,
+              22.298
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.117063,
+            "raw_output_image_size_px": [
+              256,
+              63
+            ],
+            "raw_source_image_size_px": [
+              256,
+              63
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 15,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              255,
+              62
+            ],
+            "source_ink_pixels": 1933,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              91.794,
+              22.298
+            ],
+            "source_text_preserved": true,
+            "status": "failed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "U7502f614a9831b265ccb1c9c",
+            "asset_kind": "original_text",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 4,
+            "max_glyph_origin_difference_pt": 0.00019,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 66,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              861,
+              42
+            ],
+            "output_ink_pixels": 7664,
+            "output_size_pt": [
+              309.958,
+              15.114
+            ],
+            "quality_policy": "original_text",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              862,
+              43
+            ],
+            "raw_source_image_size_px": [
+              862,
+              43
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 66,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              861,
+              42
+            ],
+            "source_ink_pixels": 7664,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              309.958,
+              15.114
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          }
+        ]
+      },
+      "counts": {
+        "failed": 8,
+        "skipped_protected": 26
+      }
+    }
+  },
+  "recovered": {
+    "generation_id": "b7c5a41d905c4a91",
+    "state": "preview_ready",
+    "pages": [
+      1
+    ],
+    "error": null,
+    "report": {
+      "diagnostics": {
+        "ai_translation_succeeded": 2,
+        "attempt_errors": {},
+        "cached_translations": 6,
+        "elapsed_seconds": 0.018,
+        "failure_stage": null,
+        "pdf_placement_succeeded": 8,
+        "protected_units": 26,
+        "runtime_calls": 1,
+        "split_batches": 0,
+        "stopped_by": null,
+        "translation_candidates": 8,
+        "translation_failures": {},
+        "translation_succeeded": 8,
+        "unsafe_units": 0
+      },
+      "quality": {
+        "failed_visuals": 0,
+        "missing_or_duplicate": 0,
+        "outside_page": 0,
+        "overlaps": 0,
+        "passed_visuals": 4,
+        "reading_order_preserved": true,
+        "text_blocks_validated": 8,
+        "visual_quality_version": "native-2",
+        "visuals": [
+          {
+            "annotations_present": false,
+            "asset_id": "V135b2eabeb5a715d32a347c4",
+            "asset_kind": "figure",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 1,
+            "max_glyph_origin_difference_pt": 0.00095,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 17,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              300,
+              55
+            ],
+            "output_ink_pixels": 2375,
+            "output_size_pt": [
+              107.85,
+              19.684
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              301,
+              56
+            ],
+            "raw_source_image_size_px": [
+              301,
+              56
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 17,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              300,
+              55
+            ],
+            "source_ink_pixels": 2375,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              107.85,
+              19.684
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V48a3bf234c779885ea567aee",
+            "asset_kind": "figure",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 2,
+            "max_glyph_origin_difference_pt": 1.7e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 1,
+            "output_glyph_count": 80,
+            "output_image_count": 1,
+            "output_image_size_px": [
+              1428,
+              275
+            ],
+            "output_ink_pixels": 379140,
+            "output_size_pt": [
+              514.0,
+              99.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.026553,
+            "raw_output_image_size_px": [
+              1429,
+              276
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              276
+            ],
+            "source_drawing_count": 1,
+            "source_glyph_count": 80,
+            "source_image_count": 1,
+            "source_image_size_px": [
+              1428,
+              275
+            ],
+            "source_ink_pixels": 379140,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              99.0
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "Vd60b73f613e13c8664d4fca7",
+            "asset_kind": "table",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 3,
+            "max_glyph_origin_difference_pt": 1.2e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 9,
+            "output_glyph_count": 81,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              1428,
+              178
+            ],
+            "output_ink_pixels": 29902,
+            "output_size_pt": [
+              514.0,
+              64.0
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.00018,
+            "raw_output_image_size_px": [
+              1429,
+              179
+            ],
+            "raw_source_image_size_px": [
+              1429,
+              179
+            ],
+            "source_drawing_count": 9,
+            "source_glyph_count": 81,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              1428,
+              178
+            ],
+            "source_ink_pixels": 29902,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              514.0,
+              64.0
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          },
+          {
+            "annotations_present": false,
+            "asset_id": "V8e50d8b354db674a9deafc29",
+            "asset_kind": "equation",
+            "classification": "native_content_preserved",
+            "crop_no_hidden_text": true,
+            "crop_text_complete": true,
+            "cropbox_size_pt": [
+              595.0,
+              842.0
+            ],
+            "dpi": 200,
+            "drawings_preserved": true,
+            "error": null,
+            "fonts_preserved": true,
+            "glyph_codes_preserved": true,
+            "glyphs_preserved": true,
+            "images_preserved": true,
+            "japanese_page": 4,
+            "max_glyph_origin_difference_pt": 3.7e-05,
+            "mean_pixel_difference": 0.0,
+            "native_size_preserved": true,
+            "output_drawing_count": 0,
+            "output_glyph_count": 15,
+            "output_image_count": 0,
+            "output_image_size_px": [
+              255,
+              62
+            ],
+            "output_ink_pixels": 1933,
+            "output_size_pt": [
+              91.794,
+              22.298
+            ],
+            "quality_policy": "scientific_visual",
+            "raw_mean_pixel_difference": 0.0,
+            "raw_output_image_size_px": [
+              256,
+              63
+            ],
+            "raw_source_image_size_px": [
+              256,
+              63
+            ],
+            "source_drawing_count": 0,
+            "source_glyph_count": 15,
+            "source_image_count": 0,
+            "source_image_size_px": [
+              255,
+              62
+            ],
+            "source_ink_pixels": 1933,
+            "source_page": 1,
+            "source_rotation": 0,
+            "source_size_pt": [
+              91.794,
+              22.298
+            ],
+            "source_text_preserved": true,
+            "status": "passed",
+            "vector_preserved": true
+          }
+        ]
+      },
+      "counts": {
+        "skipped_protected": 26,
+        "translated": 8
+      },
+      "japanese_page_count": 4,
+      "visual_quality_version": "native-2"
+    }
+  }
+}

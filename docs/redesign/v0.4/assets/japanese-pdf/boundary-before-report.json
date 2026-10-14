@@ -1,0 +1,465 @@
+{
+  "head": "5256ddce29fbdd116685c3b84f2ebdbfef973998",
+  "state": "failed",
+  "error": "visual_text_boundary_unresolved",
+  "ai_calls": 0,
+  "coverage": {
+    "abstract": {
+      "candidate_source_chars": 0,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "protected_source_chars": 0,
+      "ratio": 0.0,
+      "source_chars": 1150,
+      "translated_source_chars": 0,
+      "untranslated_reasons": {
+        "not_translated": 1150
+      }
+    },
+    "abstract_complete": false,
+    "body": {
+      "candidate_source_chars": 0,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "protected_source_chars": 0,
+      "ratio": 0.0,
+      "source_chars": 1563,
+      "translated_source_chars": 0,
+      "untranslated_reasons": {
+        "not_translated": 1563
+      }
+    },
+    "body_preserved_in_visuals": 0,
+    "caption": {
+      "candidate_source_chars": 0,
+      "placed_source_chars": 0,
+      "placed_translated_source_chars": 0,
+      "protected_source_chars": 0,
+      "ratio": 0.0,
+      "source_chars": 56,
+      "translated_source_chars": 0,
+      "untranslated_reasons": {
+        "not_translated": 56
+      }
+    },
+    "title": {
+      "complete": true,
+      "meaning_review": "not_checked",
+      "source_blocks": 2,
+      "translated": false,
+      "units": 1
+    }
+  },
+  "content_detection": [
+    {
+      "boundary_conflicts": [],
+      "pair_counts": {
+        "font_envelopes_only": 5
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            682.469,
+            4.44
+          ],
+          "block_ids": [
+            "787d34a64678269105e159855f3cb8b529594ca7f621d65bb32b90cb046c25ea",
+            "0b2488b6eb618fbd6773595de709c9e6f49cc31ba1b1f4011b4b97119471f7df"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            186,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 13.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            682.465,
+            4.44
+          ],
+          "block_ids": [
+            "0b2488b6eb618fbd6773595de709c9e6f49cc31ba1b1f4011b4b97119471f7df",
+            "cbfafd049f145e396659bb87f1cb79119430dd185a067b41975b0a87338db8bd"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            676.698,
+            4.44
+          ],
+          "block_ids": [
+            "cbfafd049f145e396659bb87f1cb79119430dd185a067b41975b0a87338db8bd",
+            "32c3c18fa08d2ea1c2ccbd6599800a121df7617858a04e5ec54588171a6b4e86"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2707,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "32c3c18fa08d2ea1c2ccbd6599800a121df7617858a04e5ec54588171a6b4e86",
+            "98da20f90c7b65b1f4e381f7a8ccb1130a21ca6940f513fb52f88a9f4ff9bb03"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "98da20f90c7b65b1f4e381f7a8ccb1130a21ca6940f513fb52f88a9f4ff9bb03",
+            "187a9bcf06fe315db5e2d1b791dacce830284d8837f142b4bcd60ed34c1764ab"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            186
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        }
+      ],
+      "regions": [],
+      "source_page": 1,
+      "version": "glyph-ink-1"
+    },
+    {
+      "boundary_conflicts": [
+        {
+          "block_id": "317ee9c428de680dd3ddff7f367a5715db325dbc1b1d581aaad8572d58c19f43",
+          "region_members": 1
+        },
+        {
+          "block_id": "1213bf47e5e97b3e0a822212f8ba4f406329dd243bec88c174f2e81d0c4b09d1",
+          "region_members": 1
+        },
+        {
+          "block_id": "3f7f35495c7cf4b56cb240fcc27e628973598a9deb77853eb261a7b231d1485f",
+          "region_members": 1
+        },
+        {
+          "block_id": "2ccb4aaa2652d3eab01b1d1ecdf6d4645e6f48bcb87e1fecf971c9db2034a518",
+          "region_members": 1
+        },
+        {
+          "block_id": "7c5e9edfa8cb4d88d5f1a42d6b75839d35b36fe334322d0544b77ae75bef660e",
+          "region_members": 1
+        }
+      ],
+      "pair_counts": {
+        "font_envelopes_only": 5
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            34.135,
+            1.218
+          ],
+          "block_ids": [
+            "08e3ee74ef84e58482baa4ba82f397cc1db8b3eb73f3e7e5da0f5016b04bb01d",
+            "317ee9c428de680dd3ddff7f367a5715db325dbc1b1d581aaad8572d58c19f43"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            137,
+            6
+          ],
+          "glyph_counts": [
+            11,
+            11
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            24.962,
+            1.218
+          ],
+          "block_ids": [
+            "bf496378c804d973d009a912a34c6c3af76984877741580a58f4235fca23db4c",
+            "1213bf47e5e97b3e0a822212f8ba4f406329dd243bec88c174f2e81d0c4b09d1"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            100,
+            6
+          ],
+          "glyph_counts": [
+            8,
+            11
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            75.65,
+            1.218
+          ],
+          "block_ids": [
+            "da25b005441c1e612fb0f0fc93749dd97eb30bc11e9e4c9ec278f1530d8b9590",
+            "3f7f35495c7cf4b56cb240fcc27e628973598a9deb77853eb261a7b231d1485f"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            303,
+            6
+          ],
+          "glyph_counts": [
+            41,
+            20
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            97.798,
+            1.218
+          ],
+          "block_ids": [
+            "9b5993feb18b3a715f469479d7e42c286d449f2bba55dfd055a06ca29f35a3ef",
+            "2ccb4aaa2652d3eab01b1d1ecdf6d4645e6f48bcb87e1fecf971c9db2034a518"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            392,
+            6
+          ],
+          "glyph_counts": [
+            41,
+            27
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            51.934,
+            1.218
+          ],
+          "block_ids": [
+            "59893339a1f4900edf9c3febd70e2199dbc3d3bebea60e3b92f2484b55054f8d",
+            "7c5e9edfa8cb4d88d5f1a42d6b75839d35b36fe334322d0544b77ae75bef660e"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            208,
+            6
+          ],
+          "glyph_counts": [
+            16,
+            27
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        }
+      ],
+      "regions": [
+        {
+          "crop_size_pt": [
+            38.135,
+            13.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            28.962,
+            13.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            137.582,
+            13.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            137.582,
+            13.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            55.934,
+            13.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        }
+      ],
+      "source_page": 2,
+      "version": "glyph-ink-1"
+    },
+    {
+      "boundary_conflicts": [],
+      "pair_counts": {},
+      "pair_limit_reached": false,
+      "pairs": [],
+      "regions": [
+        {
+          "crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            511.0,
+            49.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 4,
+          "seed_size_pt": [
+            511.0,
+            54.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            89.254,
+            21.862
+          ],
+          "text_only": false
+        }
+      ],
+      "source_page": 3,
+      "version": "glyph-ink-1"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ Phase 0（T0-01 / T0-02、generated PDF fixtures）は実装・検証済み。
 [DB migration / backup / 復旧手順](../../development/db_migrations.md) を参照。
 Phase 1とPaper Brief / Import Bridge backend foundationは実装済み。
 T2A-04のImport確認UIとT2-05のPaper Brief表示UIは実装済み。
-Phase 0AのSubscription-first AI Runtime Foundationは実装済み。日本語版Readerは未実装。
+Phase 0AのSubscription-first AI Runtime Foundationは実装済み。日本語PDFの最大3原文ページ相当の再組版試作は実装済み。
 
 This directory is the source-of-truth package for the next reader MVP.
 
@@ -66,3 +66,23 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [Structured Paper Brief生成](structured_brief_generation.md): T2-02/T2-03/T2-06、AIRuntime経由、bounded context、Evidence、再生成preview、schema v4、tests・manual smoke。
 
 - [原文PDF Reader高DPI・ズーム・全幅表示](reader_hidpi_zoom.md): T3-04、T10-03のPDF状態復元、生成fixtureとbrowser回帰、Windows確認手順。
+
+- [日本語PDF試作](japanese_pdf_prototype.md): T3-01／T3-03 PoC、schema v5、再組版・保存・block対応切替、図表/Caption保持、Cloud fixture品質とWindows受入手順。
+
+- [日本語PDF翻訳の失敗診断・部分成功](japanese_translation_failures.md): Windows p.1の失敗を受けた分離retry・safe code・実機再試行。
+
+- [日本語PDFの原物品質検証](japanese_visual_quality.md): 埋め込みfont/位相差の再現、原資源保持、asset診断と破損検出、Windows再生成。
+
+- [original_textのclip検証](japanese_clip_quality.md): pixel差0で失敗する不可視Form命令、kind別ポリシー、native-3とWindows再検証。
+
+- [日本語PDFの文章構造・読書品質](japanese_semantic_reflow.md): Semantic Assembly、全文タイトル、Abstract、metadata分離、11pt英文fallback、本文文字数カバレッジ。
+
+- [日本語PDFのAbstract・英文抽出品質](japanese_abstract_reading_quality.md): math/font誤保護、glyph間space、脚注/folio、Abstract文字数ゲート、reflow-3とWindows再検証。
+
+- [1,150文字Abstractのfont外接矩形の誤保護](japanese_overlap_quality.md): glyph/原描画の局所proof、非連鎖領域、タイトル意味review、安全なWindows数値診断、reflow-4。
+
+- [保護領域の余白による境界未解決の分離](japanese_boundary_quality.md): seed provenanceと3値接触診断、必須範囲を保持した余白縮小、reflow-5 / glyph-ink-2とWindows再検証。
+
+- [Abstractの残存保護・原文テキスト再組版](japanese_text_recovery.md): native span所属、通常本文の輪郭証明、crop文字数診断、段階別失敗表示、reflow-6とWindows再検証。
+
+- [通常本文と科学的原物の経路分離](japanese_content_lanes.md): 共通glyph/ink proof、positive scientific objects、Abstract独立ゲート、失敗単位だけのretry、reflow-7とWindows再検証。

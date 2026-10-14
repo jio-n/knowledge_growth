@@ -199,7 +199,7 @@ def get_document(source_id: str):
         for block in blocks:
             block["bbox"] = json.loads(block["bbox_json"]) if block["bbox_json"] else None
         translations = {r["block_id"]: r["translated_text"] for r in con.execute(
-            "SELECT block_id, translated_text FROM translations WHERE source_id=? AND block_id IS NOT NULL",
+            "SELECT block_id, translated_text FROM translations WHERE source_id=? AND block_id IS NOT NULL AND translated_text<>'' ORDER BY user_edited,updated_at,rowid",
             (source_id,))}
         highlights = rows_to_dicts(con.execute(
             "SELECT * FROM highlights WHERE source_id=?", (source_id,)))

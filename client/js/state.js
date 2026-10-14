@@ -47,6 +47,9 @@ const READER_DEFAULTS = {
   paneWidthPct: 55,   // left pane width, percent of the split area
   scrollTop: 0, // legacy fallback, read only by the new PDF controller
   blockScrollTop: null,
+  pdfLanguage: "original",
+  japaneseGenerationId: null,
+  pdfViews: {},       // original and japanese:<generationId> positions
   pdfView: null,       // { mode: width|page|custom, zoom, position: {page,x,y} }
   sidePanelCollapsed: false,
   activeTab: "summary", // summary | qa | note

@@ -1,0 +1,132 @@
+{
+  "before": {
+    "asset_id": "tiny-original",
+    "asset_kind": "original_text",
+    "source_page": 1,
+    "japanese_page": 2,
+    "source_size_pt": [
+      395.157,
+      17.215
+    ],
+    "output_size_pt": [
+      395.157,
+      17.215
+    ],
+    "dpi": 200,
+    "vector_preserved": true,
+    "annotations_present": false,
+    "quality_policy": "original_text",
+    "status": "failed",
+    "error": "visual_content_changed",
+    "classification": "drawing_or_image_changed",
+    "source_rotation": 0,
+    "cropbox_size_pt": [
+      595.0,
+      842.0
+    ],
+    "native_size_preserved": true,
+    "source_image_size_px": [
+      1098,
+      48
+    ],
+    "output_image_size_px": [
+      1098,
+      48
+    ],
+    "source_ink_pixels": 3981,
+    "output_ink_pixels": 3981,
+    "mean_pixel_difference": 0.0,
+    "raw_mean_pixel_difference": 0.0,
+    "raw_source_image_size_px": [
+      1098,
+      48
+    ],
+    "raw_output_image_size_px": [
+      1098,
+      48
+    ],
+    "source_text_preserved": true,
+    "crop_no_hidden_text": true,
+    "crop_text_complete": true,
+    "source_glyph_count": 22,
+    "output_glyph_count": 22,
+    "glyphs_preserved": true,
+    "glyph_codes_preserved": true,
+    "max_glyph_origin_difference_pt": 0.000374,
+    "fonts_preserved": true,
+    "source_drawing_count": 2,
+    "output_drawing_count": 4,
+    "drawings_preserved": false,
+    "source_image_count": 0,
+    "output_image_count": 0,
+    "images_preserved": true
+  },
+  "after": {
+    "asset_id": "tiny-original",
+    "asset_kind": "original_text",
+    "source_page": 1,
+    "japanese_page": 2,
+    "source_size_pt": [
+      395.157,
+      17.215
+    ],
+    "output_size_pt": [
+      395.157,
+      17.215
+    ],
+    "dpi": 200,
+    "vector_preserved": true,
+    "annotations_present": false,
+    "quality_policy": "original_text",
+    "status": "passed",
+    "error": null,
+    "classification": "nonvisible_drawing_commands",
+    "source_rotation": 0,
+    "cropbox_size_pt": [
+      595.0,
+      842.0
+    ],
+    "native_size_preserved": true,
+    "source_image_size_px": [
+      1098,
+      48
+    ],
+    "output_image_size_px": [
+      1098,
+      48
+    ],
+    "source_ink_pixels": 3981,
+    "output_ink_pixels": 3981,
+    "mean_pixel_difference": 0.0,
+    "raw_mean_pixel_difference": 0.0,
+    "raw_source_image_size_px": [
+      1098,
+      48
+    ],
+    "raw_output_image_size_px": [
+      1098,
+      48
+    ],
+    "source_text_preserved": true,
+    "crop_no_hidden_text": true,
+    "crop_text_complete": true,
+    "source_glyph_count": 22,
+    "output_glyph_count": 22,
+    "glyphs_preserved": true,
+    "glyph_codes_preserved": true,
+    "max_glyph_origin_difference_pt": 0.000374,
+    "fonts_preserved": true,
+    "source_drawing_count": 2,
+    "output_drawing_count": 4,
+    "drawings_preserved": false,
+    "source_image_count": 0,
+    "output_image_count": 0,
+    "images_preserved": true,
+    "visible_drawings_verified": true,
+    "visible_drawings_preserved": true,
+    "source_invisible_drawing_count": 0,
+    "output_invisible_drawing_count": 2,
+    "exact_pixels_preserved": true,
+    "nonvisible_drawing_difference_proven": true
+  }
+}

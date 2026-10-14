@@ -1,0 +1,517 @@
+{
+  "passed": 6,
+  "cases": [
+    "title missing its research subject is rejected while full Abstract translation succeeds",
+    "numeric baseline ink crop and title meaning diagnostics available without source text",
+    "retry only failed title and deliberate English fallback while successful Abstract translations are reused",
+    "search selectable Japanese and original block jump preserve the single viewer and SourceAnchor contract",
+    "all 1150 Abstract characters placed in order once at 11pt; native Figure Table Equation and Captions preserved",
+    "download and offline reload retain source hash original blocks and saved Japanese artifact"
+  ],
+  "pageerrors": [],
+  "source_hash": "36403ee1086b9737ce6b22938b1cfab269504fdf07767a99b0fc5c05168bd2f4",
+  "coverage": {
+    "abstract": {
+      "candidate_source_chars": 1150,
+      "placed_source_chars": 1150,
+      "placed_translated_source_chars": 1150,
+      "protected_source_chars": 0,
+      "ratio": 1.0,
+      "source_chars": 1150,
+      "translated_source_chars": 1150,
+      "untranslated_reasons": {}
+    },
+    "abstract_complete": true,
+    "body": {
+      "candidate_source_chars": 1467,
+      "placed_source_chars": 1467,
+      "placed_translated_source_chars": 1371,
+      "protected_source_chars": 0,
+      "ratio": 0.934560327198364,
+      "source_chars": 1467,
+      "translated_source_chars": 1371,
+      "untranslated_reasons": {
+        "ai_uncertain": 96
+      }
+    },
+    "body_preserved_in_visuals": 0,
+    "caption": {
+      "candidate_source_chars": 56,
+      "placed_source_chars": 56,
+      "placed_translated_source_chars": 56,
+      "protected_source_chars": 0,
+      "ratio": 1.0,
+      "source_chars": 56,
+      "translated_source_chars": 56,
+      "untranslated_reasons": {}
+    },
+    "title": {
+      "complete": true,
+      "meaning_review": "complete",
+      "source_blocks": 2,
+      "translated": true,
+      "units": 1
+    }
+  },
+  "quality": {
+    "failed_visuals": 0,
+    "missing_or_duplicate": 0,
+    "outside_page": 0,
+    "overlaps": 0,
+    "passed_visuals": 3,
+    "reading_order_preserved": true,
+    "source_blocks_mapped": 32,
+    "source_mapping_duplicates": 0,
+    "text_blocks_validated": 24,
+    "untranslated_text_validated": 8,
+    "visual_quality_version": "native-3",
+    "visuals": [
+      {
+        "annotations_present": false,
+        "asset_id": "V3cbf1096b43b95257fc9c95e",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 3,
+        "max_glyph_origin_difference_pt": 2.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 2,
+        "output_glyph_count": 12,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          137
+        ],
+        "output_ink_pixels": 7408,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          49.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          1421,
+          137
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          137
+        ],
+        "source_drawing_count": 2,
+        "source_glyph_count": 12,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          137
+        ],
+        "source_ink_pixels": 7408,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          49.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V84e05613ef71fa4dad126fa0",
+        "asset_kind": "table",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 4,
+        "max_glyph_origin_difference_pt": 1.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 6,
+        "output_glyph_count": 28,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          150
+        ],
+        "output_ink_pixels": 10065,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          54.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.00013,
+        "raw_output_image_size_px": [
+          1421,
+          151
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          151
+        ],
+        "source_drawing_count": 6,
+        "source_glyph_count": 28,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          150
+        ],
+        "source_ink_pixels": 10065,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          54.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "Vcb42c2a2ad2450bc350f6163",
+        "asset_kind": "equation",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 5,
+        "max_glyph_origin_difference_pt": 0.000119,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 0,
+        "output_glyph_count": 15,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          248,
+          61
+        ],
+        "output_ink_pixels": 1711,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          89.254,
+          21.862
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          249,
+          61
+        ],
+        "raw_source_image_size_px": [
+          249,
+          61
+        ],
+        "source_drawing_count": 0,
+        "source_glyph_count": 15,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          248,
+          61
+        ],
+        "source_ink_pixels": 1711,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          89.254,
+          21.862
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      }
+    ]
+  },
+  "content_detection": [
+    {
+      "boundary_conflicts": [],
+      "pair_counts": {
+        "font_envelopes_only": 5
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            682.469,
+            4.44
+          ],
+          "block_ids": [
+            "e63f8a10e4921ed2a85eeeaa393afed27f272a482bccaaa9ad0bb6ff4cd588a5",
+            "4058ba3f51a05ae42c32ffe44c0a793ace17f8217a91a2a7c5d349f523e8acaa"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            186,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 13.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            682.465,
+            4.44
+          ],
+          "block_ids": [
+            "4058ba3f51a05ae42c32ffe44c0a793ace17f8217a91a2a7c5d349f523e8acaa",
+            "48314676c327ce1c1adf1435013459b25f94c82e5c7db3911fd21b02a5fd8760"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            676.698,
+            4.44
+          ],
+          "block_ids": [
+            "48314676c327ce1c1adf1435013459b25f94c82e5c7db3911fd21b02a5fd8760",
+            "9289d4c15a6b5d90df9d5b73a5ed170750228869614a3ad2ede9e43b7b090dfe"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2707,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "9289d4c15a6b5d90df9d5b73a5ed170750228869614a3ad2ede9e43b7b090dfe",
+            "5a8cb3dc9ec8bdc98ccf3ebd66ec10b0939f918432dcc67bfe4666d719e44201"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "5a8cb3dc9ec8bdc98ccf3ebd66ec10b0939f918432dcc67bfe4666d719e44201",
+            "62408b5ded8d76efa2ebe38a979945b84da418d089403facdf06d854943777e1"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            186
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        }
+      ],
+      "regions": [],
+      "source_page": 1,
+      "version": "glyph-ink-1"
+    },
+    {
+      "boundary_conflicts": [],
+      "pair_counts": {},
+      "pair_limit_reached": false,
+      "pairs": [],
+      "regions": [
+        {
+          "crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            511.0,
+            49.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "expansion_steps": 1,
+          "member_count": 4,
+          "seed_size_pt": [
+            511.0,
+            54.0
+          ],
+          "text_only": false
+        },
+        {
+          "crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "expansion_steps": 1,
+          "member_count": 1,
+          "seed_size_pt": [
+            89.254,
+            21.862
+          ],
+          "text_only": false
+        }
+      ],
+      "source_page": 2,
+      "version": "glyph-ink-1"
+    }
+  ],
+  "diagnostics": {
+    "ai_translation_succeeded": 1,
+    "attempt_errors": {
+      "ai_uncertain": 2
+    },
+    "cached_translations": 15,
+    "elapsed_seconds": 0.004,
+    "failure_stage": null,
+    "metadata_units": 7,
+    "pdf_placement_succeeded": 16,
+    "protected_units": 7,
+    "runtime_calls": 3,
+    "split_batches": 0,
+    "stopped_by": null,
+    "title_reviews": 1,
+    "translation_candidates": 17,
+    "translation_failures": {
+      "ai_uncertain": 1
+    },
+    "translation_succeeded": 16,
+    "unsafe_units": 0
+  },
+  "japanese_pages": 5,
+  "title_review": {
+    "checks": [
+      {
+        "category": "research_subject",
+        "source_chars": 26,
+        "status": "covered",
+        "translated_chars": 11
+      },
+      {
+        "category": "application_domain",
+        "source_chars": 13,
+        "status": "covered",
+        "translated_chars": 4
+      },
+      {
+        "category": "method_model",
+        "source_chars": 11,
+        "status": "covered",
+        "translated_chars": 7
+      },
+      {
+        "category": "research_positioning",
+        "source_chars": 19,
+        "status": "covered",
+        "translated_chars": 8
+      },
+      {
+        "category": "identifiers",
+        "source_chars": 4,
+        "status": "covered",
+        "translated_chars": 4
+      }
+    ],
+    "status": "complete",
+    "unmapped_source_tokens": 0,
+    "version": "title-meaning-1"
+  }
+}

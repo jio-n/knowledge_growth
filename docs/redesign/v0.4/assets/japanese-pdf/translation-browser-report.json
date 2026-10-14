@@ -1,0 +1,112 @@
+{
+  "passed": 8,
+  "cases": [
+    "all-batch invalid JSON classified without source/raw response",
+    "original reader survives translation failure",
+    "partial success retains two valid paragraphs",
+    "numeric failure isolated and layout count visible",
+    "partial PDF and diagnostics restored after reload and downloadable",
+    "retry reuses successes and translates only failed block",
+    "uncertain safe diagnostic code and count",
+    "timeout safe diagnostic code and count"
+  ],
+  "pageerrors": [],
+  "diagnostics": {
+    "f19180c5c1fb4484": {
+      "ai_translation_succeeded": 0,
+      "attempt_errors": {
+        "invalid_json": 16
+      },
+      "cached_translations": 0,
+      "elapsed_seconds": 0.006,
+      "failure_stage": "translation",
+      "pdf_placement_succeeded": 0,
+      "protected_units": 3,
+      "runtime_calls": 10,
+      "split_batches": 2,
+      "stopped_by": null,
+      "translation_candidates": 3,
+      "translation_failures": {
+        "invalid_json": 3
+      },
+      "translation_succeeded": 0,
+      "unsafe_units": 0
+    },
+    "ad916c268b0749dd": {
+      "ai_translation_succeeded": 2,
+      "attempt_errors": {
+        "numbers_changed": 2
+      },
+      "cached_translations": 0,
+      "elapsed_seconds": 0.012,
+      "failure_stage": null,
+      "pdf_placement_succeeded": 2,
+      "protected_units": 3,
+      "runtime_calls": 2,
+      "split_batches": 0,
+      "stopped_by": null,
+      "translation_candidates": 3,
+      "translation_failures": {
+        "numbers_changed": 1
+      },
+      "translation_succeeded": 2,
+      "unsafe_units": 0
+    },
+    "3c382f801d674b28": {
+      "ai_translation_succeeded": 1,
+      "attempt_errors": {},
+      "cached_translations": 2,
+      "elapsed_seconds": 0.004,
+      "failure_stage": null,
+      "pdf_placement_succeeded": 3,
+      "protected_units": 3,
+      "runtime_calls": 1,
+      "split_batches": 0,
+      "stopped_by": null,
+      "translation_candidates": 3,
+      "translation_failures": {},
+      "translation_succeeded": 3,
+      "unsafe_units": 0
+    },
+    "5afeaae8cb214c26": {
+      "ai_translation_succeeded": 2,
+      "attempt_errors": {
+        "ai_uncertain": 2
+      },
+      "cached_translations": 0,
+      "elapsed_seconds": 0.006,
+      "failure_stage": null,
+      "pdf_placement_succeeded": 2,
+      "protected_units": 3,
+      "runtime_calls": 2,
+      "split_batches": 0,
+      "stopped_by": null,
+      "translation_candidates": 3,
+      "translation_failures": {
+        "ai_uncertain": 1
+      },
+      "translation_succeeded": 2,
+      "unsafe_units": 0
+    },
+    "a5786451f8144707": {
+      "ai_translation_succeeded": 0,
+      "attempt_errors": {
+        "ai_timeout": 16
+      },
+      "cached_translations": 0,
+      "elapsed_seconds": 0.003,
+      "failure_stage": "translation",
+      "pdf_placement_succeeded": 0,
+      "protected_units": 3,
+      "runtime_calls": 10,
+      "split_batches": 2,
+      "stopped_by": null,
+      "translation_candidates": 3,
+      "translation_failures": {
+        "ai_timeout": 3
+      },
+      "translation_succeeded": 0,
+      "unsafe_units": 0
+    }
+  }
+}

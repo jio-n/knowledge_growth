@@ -263,3 +263,18 @@ def test_v3_to_v4_preserves_brief_and_generations_cascade(database):
     database.execute("INSERT INTO paper_brief_generations(id,source_id,state,snapshot_json,created_at,updated_at) VALUES('job','s','failed','{}','old','old')")
     database.execute("DELETE FROM sources WHERE id='s'")
     assert database.execute('SELECT * FROM paper_brief_generations').fetchall()==[]
+
+
+def test_v4_to_v5_translation_metadata_preserves_existing_research(database):
+    _seed_legacy(database)
+    run_migrations(database, migrations=MIGRATIONS[:4])
+    before=_snapshot(database)
+    backup=run_migrations(database)
+    assert _snapshot(database)==before and backup.exists()
+    row=database.execute("SELECT source_text,translated_text,user_edited,created_at,translation_status,source_hash FROM translations WHERE id='t'").fetchone()
+    assert row==('Synthetic text.','ユーザー修正済み訳',1,'old','translated',None)
+    assert database.execute('SELECT * FROM japanese_pdf_generations').fetchall()==[]
+    with closing(sqlite3.connect(backup)) as old:
+        assert _snapshot(old)==before
+        assert old.execute('SELECT MAX(version) FROM schema_version').fetchone()[0]==4
+        assert 'source_hash' not in [r[1] for r in old.execute('PRAGMA table_info(translations)')]

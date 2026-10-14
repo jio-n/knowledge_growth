@@ -12,6 +12,7 @@ import signal
 import subprocess
 import tempfile
 import threading
+import time
 from concurrent.futures import Future, TimeoutError
 from contextlib import contextmanager
 from .base import AIError
@@ -116,7 +117,10 @@ class AppServerProcess:
                 with self._lock:
                     if not future.done(): future.set_exception(AIError("process_disconnected"))
 
-    def _write(self, payload):
+    def _wait_seconds(self, deadline):
+        return self.timeout if deadline is None else max(0, min(self.timeout, deadline-time.monotonic()))
+
+    def _write(self, payload, *, deadline=None):
         frame = (json.dumps(payload, ensure_ascii=False) + "\n").encode()
         if len(frame) > MAX_FRAME: raise AIError("request_too_large")
         future = Future()
@@ -127,7 +131,7 @@ class AppServerProcess:
         try:
             try: self._writer_queue.put_nowait((frame, future))
             except queue.Full: raise AIError("write_queue_full") from None
-            future.result(timeout=self.timeout)
+            future.result(timeout=self._wait_seconds(deadline))
         except TimeoutError:
             self._fail("rpc_timeout")
             raise AIError("rpc_timeout") from None
@@ -136,7 +140,7 @@ class AppServerProcess:
 
     def notify(self, method): self._write({"method": method})
 
-    def request(self, method, params=None):
+    def request(self, method, params=None, *, deadline=None):
         with self._lock:
             self._next_id += 1
             request_id = self._next_id
@@ -145,8 +149,8 @@ class AppServerProcess:
         try:
             payload = {"id": request_id, "method": method}
             if params is not None: payload["params"] = params
-            self._write(payload)
-            return future.result(timeout=self.timeout)
+            self._write(payload, deadline=deadline)
+            return future.result(timeout=self._wait_seconds(deadline))
         except TimeoutError:
             self._fail("rpc_timeout")
             raise AIError("rpc_timeout") from None

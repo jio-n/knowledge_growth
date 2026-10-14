@@ -1,0 +1,98 @@
+{
+  "head": "bf03dc57571f1f694de04a0f1682f7dcca02f878",
+  "published": false,
+  "error": "visual_font_validation_unavailable",
+  "coverage": {
+    "body": {
+      "source_chars": 430,
+      "translated_source_chars": 0,
+      "ratio": 0.0
+    },
+    "abstract": {
+      "source_chars": 281,
+      "translated_source_chars": 0,
+      "ratio": 0.0
+    },
+    "caption": {
+      "source_chars": 0,
+      "translated_source_chars": 0,
+      "ratio": null
+    },
+    "title": {
+      "units": 1,
+      "source_blocks": 2,
+      "complete": true,
+      "translated": true
+    },
+    "abstract_complete": false,
+    "body_preserved_in_visuals": 1
+  },
+  "roles": [
+    {
+      "role": "paper_title",
+      "kind": "text",
+      "source_chars": 62,
+      "reason": null
+    },
+    {
+      "role": "abstract_heading",
+      "kind": "text",
+      "source_chars": 8,
+      "reason": null
+    },
+    {
+      "role": "section_heading",
+      "kind": "text",
+      "source_chars": 14,
+      "reason": null
+    },
+    {
+      "role": "paragraph",
+      "kind": "text",
+      "source_chars": 102,
+      "reason": "ai_uncertain"
+    },
+    {
+      "role": "paragraph",
+      "kind": "text",
+      "source_chars": 52,
+      "reason": "ai_uncertain"
+    },
+    {
+      "role": "paragraph",
+      "kind": "text",
+      "source_chars": 1,
+      "reason": "ai_uncertain"
+    },
+    {
+      "role": "authors",
+      "kind": "metadata",
+      "source_chars": 28,
+      "reason": "metadata_preserved"
+    },
+    {
+      "role": "affiliations",
+      "kind": "metadata",
+      "source_chars": 45,
+      "reason": "metadata_preserved"
+    },
+    {
+      "role": "contact",
+      "kind": "metadata",
+      "source_chars": 40,
+      "reason": "metadata_preserved"
+    },
+    {
+      "role": "bibliographic",
+      "kind": "metadata",
+      "source_chars": 54,
+      "reason": "metadata_preserved"
+    },
+    {
+      "role": "abstract_body",
+      "kind": "visual",
+      "source_chars": 284,
+      "reason": "visual_or_equation"
+    }
+  ]
+}

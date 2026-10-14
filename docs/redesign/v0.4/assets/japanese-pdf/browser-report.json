@@ -1,0 +1,3733 @@
+{
+  "passed": 17,
+  "cases": [
+    "original page subset validation",
+    "UI reflow generation and persisted artifact",
+    "single viewer reflow PDF",
+    "zoom and panel state preserved",
+    "Japanese full PDF search",
+    "Japanese selection returns original block on source page 2",
+    "no Japanese character bbox saved as SourceAnchor",
+    "block mapping source p.2 -> Japanese p.1, not page-number synchronization",
+    "Evidence URL overrides Japanese preference and subset page limits",
+    "original decimal table text searchable after vector placement",
+    "visual/caption and original/Japanese locations visible",
+    "download reflow PDF",
+    "reload restores artifact-specific Japanese page, zoom, panel",
+    "fit mode retained through semantic switch",
+    "text/PDF mode separate from Japanese/original PDF",
+    "long Japanese text naturally paginates without shrinking/overflow",
+    "rapid document switching and route teardown without errors"
+  ],
+  "pageerrors": [],
+  "original_hash": "c47d62c899b70fbd9799cd4de77c0d056746e2c8c0a23b54fad164f4312adbf9",
+  "pdf_hash": "589ee2924286dfe443bcbccb4d029a76dee09c822c3c5eba9171d307644c7cbb",
+  "generation_report": {
+    "assets": [
+      {
+        "caption_block_ids": [
+          "621afd517b88625745584d9a572cdc74233a936d565b143ed3d0da05fc1b1a14"
+        ],
+        "caption_status": "translated",
+        "id": "V1878ee470805117a7f4dfe7e",
+        "japanese_bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0,
+            0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            44.08,
+            128.72,
+            538.08,
+            212.72
+          ],
+          "rotation": 0,
+          "units": "pt"
+        },
+        "japanese_page": 1,
+        "kind": "figure",
+        "original_block_ids": [
+          "a0bb576a018db18d7057095b08e36aba86c58c3a8e1eaaf68a5521d9e76d5736",
+          "0313da3dd98ca524614abccadd3d8f3131e65763d1c78b4bb49dcc256b984749",
+          "818c54c7348904b4f8461ce4dad09d7200806c05a990d2ab09c23467db99aac4",
+          "b076f19fd1959faf422b225df70ba40f0d9ed85020ad1e5304506369bcfbb944"
+        ],
+        "rasterize_annotations": false,
+        "reason": null,
+        "source_bbox": [
+          43.0,
+          218.0,
+          537.0,
+          302.0
+        ],
+        "source_page": 1,
+        "status": "resolved",
+        "vector_preserved": true
+      },
+      {
+        "caption_block_ids": [],
+        "id": "V5797a22e1c58ec4e03ff15f4",
+        "japanese_bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0,
+            0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            44.0,
+            619.1100146484375,
+            139.81199645996094,
+            642.3459765625
+          ],
+          "rotation": 0,
+          "units": "pt"
+        },
+        "japanese_page": 1,
+        "kind": "equation",
+        "original_block_ids": [
+          "992f7b949027c8fd74b46934c3fd1782689551da6a2bd318e1b70e028b113ccb"
+        ],
+        "rasterize_annotations": false,
+        "reason": null,
+        "source_bbox": [
+          98.0,
+          726.3900146484375,
+          193.81199645996094,
+          749.6259765625
+        ],
+        "source_page": 2,
+        "status": "resolved",
+        "vector_preserved": true
+      },
+      {
+        "caption_block_ids": [
+          "f1f6c0725aa7c1727e5fd2165c478c4157e5d5a2a15753351d56f0fad43cd95f"
+        ],
+        "caption_status": "translated",
+        "id": "Vf17ddf02ad0046965d3b83fc",
+        "japanese_bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0,
+            0,
+            608.0,
+            842.0
+          ],
+          "rect": [
+            44.12,
+            81.08,
+            563.12,
+            501.08
+          ],
+          "rotation": 0,
+          "units": "pt"
+        },
+        "japanese_page": 3,
+        "kind": "table",
+        "original_block_ids": [
+          "2940e7519e4d2b3cab7bdd7c33617684bd2221bdf62550f3b5ba9e48a810a187",
+          "b9c0f0a2e02fb332fa839e2ab2c528cee75faff362bb813c25c1579cf00d5680",
+          "7ee6e3c1643d13d47e3ca897b81e62a7c69f242501a657e36d99c588be6959a4",
+          "d598637dd37e53af84cbff5e9010f6189431a1eee642bc74867ab5d09c6546e1",
+          "edd63da3722de7f71c15d7d2bf56b74780f0832d3554effdfcd883bdb384c83d",
+          "419b690bce8afcc616a4802385a71d021bf6453f1e74d8b9d7c1c3abbe40a8ea",
+          "38045c045176537ecd6bebf30561a28d847978804c3dc8e6ed703627e23725b1",
+          "fd5f2e54f6033a567227f492c46ab0e006cf0f28920b5eb6e8a1690227bff759",
+          "e477f42f51d9f7d6e475f8d65594eaf6b8880f9d6194c631eb0916eb7499775e",
+          "cac2cdc4c9e11d489fb9474bbf3b0fd0afe708ff3e3f945c39a4eb0120384ce6",
+          "cad91e2a8a9ebbc260b1ff5958ba182ddc737bca91e288661b7c84c830bb7c5f",
+          "34c6896c591a1bf84d58d37b1754d7a9b8ed2d758ddff47303244b181d5536a2",
+          "b4ec19ef6bfdaa92f9848b657ab16952119fb89b9effb9277c88d05069784c5e",
+          "4c7edd0a61fc4c5aecf9075e859a4464f900167b83556be952b6bc0a2f7202dc"
+        ],
+        "rasterize_annotations": false,
+        "reason": null,
+        "source_bbox": [
+          38.0,
+          143.0,
+          557.0,
+          563.0
+        ],
+        "source_page": 3,
+        "status": "resolved",
+        "vector_preserved": true
+      }
+    ],
+    "counts": {
+      "skipped_protected": 19,
+      "translated": 28
+    },
+    "japanese_page_count": 4,
+    "layout_version": "reflow-1",
+    "original_page_count": 3,
+    "quality": {
+      "missing_or_duplicate": 0,
+      "outside_page": 0,
+      "overlaps": 0,
+      "reading_order_preserved": true,
+      "text_blocks_validated": 28,
+      "visuals": [
+        {
+          "asset_id": "V1878ee470805117a7f4dfe7e",
+          "dpi": 200,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "source_text_preserved": true
+        },
+        {
+          "asset_id": "V5797a22e1c58ec4e03ff15f4",
+          "dpi": 200,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "source_text_preserved": true
+        },
+        {
+          "asset_id": "Vf17ddf02ad0046965d3b83fc",
+          "dpi": 200,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "source_text_preserved": true
+        }
+      ]
+    },
+    "reading_order": [
+      "654b87b691ecaec22f4241c947d93ffaa93eb33d032dabdbf0b15578ec0d73a6",
+      "2a51b5720a9dd687db03f34bf61497e61a489e750b67bce2faae91ec42a544ee",
+      "a0bb576a018db18d7057095b08e36aba86c58c3a8e1eaaf68a5521d9e76d5736",
+      "0313da3dd98ca524614abccadd3d8f3131e65763d1c78b4bb49dcc256b984749",
+      "818c54c7348904b4f8461ce4dad09d7200806c05a990d2ab09c23467db99aac4",
+      "b076f19fd1959faf422b225df70ba40f0d9ed85020ad1e5304506369bcfbb944",
+      "621afd517b88625745584d9a572cdc74233a936d565b143ed3d0da05fc1b1a14",
+      "a27bcdb9556e9d4b7d21fca2792e5710af57cfc87b3ae8fdc084402fd6820a2e",
+      "7211b44c191c4aef0dcfbef34547cf52b78291078a2391547e2b0ce99c3908e2",
+      "3dc4b343dcb597cb7db82f6d23251b945f0b589e9d11c52f9d7dd7e14186725b",
+      "b331687e15e7c73b0416af491313fbba5d9045ff8990fec1fb87a44ac2ee5434",
+      "9e371e39c657e400a3c727456b0de3ee1935a0de325b8a9e8570230598560f36",
+      "c9237c9122d01eebd7da3267e941dc7ac690a99ebb46f94bf00c49ebcedc0260",
+      "6f542ab9bf5b4be880653fcf0d8066aa932e39e2bb0d141086471b0f7e9f4f96",
+      "cb38251b48cef2ab898a11c9db354435aff0b7b6d01a0c130907a1295e09ae4e",
+      "ab7e8edf25d8eaa711de9d5fc35017251bc23352a647b860eaee458286cc53d2",
+      "4def4e119cbf93d8bf9754ef1ec382119b67d4e117f71f7e2ae233afefa83980",
+      "50f69b3f605547ac88e0968aeb9863c2578a77b64dc731e98328c7821949b6be",
+      "992f7b949027c8fd74b46934c3fd1782689551da6a2bd318e1b70e028b113ccb",
+      "4e08a72ec238c23cb4915d3b0847affa411a28e15b923d583b35eddeb4c6d372",
+      "9da1937b785dd8ff8e0ca3e0853b900c4838107954e3998c408d864cc1215f8a",
+      "ce9895c7ef6b08c34f12602758702154f8495cf12e2109927ea3243a575e2787",
+      "70cfd935ed139191188b12687a16a2b0eff4b227a7035e3e373c241708241bb9",
+      "abb21dd0be7a207d47507b9da5c4ee08066ce16672f724741f7d2716e97b59b4",
+      "43aaf8be9005da33d924544e610c7322cd1e26b59df7bf75df98b91e4dd0991c",
+      "51940e1d9e062218e885ba5248e5f99435dd23612b342c1e71425b7a1988ecda",
+      "5956d7087de51313de3bbbb639731d34484a7299a555d39bb518819455e30ede",
+      "413a657f43257f96f86b4266dd41b378d00578a5854b12dd53483f64f98356b3",
+      "5860aa9ea25c8e50329e6948846b843b053036444b51655767d0cebc88ae11e7",
+      "2940e7519e4d2b3cab7bdd7c33617684bd2221bdf62550f3b5ba9e48a810a187",
+      "b9c0f0a2e02fb332fa839e2ab2c528cee75faff362bb813c25c1579cf00d5680",
+      "7ee6e3c1643d13d47e3ca897b81e62a7c69f242501a657e36d99c588be6959a4",
+      "d598637dd37e53af84cbff5e9010f6189431a1eee642bc74867ab5d09c6546e1",
+      "edd63da3722de7f71c15d7d2bf56b74780f0832d3554effdfcd883bdb384c83d",
+      "419b690bce8afcc616a4802385a71d021bf6453f1e74d8b9d7c1c3abbe40a8ea",
+      "38045c045176537ecd6bebf30561a28d847978804c3dc8e6ed703627e23725b1",
+      "fd5f2e54f6033a567227f492c46ab0e006cf0f28920b5eb6e8a1690227bff759",
+      "e477f42f51d9f7d6e475f8d65594eaf6b8880f9d6194c631eb0916eb7499775e",
+      "cac2cdc4c9e11d489fb9474bbf3b0fd0afe708ff3e3f945c39a4eb0120384ce6",
+      "cad91e2a8a9ebbc260b1ff5958ba182ddc737bca91e288661b7c84c830bb7c5f",
+      "34c6896c591a1bf84d58d37b1754d7a9b8ed2d758ddff47303244b181d5536a2",
+      "b4ec19ef6bfdaa92f9848b657ab16952119fb89b9effb9277c88d05069784c5e",
+      "4c7edd0a61fc4c5aecf9075e859a4464f900167b83556be952b6bc0a2f7202dc",
+      "f1f6c0725aa7c1727e5fd2165c478c4157e5d5a2a15753351d56f0fad43cd95f",
+      "dc9491c213f258cee10f41588ec014adccfc833524bc788f260799fe04087e61",
+      "010db1146852395d61d77763fefacd9153135a8afe77bc79ce444fc099c228f2",
+      "6b401abc24ffed9ac25e90788e2672ff4c331a8ecdfcfb7821050e22d6e168ad"
+    ],
+    "selected_pages": [
+      1,
+      2,
+      3
+    ],
+    "source_text_blocks": 45,
+    "text_blocks": 28,
+    "translated_pages": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "translated_ratio": 1.0,
+    "units": [
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            35.0,
+            113.008,
+            59.786
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                35.0,
+                113.008,
+                59.786
+              ],
+              "text": "Abstract"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "654b87b691ecaec22f4241c947d93ffaa93eb33d032dabdbf0b15578ec0d73a6",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                47.92799758911133,
+                76.0,
+                68.83999633789062
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "e056aab512ee4248"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            546.847,
+            131.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                546.847,
+                115.114
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves"
+            },
+            {
+              "rect": [
+                40.0,
+                116.248,
+                143.939,
+                131.362
+              ],
+              "text": "the original evidence."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "2a51b5720a9dd687db03f34bf61497e61a489e750b67bce2faae91ec42a544ee",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                84.47799682617188,
+                550.0,
+                116.45499420166016
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "d416db1322564988"
+      },
+      {
+        "asset_id": "V1878ee470805117a7f4dfe7e",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            45.0,
+            220.0,
+            535.0,
+            300.0
+          ],
+          "rotation": 0,
+          "spans": [],
+          "units": "pt"
+        },
+        "block_id": "a0bb576a018db18d7057095b08e36aba86c58c3a8e1eaaf68a5521d9e76d5736",
+        "font_size": null,
+        "kind": "visual",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.08,
+                128.72,
+                538.08,
+                212.72
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Abstract",
+        "status": "skipped_protected",
+        "translation_id": "92d00c830b1e4794"
+      },
+      {
+        "asset_id": "V1878ee470805117a7f4dfe7e",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            57.0,
+            248.0,
+            88.136,
+            267.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                57.0,
+                248.0,
+                88.136,
+                267.236
+              ],
+              "text": "Input"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "0313da3dd98ca524614abccadd3d8f3131e65763d1c78b4bb49dcc256b984749",
+        "font_size": null,
+        "kind": "visual",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.08,
+                128.72,
+                538.08,
+                212.72
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Abstract",
+        "status": "skipped_protected",
+        "translation_id": "19daa946485647e4"
+      },
+      {
+        "asset_id": "V1878ee470805117a7f4dfe7e",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            232.0,
+            248.0,
+            284.136,
+            267.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                232.0,
+                248.0,
+                284.136,
+                267.236
+              ],
+              "text": "Encoder"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "818c54c7348904b4f8461ce4dad09d7200806c05a990d2ab09c23467db99aac4",
+        "font_size": null,
+        "kind": "visual",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.08,
+                128.72,
+                538.08,
+                212.72
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Abstract",
+        "status": "skipped_protected",
+        "translation_id": "dd0a7ea2d109483e"
+      },
+      {
+        "asset_id": "V1878ee470805117a7f4dfe7e",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            407.0,
+            248.0,
+            449.028,
+            267.236
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                407.0,
+                248.0,
+                449.028,
+                267.236
+              ],
+              "text": "Output"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b076f19fd1959faf422b225df70ba40f0d9ed85020ad1e5304506369bcfbb944",
+        "font_size": null,
+        "kind": "visual",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.08,
+                128.72,
+                538.08,
+                212.72
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Abstract",
+        "status": "skipped_protected",
+        "translation_id": "e62fb260b64c4152"
+      },
+      {
+        "asset_id": "V1878ee470805117a7f4dfe7e",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            325.0,
+            299.842,
+            340.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                325.0,
+                299.842,
+                340.114
+              ],
+              "text": "Figure 1. Synthetic input-encoder-output architecture."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "621afd517b88625745584d9a572cdc74233a936d565b143ed3d0da05fc1b1a14",
+        "font_size": 10.0,
+        "kind": "caption",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                222.3000030517578,
+                275.3671875,
+                235.3699951171875
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "3f61b466992c4514"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            405.0,
+            312.701,
+            436.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                405.0,
+                312.701,
+                420.114
+              ],
+              "text": "As shown in Figure 1, the encoder maps input to output."
+            },
+            {
+              "rect": [
+                40.0,
+                421.248,
+                297.411,
+                436.362
+              ],
+              "text": "A frozen backbone is evaluated in a few-shot setting."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "a27bcdb9556e9d4b7d21fca2792e5710af57cfc87b3ae8fdc084402fd6820a2e",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                261.00799560546875,
+                546.2235107421875,
+                292.9850158691406
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "55fcb17bfc9c45c6"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            32.0,
+            297.86,
+            59.54
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                32.0,
+                297.86,
+                59.54
+              ],
+              "text": "Synthetic Research Fixture"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "7211b44c191c4aef0dcfbef34547cf52b78291078a2391547e2b0ce99c3908e2",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                308.91302490234375,
+                204.0,
+                329.82501220703125
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture",
+        "status": "translated",
+        "translation_id": "55e65dfe0c104139"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            92.0,
+            157.344,
+            114.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                92.0,
+                157.344,
+                114.032
+              ],
+              "text": "1 LEFT Column"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "3dc4b343dcb597cb7db82f6d23251b945f0b589e9d11c52f9d7dd7e14186725b",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                345.7530212402344,
+                89.0,
+                366.6650085449219
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "89b18f538797494e"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            148.0,
+            250.32,
+            179.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                148.0,
+                132.323,
+                163.114
+              ],
+              "text": "LEFT paragraph 1."
+            },
+            {
+              "rect": [
+                40.0,
+                164.248,
+                250.32,
+                179.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b331687e15e7c73b0416af491313fbba5d9045ff8990fec1fb87a44ac2ee5434",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                382.3030090332031,
+                292.04998779296875,
+                396.6800231933594
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "c5f7f8746e9444ab"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            213.0,
+            250.32,
+            244.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                213.0,
+                132.323,
+                228.114
+              ],
+              "text": "LEFT paragraph 2."
+            },
+            {
+              "rect": [
+                40.0,
+                229.248,
+                250.32,
+                244.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9e371e39c657e400a3c727456b0de3ee1935a0de325b8a9e8570230598560f36",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                412.3180236816406,
+                292.04998779296875,
+                426.6950378417969
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "2ed78d4aa66844fd"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            278.0,
+            250.32,
+            309.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                278.0,
+                132.323,
+                293.114
+              ],
+              "text": "LEFT paragraph 3."
+            },
+            {
+              "rect": [
+                40.0,
+                294.248,
+                250.32,
+                309.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "c9237c9122d01eebd7da3267e941dc7ac690a99ebb46f94bf00c49ebcedc0260",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                442.3330383300781,
+                292.04998779296875,
+                456.7100524902344
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "bb43fb5d60c04dc6"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            343.0,
+            250.32,
+            374.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                343.0,
+                132.323,
+                358.114
+              ],
+              "text": "LEFT paragraph 4."
+            },
+            {
+              "rect": [
+                40.0,
+                359.248,
+                250.32,
+                374.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "6f542ab9bf5b4be880653fcf0d8066aa932e39e2bb0d141086471b0f7e9f4f96",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                472.3480529785156,
+                292.04998779296875,
+                486.7250671386719
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "7e9ada4a2f6843aa"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            408.0,
+            250.32,
+            439.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                408.0,
+                132.323,
+                423.114
+              ],
+              "text": "LEFT paragraph 5."
+            },
+            {
+              "rect": [
+                40.0,
+                424.248,
+                250.32,
+                439.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "cb38251b48cef2ab898a11c9db354435aff0b7b6d01a0c130907a1295e09ae4e",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                502.3630676269531,
+                292.04998779296875,
+                516.7400512695312
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "e67b28ca189e4fe7"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            473.0,
+            250.32,
+            504.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                473.0,
+                132.323,
+                488.114
+              ],
+              "text": "LEFT paragraph 6."
+            },
+            {
+              "rect": [
+                40.0,
+                489.248,
+                250.32,
+                504.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "ab7e8edf25d8eaa711de9d5fc35017251bc23352a647b860eaee458286cc53d2",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                532.3780517578125,
+                292.04998779296875,
+                546.7550048828125
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "116b0632be62419c"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            538.0,
+            250.32,
+            569.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                538.0,
+                132.323,
+                553.114
+              ],
+              "text": "LEFT paragraph 7."
+            },
+            {
+              "rect": [
+                40.0,
+                554.247,
+                250.32,
+                569.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "4def4e119cbf93d8bf9754ef1ec382119b67d4e117f71f7e2ae233afefa83980",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                562.3930053710938,
+                292.04998779296875,
+                576.7699584960938
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "90393199b87e4f7d"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            603.0,
+            250.32,
+            634.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                603.0,
+                132.323,
+                618.114
+              ],
+              "text": "LEFT paragraph 8."
+            },
+            {
+              "rect": [
+                40.0,
+                619.248,
+                250.32,
+                634.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "50f69b3f605547ac88e0968aeb9863c2578a77b64dc731e98328c7821949b6be",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                592.407958984375,
+                292.04998779296875,
+                606.784912109375
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "translated",
+        "translation_id": "bd3d9b028bcc459b"
+      },
+      {
+        "asset_id": "V5797a22e1c58ec4e03ff15f4",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            100.0,
+            728.39,
+            191.812,
+            747.626
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                100.0,
+                728.39,
+                191.812,
+                747.626
+              ],
+              "text": "y = W x + b (1)"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "992f7b949027c8fd74b46934c3fd1782689551da6a2bd318e1b70e028b113ccb",
+        "font_size": null,
+        "kind": "visual",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                619.1100146484375,
+                139.81199645996094,
+                642.3459765625
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 1 LEFT Column",
+        "status": "skipped_protected",
+        "translation_id": "906de2e1f3234f3a"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            92.0,
+            437.12,
+            114.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                92.0,
+                437.12,
+                114.032
+              ],
+              "text": "1 RIGHT Column"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "4e08a72ec238c23cb4915d3b0847affa411a28e15b923d583b35eddeb4c6d372",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                662.27392578125,
+                89.0,
+                683.1859130859375
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "f61f6ee6e5404686"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            148.0,
+            520.32,
+            179.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                148.0,
+                409.649,
+                163.114
+              ],
+              "text": "RIGHT paragraph 1."
+            },
+            {
+              "rect": [
+                310.0,
+                164.248,
+                520.32,
+                179.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "9da1937b785dd8ff8e0ca3e0853b900c4838107954e3998c408d864cc1215f8a",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                698.8239135742188,
+                292.04998779296875,
+                713.2008666992188
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "976dd5787fe3489d"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            213.0,
+            520.32,
+            244.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                213.0,
+                409.649,
+                228.114
+              ],
+              "text": "RIGHT paragraph 2."
+            },
+            {
+              "rect": [
+                310.0,
+                229.248,
+                520.32,
+                244.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "ce9895c7ef6b08c34f12602758702154f8495cf12e2109927ea3243a575e2787",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                728.8388671875,
+                292.04998779296875,
+                743.2158203125
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "43f7a348d9c44732"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            278.0,
+            520.32,
+            309.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                278.0,
+                409.649,
+                293.114
+              ],
+              "text": "RIGHT paragraph 3."
+            },
+            {
+              "rect": [
+                310.0,
+                294.248,
+                520.32,
+                309.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "70cfd935ed139191188b12687a16a2b0eff4b227a7035e3e373c241708241bb9",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                47.637996673583984,
+                292.04998779296875,
+                62.01499938964844
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "ba232792fcd547f8"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            343.0,
+            520.32,
+            374.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                343.0,
+                409.649,
+                358.114
+              ],
+              "text": "RIGHT paragraph 4."
+            },
+            {
+              "rect": [
+                310.0,
+                359.248,
+                520.32,
+                374.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "abb21dd0be7a207d47507b9da5c4ee08066ce16672f724741f7d2716e97b59b4",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                77.65299987792969,
+                292.04998779296875,
+                92.02999877929688
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "7711dc8534a94257"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            408.0,
+            520.32,
+            439.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                408.0,
+                409.649,
+                423.114
+              ],
+              "text": "RIGHT paragraph 5."
+            },
+            {
+              "rect": [
+                310.0,
+                424.248,
+                520.32,
+                439.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "43aaf8be9005da33d924544e610c7322cd1e26b59df7bf75df98b91e4dd0991c",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                107.66799926757812,
+                292.04998779296875,
+                122.04499816894531
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "c2a7de0e04ba4ca5"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            473.0,
+            520.32,
+            504.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                473.0,
+                409.649,
+                488.114
+              ],
+              "text": "RIGHT paragraph 6."
+            },
+            {
+              "rect": [
+                310.0,
+                489.248,
+                520.32,
+                504.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "51940e1d9e062218e885ba5248e5f99435dd23612b342c1e71425b7a1988ecda",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                137.68299865722656,
+                292.04998779296875,
+                152.05999755859375
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "bca2aee944ae4ee6"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            538.0,
+            520.32,
+            569.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                538.0,
+                409.649,
+                553.114
+              ],
+              "text": "RIGHT paragraph 7."
+            },
+            {
+              "rect": [
+                310.0,
+                554.247,
+                520.32,
+                569.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "5956d7087de51313de3bbbb639731d34484a7299a555d39bb518819455e30ede",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                167.697998046875,
+                292.04998779296875,
+                182.0749969482422
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "ac4777f39a154093"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            310.0,
+            603.0,
+            520.32,
+            634.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                310.0,
+                603.0,
+                409.649,
+                618.114
+              ],
+              "text": "RIGHT paragraph 8."
+            },
+            {
+              "rect": [
+                310.0,
+                619.248,
+                520.32,
+                634.362
+              ],
+              "text": "Synthetic column content for reading order."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "413a657f43257f96f86b4266dd41b378d00578a5854b12dd53483f64f98356b3",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 2,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                197.71299743652344,
+                292.04998779296875,
+                212.08999633789062
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 1 RIGHT Column",
+        "status": "translated",
+        "translation_id": "be7df6dea38044da"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            40.0,
+            111.136,
+            62.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                40.0,
+                111.136,
+                62.032
+              ],
+              "text": "2 Results"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "5860aa9ea25c8e50329e6948846b843b053036444b51655767d0cebc88ae11e7",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                47.92799758911133,
+                89.0,
+                68.83999633789062
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "translated",
+        "translation_id": "a9dacc977db24972"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            331.621,
+            115.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                331.621,
+                115.114
+              ],
+              "text": "Table 1. Synthetic benchmark scores (invented test values)."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "f1f6c0725aa7c1727e5fd2165c478c4157e5d5a2a15753351d56f0fad43cd95f",
+        "font_size": 10.0,
+        "kind": "caption",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                510.6599426269531,
+                301.734375,
+                523.72998046875
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "translated",
+        "translation_id": "31bcd787b556422e"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            145.0,
+            555.0,
+            561.0
+          ],
+          "rotation": 0,
+          "spans": [],
+          "units": "pt"
+        },
+        "block_id": "2940e7519e4d2b3cab7bdd7c33617684bd2221bdf62550f3b5ba9e48a810a187",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "6d86999a551e4668"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            152.0,
+            171.96,
+            160.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                152.0,
+                171.96,
+                160.244
+              ],
+              "text": "Dataset | Metric | Setting | Baseline | Proposed"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b9c0f0a2e02fb332fa839e2ab2c528cee75faff362bb813c25c1579cf00d5680",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "4effd632667d4b4c"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            184.0,
+            204.99,
+            192.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                184.0,
+                204.99,
+                192.244
+              ],
+              "text": "Synthetic-00 | Accuracy | few-shot | 60.012345 | 62.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "7ee6e3c1643d13d47e3ca897b81e62a7c69f242501a657e36d99c588be6959a4",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "fcd2e8a7ff3445b4"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            216.0,
+            204.99,
+            224.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                216.0,
+                204.99,
+                224.244
+              ],
+              "text": "Synthetic-01 | Accuracy | few-shot | 61.012345 | 63.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "d598637dd37e53af84cbff5e9010f6189431a1eee642bc74867ab5d09c6546e1",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "ce695616b83b4b7f"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            248.0,
+            204.99,
+            256.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                248.0,
+                204.99,
+                256.244
+              ],
+              "text": "Synthetic-02 | Accuracy | few-shot | 62.012345 | 64.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "edd63da3722de7f71c15d7d2bf56b74780f0832d3554effdfcd883bdb384c83d",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "068bb973895f4fe7"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            280.0,
+            204.99,
+            288.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                280.0,
+                204.99,
+                288.244
+              ],
+              "text": "Synthetic-03 | Accuracy | few-shot | 63.012345 | 65.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "419b690bce8afcc616a4802385a71d021bf6453f1e74d8b9d7c1c3abbe40a8ea",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "741a7e1ad7d848ef"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            312.0,
+            204.99,
+            320.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                312.0,
+                204.99,
+                320.244
+              ],
+              "text": "Synthetic-04 | Accuracy | few-shot | 64.012345 | 66.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "38045c045176537ecd6bebf30561a28d847978804c3dc8e6ed703627e23725b1",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "0bf606999d494810"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            344.0,
+            204.99,
+            352.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                344.0,
+                204.99,
+                352.244
+              ],
+              "text": "Synthetic-05 | Accuracy | few-shot | 65.012345 | 67.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "fd5f2e54f6033a567227f492c46ab0e006cf0f28920b5eb6e8a1690227bff759",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "6f77e1b6310645db"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            376.0,
+            204.99,
+            384.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                376.0,
+                204.99,
+                384.244
+              ],
+              "text": "Synthetic-06 | Accuracy | few-shot | 66.012345 | 68.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "e477f42f51d9f7d6e475f8d65594eaf6b8880f9d6194c631eb0916eb7499775e",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "bff5d0e69969456e"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            408.0,
+            204.99,
+            416.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                408.0,
+                204.99,
+                416.244
+              ],
+              "text": "Synthetic-07 | Accuracy | few-shot | 67.012345 | 69.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "cac2cdc4c9e11d489fb9474bbf3b0fd0afe708ff3e3f945c39a4eb0120384ce6",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "06093179ac524ab1"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            440.0,
+            204.99,
+            448.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                440.0,
+                204.99,
+                448.244
+              ],
+              "text": "Synthetic-08 | Accuracy | few-shot | 68.012345 | 70.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "cad91e2a8a9ebbc260b1ff5958ba182ddc737bca91e288661b7c84c830bb7c5f",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "a902a7d00e294efb"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            472.0,
+            204.99,
+            480.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                472.0,
+                204.99,
+                480.244
+              ],
+              "text": "Synthetic-09 | Accuracy | few-shot | 69.012345 | 71.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "34c6896c591a1bf84d58d37b1754d7a9b8ed2d758ddff47303244b181d5536a2",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "39ff0fad1ebe4c47"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            504.0,
+            204.99,
+            512.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                504.0,
+                204.99,
+                512.244
+              ],
+              "text": "Synthetic-10 | Accuracy | few-shot | 70.012345 | 72.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b4ec19ef6bfdaa92f9848b657ab16952119fb89b9effb9277c88d05069784c5e",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "706f897087d141be"
+      },
+      {
+        "asset_id": "Vf17ddf02ad0046965d3b83fc",
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            48.0,
+            536.0,
+            204.99,
+            544.244
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                48.0,
+                536.0,
+                204.99,
+                544.244
+              ],
+              "text": "Synthetic-11 | Accuracy | few-shot | 71.012345 | 73.987654"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "4c7edd0a61fc4c5aecf9075e859a4464f900167b83556be952b6bc0a2f7202dc",
+        "font_size": null,
+        "kind": "visual",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                608.0,
+                842.0
+              ],
+              "rect": [
+                44.12,
+                81.08,
+                563.12,
+                501.08
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 3,
+            "part": 0
+          }
+        ],
+        "reason": "visual_or_equation",
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "skipped_protected",
+        "translation_id": "c8609353d92141d2"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            595.0,
+            284.563,
+            626.362
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                595.0,
+                284.563,
+                610.114
+              ],
+              "text": "Table 1 contains invented scores for test use only."
+            },
+            {
+              "rect": [
+                40.0,
+                611.248,
+                277.864,
+                626.362
+              ],
+              "text": "Shared evidence phrase appears on both pages."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "dc9491c213f258cee10f41588ec014adccfc833524bc788f260799fe04087e61",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                47.637996673583984,
+                486.65545654296875,
+                62.01499938964844
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 4,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 2 Results",
+        "status": "translated",
+        "translation_id": "291f23fc8ed54b13"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            715.0,
+            140.464,
+            737.032
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                715.0,
+                140.464,
+                737.032
+              ],
+              "text": "3 Conclusion"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "010db1146852395d61d77763fefacd9153135a8afe77bc79ce444fc099c228f2",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                77.9429931640625,
+                89.0,
+                98.85499572753906
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 4,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 3 Conclusion",
+        "status": "translated",
+        "translation_id": "894651dfd82940d2"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            765.0,
+            269.251,
+            780.114
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                765.0,
+                269.251,
+                780.114
+              ],
+              "text": "This fixture is for offline regression testing only."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "6b401abc24ffed9ac25e90788e2672ff4c331a8ecdfcfb7821050e22d6e168ad",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 3,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                114.49299621582031,
+                286.0,
+                128.8699951171875
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 4,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Synthetic Research Fixture > 3 Conclusion",
+        "status": "translated",
+        "translation_id": "5b1ad6593f484c6b"
+      }
+    ]
+  },
+  "long_report": {
+    "assets": [],
+    "counts": {
+      "translated": 2
+    },
+    "japanese_page_count": 2,
+    "layout_version": "reflow-1",
+    "original_page_count": 1,
+    "quality": {
+      "missing_or_duplicate": 0,
+      "outside_page": 0,
+      "overlaps": 0,
+      "reading_order_preserved": true,
+      "text_blocks_validated": 2,
+      "visuals": []
+    },
+    "reading_order": [
+      "87b07f0d0baa3aa1f497b74d03ab8f79855ec7f174dd34a6339e8ed9f7506ede",
+      "b06c628bfe1b90fab392bf705975c2cb48a785ea0b5f87435422e7e73ce5f639",
+      "b06c628bfe1b90fab392bf705975c2cb48a785ea0b5f87435422e7e73ce5f639"
+    ],
+    "selected_pages": [
+      1
+    ],
+    "source_text_blocks": 2,
+    "text_blocks": 2,
+    "translated_pages": [
+      1,
+      2
+    ],
+    "translated_ratio": 1.0,
+    "units": [
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            35.0,
+            113.008,
+            59.786
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                35.0,
+                113.008,
+                59.786
+              ],
+              "text": "Abstract"
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "87b07f0d0baa3aa1f497b74d03ab8f79855ec7f174dd34a6339e8ed9f7506ede",
+        "font_size": 16.0,
+        "kind": "text",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                47.92799758911133,
+                76.0,
+                68.83999633789062
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "fba9d2be5834470a"
+      },
+      {
+        "asset_id": null,
+        "bbox": {
+          "coordinate_system": "pymupdf_unrotated",
+          "page_rect": [
+            0.0,
+            0.0,
+            595.0,
+            842.0
+          ],
+          "rect": [
+            40.0,
+            100.0,
+            550.582,
+            329.802
+          ],
+          "rotation": 0,
+          "spans": [
+            {
+              "rect": [
+                40.0,
+                100.0,
+                535.558,
+                108.244
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                108.862,
+                550.582,
+                117.106
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                117.725,
+                535.558,
+                125.969
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                126.587,
+                550.582,
+                134.831
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                135.449,
+                535.558,
+                143.693
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                144.311,
+                550.582,
+                152.555
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                153.174,
+                535.558,
+                161.418
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                162.036,
+                550.582,
+                170.28
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                170.898,
+                535.558,
+                179.142
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                179.761,
+                550.582,
+                188.005
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                188.623,
+                535.558,
+                196.867
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                197.485,
+                550.582,
+                205.729
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                206.348,
+                535.558,
+                214.592
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                215.21,
+                550.582,
+                223.454
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                224.072,
+                535.558,
+                232.316
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                232.935,
+                550.582,
+                241.179
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                241.797,
+                535.558,
+                250.041
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                250.659,
+                550.582,
+                258.903
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                259.521,
+                535.558,
+                267.765
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                268.384,
+                550.582,
+                276.628
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                277.246,
+                535.558,
+                285.49
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                286.108,
+                550.582,
+                294.352
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                294.971,
+                535.558,
+                303.215
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                303.833,
+                550.582,
+                312.077
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            },
+            {
+              "rect": [
+                40.0,
+                312.695,
+                535.558,
+                320.939
+              ],
+              "text": "We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The"
+            },
+            {
+              "rect": [
+                40.0,
+                321.557,
+                550.582,
+                329.802
+              ],
+              "text": "method maps input to output and preserves the original evidence. We study a synthetic method for reproducible research. The method maps input to output and preserves the original evidence."
+            }
+          ],
+          "units": "pt"
+        },
+        "block_id": "b06c628bfe1b90fab392bf705975c2cb48a785ea0b5f87435422e7e73ce5f639",
+        "font_size": 11.0,
+        "kind": "text",
+        "page": 1,
+        "placements": [
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                84.47799682617188,
+                550.0,
+                785.2546997070312
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 1,
+            "part": 0
+          },
+          {
+            "japanese_bbox": {
+              "coordinate_system": "pymupdf_unrotated",
+              "page_rect": [
+                0,
+                0,
+                595.0,
+                842.0
+              ],
+              "rect": [
+                44.0,
+                44.637996673583984,
+                541.87890625,
+                129.4149932861328
+              ],
+              "rotation": 0,
+              "units": "pt"
+            },
+            "japanese_page": 2,
+            "part": 1
+          }
+        ],
+        "reason": null,
+        "section": "Abstract",
+        "status": "translated",
+        "translation_id": "b216786a53b34edd"
+      }
+    ]
+  }
+}

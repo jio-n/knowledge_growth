@@ -115,3 +115,19 @@ LIKE検索。対象: sources.title/one_line_summary、knowledge_items.title/cont
 - `POST /api/sources/{id}/paper-brief/generation/commit`: `{generation_id,confirmed:true}`。
 
 [bounded context・validation・Evidence・stale/再生成・user保護](../redesign/v0.4/structured_brief_generation.md)。
+
+## 日本語PDF試作（T3-01 / T3-03 PoC）
+
+- POST `/api/sources/{source_id}/japanese-pdf/generate`: `{pages:[1,3], retry_failed:false}`、最大3ページ、202。重複jobは同じ生成IDを返す。同じsourceで別生成が実行中なら409、AI未接続は503。same-origin制御。
+- GET `/api/sources/{source_id}/japanese-pdf`: state（not_generated / generating / preview_ready / failed）、generation_id、pages、report、artifacts履歴。stale成果物は最新扱いしない。
+- GET `/api/sources/{source_id}/japanese-pdf/{generation_id}/file`: version/hash/ownershipを照合してapplication/pdf。`?download=true`でattachment。未完成は404、stale/破損は409。
+
+詳細とWindows操作は[日本語PDF試作](../redesign/v0.4/japanese_pdf_prototype.md)。
+
+日本語生成方式はreflow-3 / semantic-1、extraction_versionはglyph-spacing-1。pagesは原文ページ番号で、指定した最大3ページ相当のみを収録する。派生PDFのページ数・段組は原文と異なる。reportにlayout_version、assembly_version、japanese_page_count、units[].placements、semantic_units[]、coverage、assets[]、qualityを返す。semantic_unitsは全original_block_ids、role、group hash/version、translation_idと配置を保持し、unitsのblock_id/bboxは実原文blockを参照する。translated_ratioは本文原文文字数ベースのcoverage.body.ratioと一致する。タイトル/Abstract/Captionとmetadataを区別する。既存translationsに結合単位の専用IDで保存し、追加migrationはない。旧成果物もsource/hashが一致する限り取得できるが、新生成のcacheとして返さない。[設計とWindows確認](../redesign/v0.4/japanese_abstract_reading_quality.md)。
+
+coverage.abstract/body/captionに原文文字数source_chars、候補candidate_source_chars、日本語化translated_source_chars、原物保護protected_source_chars、品質検証済み配置placed_source_chars、うち日本語placed_translated_source_chars、コード別untranslated_reasonsを返す。reading_quality.abstractはcomplete / incomplete / not_selected。PDF生成と要旨の日本語化完了を区別する。semantic_unitsのextraction/protection_reasonsは安全な件数・bool・コードのみで、本文/font名を含めない。
+
+成功・失敗reportに任意の`diagnostics`を追加した。翻訳候補/今回のAI成功/保存済み訳再利用、最終コード別件数、公開PDFへの配置成功、原物保持、failure_stage、試行/分割/時間上限を区別する。本文・訳・raw responseは診断へ含めない。schema v5のreport_jsonを再利用し、旧reportの取得契約も維持する。[分類とWindows再試行](../redesign/v0.4/japanese_translation_failures.md)。
+
+原物品質は`visual_quality_version=native-3`。成功・失敗reportの`quality.visuals[]`へkind/page/寸法/通常・共通原点pixel差/文字・glyph・font・線・画像の照合/vector状態/固定分類を返す。drawings_preservedとimages_preservedを分け、可視clipの検証可否/一致・不可視命令数も返す。original_textの全path不一致は、可視path/clip一致を証明しRGB完全一致かつ全内容検証が通った場合だけ許可する。Figure/Table/Equationと画像資源の完全照合は維持する。原物データやdigestは返さない。旧成果物は取得可能だが、新基準の生成cacheには使わない。[契約とWindows確認](../redesign/v0.4/japanese_clip_quality.md)。

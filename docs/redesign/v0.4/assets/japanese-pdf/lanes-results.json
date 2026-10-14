@@ -1,0 +1,4066 @@
+{
+  "fixture": "invented dense TeX paper; no MMAD source",
+  "baseline_head": "2c25a5bda2e48afac609424507cdf2a24fb314d0",
+  "old": {
+    "layout_version": "reflow-6",
+    "coverage": {
+      "abstract": {
+        "candidate_source_chars": 0,
+        "placed_source_chars": 1150,
+        "placed_translated_source_chars": 0,
+        "protected_source_chars": 1150,
+        "ratio": 0.0,
+        "source_chars": 1150,
+        "translated_source_chars": 0,
+        "untranslated_reasons": {
+          "visual_or_equation": 1150
+        }
+      },
+      "abstract_complete": false,
+      "body": {
+        "candidate_source_chars": 276,
+        "placed_source_chars": 1426,
+        "placed_translated_source_chars": 276,
+        "protected_source_chars": 1150,
+        "ratio": 0.1935483870967742,
+        "source_chars": 1426,
+        "translated_source_chars": 276,
+        "untranslated_reasons": {
+          "visual_or_equation": 1150
+        }
+      },
+      "body_preserved_in_visuals": 31,
+      "caption": {
+        "candidate_source_chars": 56,
+        "placed_source_chars": 56,
+        "placed_translated_source_chars": 56,
+        "protected_source_chars": 0,
+        "ratio": 1.0,
+        "source_chars": 56,
+        "translated_source_chars": 56,
+        "untranslated_reasons": {}
+      },
+      "title": {
+        "complete": true,
+        "meaning_review": "complete",
+        "source_blocks": 2,
+        "translated": true,
+        "units": 1
+      }
+    },
+    "diagnostics": {
+      "ai_translation_succeeded": 10,
+      "attempt_errors": {},
+      "cached_translations": 0,
+      "elapsed_seconds": 0.019,
+      "failure_stage": null,
+      "metadata_units": 7,
+      "pdf_placement_succeeded": 10,
+      "pdf_placement_validated": 56,
+      "protected_units": 39,
+      "publication_state": "published",
+      "runtime_calls": 3,
+      "split_batches": 0,
+      "stopped_by": null,
+      "title_reviews": 1,
+      "translation_candidates": 10,
+      "translation_failures": {},
+      "translation_succeeded": 10,
+      "unsafe_units": 0
+    }
+  },
+  "complete": {
+    "layout_version": "reflow-7",
+    "coverage": {
+      "abstract": {
+        "candidate_source_chars": 1150,
+        "placed_source_chars": 1150,
+        "placed_translated_source_chars": 1150,
+        "protected_source_chars": 0,
+        "ratio": 1.0,
+        "scientific_source_chars": 0,
+        "source_chars": 1150,
+        "translated_source_chars": 1150,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {}
+      },
+      "abstract_complete": true,
+      "body": {
+        "candidate_source_chars": 1426,
+        "placed_source_chars": 1426,
+        "placed_translated_source_chars": 1426,
+        "protected_source_chars": 0,
+        "ratio": 1.0,
+        "scientific_source_chars": 0,
+        "source_chars": 1426,
+        "translated_source_chars": 1426,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {}
+      },
+      "body_preserved_in_visuals": 0,
+      "caption": {
+        "candidate_source_chars": 56,
+        "placed_source_chars": 56,
+        "placed_translated_source_chars": 56,
+        "protected_source_chars": 0,
+        "ratio": 1.0,
+        "scientific_source_chars": 0,
+        "source_chars": 56,
+        "translated_source_chars": 56,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {}
+      },
+      "title": {
+        "complete": true,
+        "meaning_review": "complete",
+        "source_blocks": 2,
+        "translated": true,
+        "units": 1
+      }
+    },
+    "diagnostics": {
+      "ai_translation_succeeded": 1,
+      "attempt_errors": {},
+      "cached_translations": 16,
+      "elapsed_seconds": 0.004,
+      "failure_stage": null,
+      "metadata_units": 8,
+      "pdf_placement_succeeded": 17,
+      "pdf_placement_validated": 32,
+      "protected_units": 7,
+      "publication_state": "published",
+      "quality_validation_state": "passed",
+      "retry_deferred": 0,
+      "runtime_calls": 1,
+      "split_batches": 0,
+      "stopped_by": null,
+      "title_reviews": 0,
+      "translation_candidates": 17,
+      "translation_failures": {},
+      "translation_succeeded": 17,
+      "unsafe_units": 0
+    },
+    "reading_quality": {
+      "abstract": "complete",
+      "abstract_classification_complete": true,
+      "abstract_ratio": 1.0,
+      "abstract_required_ratio": 1.0,
+      "accepted": true,
+      "body_ratio": 1.0,
+      "pdf_generated": true,
+      "quality_validated": true,
+      "status": "passed"
+    },
+    "quality": {
+      "failed_visuals": 0,
+      "missing_or_duplicate": 0,
+      "outside_page": 0,
+      "overlaps": 0,
+      "passed_visuals": 3,
+      "reading_order_preserved": true,
+      "source_blocks_mapped": 61,
+      "source_mapping_duplicates": 0,
+      "text_blocks_validated": 25,
+      "untranslated_text_validated": 8,
+      "visual_quality_version": "native-3",
+      "visuals": [
+        {
+          "annotations_present": false,
+          "asset_id": "Vc1a0c54a7855e3c099550c47",
+          "asset_kind": "figure",
+          "classification": "native_content_preserved",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 11
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": true,
+          "error": null,
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 2,
+          "max_glyph_origin_difference_pt": 2.2e-05,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "original_block_chars": 11,
+          "output_drawing_count": 2,
+          "output_glyph_count": 12,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            1420,
+            137
+          ],
+          "output_ink_pixels": 7408,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            511.0,
+            49.0
+          ],
+          "placed_text": {
+            "actual_chars": 11,
+            "expected_chars": 11,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.0,
+          "raw_output_image_size_px": [
+            1421,
+            137
+          ],
+          "raw_source_image_size_px": [
+            1421,
+            137
+          ],
+          "source_drawing_count": 2,
+          "source_glyph_count": 12,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            1420,
+            137
+          ],
+          "source_ink_pixels": 7408,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            511.0,
+            49.0
+          ],
+          "source_text_preserved": true,
+          "status": "passed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": true,
+          "visible_drawings_verified": true
+        },
+        {
+          "annotations_present": false,
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "asset_kind": "table",
+          "classification": "native_content_preserved",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 28
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": true,
+          "error": null,
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 3,
+          "max_glyph_origin_difference_pt": 1.2e-05,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "original_block_chars": 28,
+          "output_drawing_count": 6,
+          "output_glyph_count": 28,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            1420,
+            150
+          ],
+          "output_ink_pixels": 10065,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            511.0,
+            54.0
+          ],
+          "placed_text": {
+            "actual_chars": 28,
+            "expected_chars": 28,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.00013,
+          "raw_output_image_size_px": [
+            1421,
+            151
+          ],
+          "raw_source_image_size_px": [
+            1421,
+            151
+          ],
+          "source_drawing_count": 6,
+          "source_glyph_count": 28,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            1420,
+            150
+          ],
+          "source_ink_pixels": 10065,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            511.0,
+            54.0
+          ],
+          "source_text_preserved": true,
+          "status": "passed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": true,
+          "visible_drawings_verified": true
+        },
+        {
+          "annotations_present": false,
+          "asset_id": "V61704fbcadd1f8da1f2e38c9",
+          "asset_kind": "equation",
+          "classification": "native_content_preserved",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 9
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": true,
+          "error": null,
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 4,
+          "max_glyph_origin_difference_pt": 0.000119,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "original_block_chars": 9,
+          "output_drawing_count": 0,
+          "output_glyph_count": 15,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            248,
+            61
+          ],
+          "output_ink_pixels": 1711,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            89.254,
+            21.862
+          ],
+          "placed_text": {
+            "actual_chars": 9,
+            "expected_chars": 9,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.0,
+          "raw_output_image_size_px": [
+            249,
+            61
+          ],
+          "raw_source_image_size_px": [
+            249,
+            61
+          ],
+          "source_drawing_count": 0,
+          "source_glyph_count": 15,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            248,
+            61
+          ],
+          "source_ink_pixels": 1711,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            89.254,
+            21.862
+          ],
+          "source_text_preserved": true,
+          "status": "passed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": true,
+          "visible_drawings_verified": true
+        }
+      ]
+    }
+  },
+  "mixed": {
+    "coverage": {
+      "abstract": {
+        "candidate_source_chars": 1150,
+        "placed_source_chars": 1150,
+        "placed_translated_source_chars": 597,
+        "protected_source_chars": 0,
+        "ratio": 0.5191304347826087,
+        "scientific_source_chars": 0,
+        "source_chars": 1150,
+        "translated_source_chars": 597,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {
+          "ai_uncertain": 367,
+          "japanese_required": 186
+        }
+      },
+      "abstract_complete": false,
+      "body": {
+        "candidate_source_chars": 1426,
+        "placed_source_chars": 1426,
+        "placed_translated_source_chars": 873,
+        "protected_source_chars": 0,
+        "ratio": 0.6122019635343618,
+        "scientific_source_chars": 0,
+        "source_chars": 1426,
+        "translated_source_chars": 873,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {
+          "ai_uncertain": 367,
+          "japanese_required": 186
+        }
+      },
+      "body_preserved_in_visuals": 0,
+      "caption": {
+        "candidate_source_chars": 56,
+        "placed_source_chars": 56,
+        "placed_translated_source_chars": 56,
+        "protected_source_chars": 0,
+        "ratio": 1.0,
+        "scientific_source_chars": 0,
+        "source_chars": 56,
+        "translated_source_chars": 56,
+        "unresolved_text_source_chars": 0,
+        "untranslated_reasons": {}
+      },
+      "title": {
+        "complete": true,
+        "meaning_review": "complete",
+        "source_blocks": 2,
+        "translated": true,
+        "units": 1
+      }
+    },
+    "diagnostics": {
+      "ai_translation_succeeded": 14,
+      "attempt_errors": {
+        "ai_uncertain": 10,
+        "japanese_required": 6
+      },
+      "cached_translations": 0,
+      "elapsed_seconds": 0.057,
+      "failure_stage": null,
+      "metadata_units": 8,
+      "pdf_placement_succeeded": 14,
+      "pdf_placement_validated": 32,
+      "protected_units": 7,
+      "publication_state": "published",
+      "quality_validation_state": "passed",
+      "retry_deferred": 0,
+      "runtime_calls": 13,
+      "split_batches": 2,
+      "stopped_by": null,
+      "title_reviews": 1,
+      "translation_candidates": 17,
+      "translation_failures": {
+        "ai_uncertain": 2,
+        "japanese_required": 1
+      },
+      "translation_succeeded": 14,
+      "unsafe_units": 0
+    },
+    "reading_quality": {
+      "abstract": "incomplete",
+      "abstract_classification_complete": true,
+      "abstract_ratio": 0.5191304347826087,
+      "abstract_required_ratio": 1.0,
+      "accepted": false,
+      "body_ratio": 0.6122019635343618,
+      "pdf_generated": true,
+      "quality_validated": true,
+      "status": "incomplete"
+    }
+  },
+  "damaged": {
+    "diagnostics": {
+      "ai_translation_succeeded": 0,
+      "attempt_errors": {},
+      "cached_translations": 17,
+      "elapsed_seconds": 0.008,
+      "failure_stage": "pdf_layout",
+      "metadata_units": 8,
+      "pdf_placement_succeeded": 0,
+      "pdf_placement_validated": 28,
+      "protected_units": 7,
+      "publication_state": "failed",
+      "quality_validation_state": "failed",
+      "retry_deferred": 0,
+      "runtime_calls": 0,
+      "split_batches": 0,
+      "stopped_by": null,
+      "title_reviews": 0,
+      "translation_candidates": 17,
+      "translation_failures": {},
+      "translation_succeeded": 17,
+      "unsafe_units": 0,
+      "visual_failures": {
+        "table": 1
+      }
+    },
+    "reading_quality": {
+      "abstract": "complete",
+      "abstract_classification_complete": true,
+      "abstract_ratio": 1.0,
+      "abstract_required_ratio": 1.0,
+      "accepted": false,
+      "body_ratio": 1.0,
+      "pdf_generated": false,
+      "quality_validated": false,
+      "status": "incomplete"
+    },
+    "quality": {
+      "failed_visuals": 1,
+      "passed_visuals": 2,
+      "visual_quality_version": "native-3",
+      "visuals": [
+        {
+          "annotations_present": false,
+          "asset_id": "Vc1a0c54a7855e3c099550c47",
+          "asset_kind": "figure",
+          "classification": "native_content_preserved",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 11,
+              "expected_chars": 11,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 11
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": true,
+          "error": null,
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 2,
+          "max_glyph_origin_difference_pt": 2.2e-05,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "original_block_chars": 11,
+          "output_drawing_count": 2,
+          "output_glyph_count": 12,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            1420,
+            137
+          ],
+          "output_ink_pixels": 7408,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            511.0,
+            49.0
+          ],
+          "placed_text": {
+            "actual_chars": 11,
+            "expected_chars": 11,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.0,
+          "raw_output_image_size_px": [
+            1421,
+            137
+          ],
+          "raw_source_image_size_px": [
+            1421,
+            137
+          ],
+          "source_drawing_count": 2,
+          "source_glyph_count": 12,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            1420,
+            137
+          ],
+          "source_ink_pixels": 7408,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            511.0,
+            49.0
+          ],
+          "source_text_preserved": true,
+          "status": "passed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": true,
+          "visible_drawings_verified": true
+        },
+        {
+          "annotations_present": false,
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "asset_kind": "table",
+          "classification": "drawing_changed",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 28,
+              "expected_chars": 28,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 28
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": false,
+          "error": "visual_content_changed",
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 3,
+          "max_glyph_origin_difference_pt": 1.2e-05,
+          "mean_pixel_difference": 0.001854,
+          "native_size_preserved": true,
+          "original_block_chars": 28,
+          "output_drawing_count": 7,
+          "output_glyph_count": 28,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            1420,
+            150
+          ],
+          "output_ink_pixels": 10065,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            511.0,
+            54.0
+          ],
+          "placed_text": {
+            "actual_chars": 28,
+            "expected_chars": 28,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.005271,
+          "raw_output_image_size_px": [
+            1421,
+            151
+          ],
+          "raw_source_image_size_px": [
+            1421,
+            151
+          ],
+          "source_drawing_count": 6,
+          "source_glyph_count": 28,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            1420,
+            150
+          ],
+          "source_ink_pixels": 10065,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            511.0,
+            54.0
+          ],
+          "source_text_preserved": true,
+          "status": "failed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": false,
+          "visible_drawings_verified": true
+        },
+        {
+          "annotations_present": false,
+          "asset_id": "V61704fbcadd1f8da1f2e38c9",
+          "asset_kind": "equation",
+          "classification": "native_content_preserved",
+          "crop_no_hidden_text": true,
+          "crop_text_complete": true,
+          "crop_text_diagnostics": {
+            "after_outside_redaction": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "boundary_straddling_glyphs": 0,
+            "native_crop": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "native_crop_all_text": {
+              "actual_chars": 9,
+              "expected_chars": 9,
+              "extra_chars": 0,
+              "missing_chars": 0,
+              "order_matches": true
+            },
+            "source_clip_chars": 9
+          },
+          "cropbox_size_pt": [
+            595.0,
+            842.0
+          ],
+          "dpi": 200,
+          "drawings_preserved": true,
+          "error": null,
+          "fonts_preserved": true,
+          "glyph_codes_preserved": true,
+          "glyphs_preserved": true,
+          "images_preserved": true,
+          "japanese_page": 4,
+          "max_glyph_origin_difference_pt": 0.000119,
+          "mean_pixel_difference": 0.0,
+          "native_size_preserved": true,
+          "original_block_chars": 9,
+          "output_drawing_count": 0,
+          "output_glyph_count": 15,
+          "output_image_count": 0,
+          "output_image_size_px": [
+            248,
+            61
+          ],
+          "output_ink_pixels": 1711,
+          "output_invisible_drawing_count": 0,
+          "output_size_pt": [
+            89.254,
+            21.862
+          ],
+          "placed_text": {
+            "actual_chars": 9,
+            "expected_chars": 9,
+            "extra_chars": 0,
+            "missing_chars": 0,
+            "order_matches": true
+          },
+          "quality_policy": "scientific_visual",
+          "raw_mean_pixel_difference": 0.0,
+          "raw_output_image_size_px": [
+            249,
+            61
+          ],
+          "raw_source_image_size_px": [
+            249,
+            61
+          ],
+          "source_drawing_count": 0,
+          "source_glyph_count": 15,
+          "source_image_count": 0,
+          "source_image_size_px": [
+            248,
+            61
+          ],
+          "source_ink_pixels": 1711,
+          "source_invisible_drawing_count": 0,
+          "source_page": 2,
+          "source_rotation": 0,
+          "source_size_pt": [
+            89.254,
+            21.862
+          ],
+          "source_text_preserved": true,
+          "status": "passed",
+          "text_failure_stage": null,
+          "vector_preserved": true,
+          "visible_drawings_preserved": true,
+          "visible_drawings_verified": true
+        }
+      ]
+    }
+  },
+  "browser": {
+    "passed": 8,
+    "cases": [
+      "publication and native quality success do not pass the independent Abstract reading gate",
+      "glyph correspondence classification and uncertain versus English-response evidence are numerical and separate",
+      "all failed ordinary paragraphs remain searchable 11pt English without any native text crop",
+      "three selected-unit actions each request only their failed ID and reuse every successful translation",
+      "Japanese search selection and original multi-block jump retain one viewer and SourceAnchor",
+      "downloaded Japanese text has complete ordered coverage and native-3 figures tables equations remain exact",
+      "one changed table line rejects quality and publication without relabelling successful AI titles",
+      "offline reload preserves saved artifacts original hash blocks and source version"
+    ],
+    "pageerrors": []
+  },
+  "classification_pages": [
+    {
+      "boundary_checks": [],
+      "boundary_conflicts": [],
+      "classification_version": "content-lanes-1",
+      "layout_decoration_objects": [
+        0,
+        1
+      ],
+      "pair_counts": {
+        "overlap_unproven": 24
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            142.1,
+            5.898
+          ],
+          "block_ids": [
+            "90679c0d2f9dfd992d23b0d1f0f0952cc7de18b8bca441704234762457ae5c96",
+            "465fc55e5f330494029a6e88895e17b569235fc83a834fb5457f5f9e62d0dcde"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            43,
+            38
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            142.1,
+            5.898
+          ],
+          "block_ids": [
+            "465fc55e5f330494029a6e88895e17b569235fc83a834fb5457f5f9e62d0dcde",
+            "63c84bafffa6f9b3d9c242f7e63e4d5925518856d04cba76d3ed72274b5e6c28"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            38,
+            45
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            148.568,
+            5.898
+          ],
+          "block_ids": [
+            "63c84bafffa6f9b3d9c242f7e63e4d5925518856d04cba76d3ed72274b5e6c28",
+            "4a2ac773ccde1a8ff8547da177e7b0b0614c918c4d70c9ff262837bd7eac8ec3"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            45,
+            41
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            61.692,
+            5.898
+          ],
+          "block_ids": [
+            "4a2ac773ccde1a8ff8547da177e7b0b0614c918c4d70c9ff262837bd7eac8ec3",
+            "fd47e9b2bcda8a031e651ed285e03378f6ff30d2e5c7bace2a0e70c2a75d610b"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            41,
+            19
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            152.336,
+            5.898
+          ],
+          "block_ids": [
+            "f32be4d83c66448e61eacb5ceebcd1dd3ba06775228286af14f886880d0d1b94",
+            "24339ac851ed7a35eb1e10099b664fb12345c2e62332b82d2be4fdfc09a3907f"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            40,
+            41
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            154.209,
+            5.898
+          ],
+          "block_ids": [
+            "24339ac851ed7a35eb1e10099b664fb12345c2e62332b82d2be4fdfc09a3907f",
+            "81877bd1d3c70ee6941b4daf128b7795a57ad2e38d15744c4569309ce569726f"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            41,
+            44
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            143.778,
+            5.898
+          ],
+          "block_ids": [
+            "81877bd1d3c70ee6941b4daf128b7795a57ad2e38d15744c4569309ce569726f",
+            "552513e01f794bd66994f3f91742f99b1714d8bdb5d91d75c24f135da44ed6f6"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            44,
+            40
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            66.443,
+            5.898
+          ],
+          "block_ids": [
+            "552513e01f794bd66994f3f91742f99b1714d8bdb5d91d75c24f135da44ed6f6",
+            "eec0a8aabb74b4ad5a8414fc34521236cf627785fdd0b87731f2b77a28c6e4ee"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            40,
+            19
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            160.117,
+            5.898
+          ],
+          "block_ids": [
+            "2462376035308169cecfdd014a282f2c4221c5fcd35eaa311220fcea6d22c156",
+            "5d60723a903a6b7152f2a6e3cdd239b4ee385673c0fd44c6b9d029a4275f774b"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            42,
+            47
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            151.069,
+            5.898
+          ],
+          "block_ids": [
+            "5d60723a903a6b7152f2a6e3cdd239b4ee385673c0fd44c6b9d029a4275f774b",
+            "2529c7b8ba443895eb480c997140db9ebd6a1d8e903d1c280caac06c685a013b"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            47,
+            38
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            151.069,
+            5.898
+          ],
+          "block_ids": [
+            "2529c7b8ba443895eb480c997140db9ebd6a1d8e903d1c280caac06c685a013b",
+            "4033773185339ebede593e3789158c2041b6101e4918342914fcc0f370f71436"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            38,
+            46
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            33.026,
+            5.898
+          ],
+          "block_ids": [
+            "4033773185339ebede593e3789158c2041b6101e4918342914fcc0f370f71436",
+            "d6f02bdbfb3da9666c35249226ff552987a38f9c3bf42d02946b94e39f804e96"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            46,
+            10
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            158.447,
+            5.898
+          ],
+          "block_ids": [
+            "33f98c940e35ade2efda129be035557f8b83c46a37ed8a178f7eea3c77659a55",
+            "eef5e9165883384d959375f33b8230c3c731d9432d3589952f449ae060ce8d97"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            46,
+            42
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            158.447,
+            5.898
+          ],
+          "block_ids": [
+            "eef5e9165883384d959375f33b8230c3c731d9432d3589952f449ae060ce8d97",
+            "354b4c833be8fa615d7b0a458fcb162ac4690b9b3eab95b7b7b814fc2fc446d2"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            42,
+            44
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            147.544,
+            5.898
+          ],
+          "block_ids": [
+            "354b4c833be8fa615d7b0a458fcb162ac4690b9b3eab95b7b7b814fc2fc446d2",
+            "731c50af076906b92142c1bd50076322835003266e910d1a7940607c449018f3"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            44,
+            42
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            34.61,
+            5.898
+          ],
+          "block_ids": [
+            "731c50af076906b92142c1bd50076322835003266e910d1a7940607c449018f3",
+            "2344024c3e8b23c99b8b11f7a09c91abc9469619e6770b9e8a58d024a28eba1f"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            42,
+            9
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            153.335,
+            5.898
+          ],
+          "block_ids": [
+            "3e7402fea61906b8f5e08ebfc86b2a6d37ebbff5341993e1b8cff527f2dc1925",
+            "7aa7a5806754b89311b5eb29c45cbfcf36d055195263079c525885d050842470"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            40,
+            47
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            159.679,
+            5.898
+          ],
+          "block_ids": [
+            "7aa7a5806754b89311b5eb29c45cbfcf36d055195263079c525885d050842470",
+            "35ab9465aeab781ac36dd4853a9ffb590f82b2328400aa10ed95cecb6b5b92b0"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            47,
+            43
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            152.282,
+            5.898
+          ],
+          "block_ids": [
+            "35ab9465aeab781ac36dd4853a9ffb590f82b2328400aa10ed95cecb6b5b92b0",
+            "3dba52c7e0480ad1f5ceb491cfa05234666e27840359e006a654d640710ea82c"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            43,
+            44
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            36.29,
+            5.898
+          ],
+          "block_ids": [
+            "3dba52c7e0480ad1f5ceb491cfa05234666e27840359e006a654d640710ea82c",
+            "1bb627ae8a1ba618dd17d80faa01e8a14d831518aa8e345cf88dc1e1fe767fda"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            44,
+            10
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            150.436,
+            5.898
+          ],
+          "block_ids": [
+            "86fc0a3186556c79b9469688903b180fe8d555969c714b8b36f502ba3aff7a1b",
+            "2c44e0b263628b91109e0bb2c9860baf278d16cb4f93c7e40b7739887019b3bf"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            42,
+            45
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            162.534,
+            5.898
+          ],
+          "block_ids": [
+            "2c44e0b263628b91109e0bb2c9860baf278d16cb4f93c7e40b7739887019b3bf",
+            "7a3279e6c6e7e553123cc33374dab1ec54afd9142458a1ac7979e5386583f834"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            45,
+            45
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            145.885,
+            5.898
+          ],
+          "block_ids": [
+            "7a3279e6c6e7e553123cc33374dab1ec54afd9142458a1ac7979e5386583f834",
+            "091c2c2766a42dabaece10501bad1a1cc722459d4566ca89e2ef38574c9a6612"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            45,
+            40
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        },
+        {
+          "bbox_intersection_size_pt": [
+            49.897,
+            5.898
+          ],
+          "block_ids": [
+            "091c2c2766a42dabaece10501bad1a1cc722459d4566ca89e2ef38574c9a6612",
+            "04e5ca494da5a03d2d66e77c01c28d8a0f8454abd10b5db6100bcea464cb6ff6"
+          ],
+          "classification": "overlap_unproven",
+          "glyph_counts": [
+            40,
+            14
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": null,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": false
+        }
+      ],
+      "prose_recovery": [
+        {
+          "block_ids": [
+            "90679c0d2f9dfd992d23b0d1f0f0952cc7de18b8bca441704234762457ae5c96",
+            "465fc55e5f330494029a6e88895e17b569235fc83a834fb5457f5f9e62d0dcde"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            43,
+            38
+          ],
+          "source_chars": 81
+        },
+        {
+          "block_ids": [
+            "465fc55e5f330494029a6e88895e17b569235fc83a834fb5457f5f9e62d0dcde",
+            "63c84bafffa6f9b3d9c242f7e63e4d5925518856d04cba76d3ed72274b5e6c28"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            38,
+            45
+          ],
+          "source_chars": 83
+        },
+        {
+          "block_ids": [
+            "63c84bafffa6f9b3d9c242f7e63e4d5925518856d04cba76d3ed72274b5e6c28",
+            "4a2ac773ccde1a8ff8547da177e7b0b0614c918c4d70c9ff262837bd7eac8ec3"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            45,
+            41
+          ],
+          "source_chars": 86
+        },
+        {
+          "block_ids": [
+            "4a2ac773ccde1a8ff8547da177e7b0b0614c918c4d70c9ff262837bd7eac8ec3",
+            "fd47e9b2bcda8a031e651ed285e03378f6ff30d2e5c7bace2a0e70c2a75d610b"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            41,
+            19
+          ],
+          "source_chars": 60
+        },
+        {
+          "block_ids": [
+            "f32be4d83c66448e61eacb5ceebcd1dd3ba06775228286af14f886880d0d1b94",
+            "24339ac851ed7a35eb1e10099b664fb12345c2e62332b82d2be4fdfc09a3907f"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            40,
+            41
+          ],
+          "source_chars": 81
+        },
+        {
+          "block_ids": [
+            "24339ac851ed7a35eb1e10099b664fb12345c2e62332b82d2be4fdfc09a3907f",
+            "81877bd1d3c70ee6941b4daf128b7795a57ad2e38d15744c4569309ce569726f"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            41,
+            44
+          ],
+          "source_chars": 85
+        },
+        {
+          "block_ids": [
+            "81877bd1d3c70ee6941b4daf128b7795a57ad2e38d15744c4569309ce569726f",
+            "552513e01f794bd66994f3f91742f99b1714d8bdb5d91d75c24f135da44ed6f6"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            44,
+            40
+          ],
+          "source_chars": 84
+        },
+        {
+          "block_ids": [
+            "552513e01f794bd66994f3f91742f99b1714d8bdb5d91d75c24f135da44ed6f6",
+            "eec0a8aabb74b4ad5a8414fc34521236cf627785fdd0b87731f2b77a28c6e4ee"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            40,
+            19
+          ],
+          "source_chars": 59
+        },
+        {
+          "block_ids": [
+            "2462376035308169cecfdd014a282f2c4221c5fcd35eaa311220fcea6d22c156",
+            "5d60723a903a6b7152f2a6e3cdd239b4ee385673c0fd44c6b9d029a4275f774b"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            42,
+            47
+          ],
+          "source_chars": 89
+        },
+        {
+          "block_ids": [
+            "5d60723a903a6b7152f2a6e3cdd239b4ee385673c0fd44c6b9d029a4275f774b",
+            "2529c7b8ba443895eb480c997140db9ebd6a1d8e903d1c280caac06c685a013b"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            47,
+            38
+          ],
+          "source_chars": 85
+        },
+        {
+          "block_ids": [
+            "2529c7b8ba443895eb480c997140db9ebd6a1d8e903d1c280caac06c685a013b",
+            "4033773185339ebede593e3789158c2041b6101e4918342914fcc0f370f71436"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            38,
+            46
+          ],
+          "source_chars": 84
+        },
+        {
+          "block_ids": [
+            "4033773185339ebede593e3789158c2041b6101e4918342914fcc0f370f71436",
+            "d6f02bdbfb3da9666c35249226ff552987a38f9c3bf42d02946b94e39f804e96"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            46,
+            10
+          ],
+          "source_chars": 56
+        },
+        {
+          "block_ids": [
+            "33f98c940e35ade2efda129be035557f8b83c46a37ed8a178f7eea3c77659a55",
+            "eef5e9165883384d959375f33b8230c3c731d9432d3589952f449ae060ce8d97"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            46,
+            42
+          ],
+          "source_chars": 88
+        },
+        {
+          "block_ids": [
+            "eef5e9165883384d959375f33b8230c3c731d9432d3589952f449ae060ce8d97",
+            "354b4c833be8fa615d7b0a458fcb162ac4690b9b3eab95b7b7b814fc2fc446d2"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            42,
+            44
+          ],
+          "source_chars": 86
+        },
+        {
+          "block_ids": [
+            "354b4c833be8fa615d7b0a458fcb162ac4690b9b3eab95b7b7b814fc2fc446d2",
+            "731c50af076906b92142c1bd50076322835003266e910d1a7940607c449018f3"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            44,
+            42
+          ],
+          "source_chars": 86
+        },
+        {
+          "block_ids": [
+            "731c50af076906b92142c1bd50076322835003266e910d1a7940607c449018f3",
+            "2344024c3e8b23c99b8b11f7a09c91abc9469619e6770b9e8a58d024a28eba1f"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            42,
+            9
+          ],
+          "source_chars": 51
+        },
+        {
+          "block_ids": [
+            "3e7402fea61906b8f5e08ebfc86b2a6d37ebbff5341993e1b8cff527f2dc1925",
+            "7aa7a5806754b89311b5eb29c45cbfcf36d055195263079c525885d050842470"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            40,
+            47
+          ],
+          "source_chars": 87
+        },
+        {
+          "block_ids": [
+            "7aa7a5806754b89311b5eb29c45cbfcf36d055195263079c525885d050842470",
+            "35ab9465aeab781ac36dd4853a9ffb590f82b2328400aa10ed95cecb6b5b92b0"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            47,
+            43
+          ],
+          "source_chars": 90
+        },
+        {
+          "block_ids": [
+            "35ab9465aeab781ac36dd4853a9ffb590f82b2328400aa10ed95cecb6b5b92b0",
+            "3dba52c7e0480ad1f5ceb491cfa05234666e27840359e006a654d640710ea82c"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            43,
+            44
+          ],
+          "source_chars": 87
+        },
+        {
+          "block_ids": [
+            "3dba52c7e0480ad1f5ceb491cfa05234666e27840359e006a654d640710ea82c",
+            "1bb627ae8a1ba618dd17d80faa01e8a14d831518aa8e345cf88dc1e1fe767fda"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            44,
+            10
+          ],
+          "source_chars": 54
+        },
+        {
+          "block_ids": [
+            "86fc0a3186556c79b9469688903b180fe8d555969c714b8b36f502ba3aff7a1b",
+            "2c44e0b263628b91109e0bb2c9860baf278d16cb4f93c7e40b7739887019b3bf"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            42,
+            45
+          ],
+          "source_chars": 87
+        },
+        {
+          "block_ids": [
+            "2c44e0b263628b91109e0bb2c9860baf278d16cb4f93c7e40b7739887019b3bf",
+            "7a3279e6c6e7e553123cc33374dab1ec54afd9142458a1ac7979e5386583f834"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            45,
+            45
+          ],
+          "source_chars": 90
+        },
+        {
+          "block_ids": [
+            "7a3279e6c6e7e553123cc33374dab1ec54afd9142458a1ac7979e5386583f834",
+            "091c2c2766a42dabaece10501bad1a1cc722459d4566ca89e2ef38574c9a6612"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            45,
+            40
+          ],
+          "source_chars": 85
+        },
+        {
+          "block_ids": [
+            "091c2c2766a42dabaece10501bad1a1cc722459d4566ca89e2ef38574c9a6612",
+            "04e5ca494da5a03d2d66e77c01c28d8a0f8454abd10b5db6100bcea464cb6ff6"
+          ],
+          "classification": "verified_prose_outlines_separated",
+          "glyph_counts": [
+            40,
+            14
+          ],
+          "source_chars": 54
+        }
+      ],
+      "regions": [],
+      "seed_contacts": [],
+      "seeds": [],
+      "source_page": 1,
+      "text_units": [
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            18.25,
+            295.8,
+            31.99
+          ],
+          "block_id": "84433c1872c3e426b878678c7fae2bd5653cf83ec431181e6e1041177a9b75b2",
+          "classification": "metadata",
+          "glyph_count": 46,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "bibliographic",
+          "scientific_relations": [],
+          "source_chars": 46,
+          "text_flow": {
+            "baselines_pt": [
+              29.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 46,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            59.74,
+            514.97,
+            84.526
+          ],
+          "block_id": "23dfb2a6b553dc7e1fb59ebd7fbe2adc6e795a6b18df78b282faceb0e3766b06",
+          "classification": "text",
+          "glyph_count": 37,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paper_title",
+          "scientific_relations": [],
+          "source_chars": 37,
+          "text_flow": {
+            "baselines_pt": [
+              79.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 37,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            84.74,
+            512.972,
+            109.526
+          ],
+          "block_id": "60409318020e84c2784d19dbdadc42ccf7587d677516feece59b5e91a01ffab6",
+          "classification": "text",
+          "glyph_count": 37,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paper_title",
+          "scientific_relations": [],
+          "source_chars": 37,
+          "text_flow": {
+            "baselines_pt": [
+              104.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 37,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            130.175,
+            199.298,
+            145.289
+          ],
+          "block_id": "b82649ecdfdf57b7c1b5542c6fc45839f1224a3f2ca5868d1d0f928c7cac8fa0",
+          "classification": "metadata",
+          "glyph_count": 23,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "authors",
+          "scientific_relations": [],
+          "source_chars": 23,
+          "text_flow": {
+            "baselines_pt": [
+              142.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 23,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            152.175,
+            238.403,
+            167.289
+          ],
+          "block_id": "96ce25cb0c8ad15391b04b7b9637143da79295ce964c48fa5bfdda403a85adba",
+          "classification": "metadata",
+          "glyph_count": 37,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "affiliations",
+          "scientific_relations": [],
+          "source_chars": 37,
+          "text_flow": {
+            "baselines_pt": [
+              164.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 37,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            174.25,
+            139.74,
+            187.99
+          ],
+          "block_id": "b4400ad36304b5cd7dbcfb0172e7f90aba98bf8d3af90eeae5bd6ab3d876365d",
+          "classification": "metadata",
+          "glyph_count": 19,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "contact",
+          "scientific_relations": [],
+          "source_chars": 19,
+          "text_flow": {
+            "baselines_pt": [
+              185.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 19,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            202.09,
+            96.728,
+            219.991
+          ],
+          "block_id": "c7c621f79e8ac84bec3f2d970c639fdaef20ad0324c01dfb48594b51da670982",
+          "classification": "text",
+          "glyph_count": 8,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_heading",
+          "scientific_relations": [],
+          "source_chars": 8,
+          "text_flow": {
+            "baselines_pt": [
+              216.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 8,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            237.36,
+            208.776,
+            251.04
+          ],
+          "block_id": "90679c0d2f9dfd992d23b0d1f0f0952cc7de18b8bca441704234762457ae5c96",
+          "classification": "text",
+          "glyph_count": 43,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 43,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 43,
+          "text_flow": {
+            "baselines_pt": [
+              246.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 43,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 43
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            245.142,
+            186.1,
+            258.822
+          ],
+          "block_id": "465fc55e5f330494029a6e88895e17b569235fc83a834fb5457f5f9e62d0dcde",
+          "classification": "text",
+          "glyph_count": 38,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 38,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 38,
+          "text_flow": {
+            "baselines_pt": [
+              253.782
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 38,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 38
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            252.924,
+            214.885,
+            266.604
+          ],
+          "block_id": "63c84bafffa6f9b3d9c242f7e63e4d5925518856d04cba76d3ed72274b5e6c28",
+          "classification": "text",
+          "glyph_count": 45,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 45,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 45,
+          "text_flow": {
+            "baselines_pt": [
+              261.564
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 45,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 45
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            260.706,
+            192.568,
+            274.386
+          ],
+          "block_id": "4a2ac773ccde1a8ff8547da177e7b0b0614c918c4d70c9ff262837bd7eac8ec3",
+          "classification": "text",
+          "glyph_count": 41,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 41,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 41,
+          "text_flow": {
+            "baselines_pt": [
+              269.346
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 41,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 41
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            268.488,
+            105.692,
+            282.168
+          ],
+          "block_id": "fd47e9b2bcda8a031e651ed285e03378f6ff30d2e5c7bace2a0e70c2a75d610b",
+          "classification": "text",
+          "glyph_count": 19,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 19,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 19,
+          "text_flow": {
+            "baselines_pt": [
+              277.128
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 19,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 19
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            283.27,
+            196.336,
+            296.95
+          ],
+          "block_id": "f32be4d83c66448e61eacb5ceebcd1dd3ba06775228286af14f886880d0d1b94",
+          "classification": "text",
+          "glyph_count": 40,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 38,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 40,
+          "text_flow": {
+            "baselines_pt": [
+              291.91
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 40,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 38
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            291.052,
+            198.209,
+            304.732
+          ],
+          "block_id": "24339ac851ed7a35eb1e10099b664fb12345c2e62332b82d2be4fdfc09a3907f",
+          "classification": "text",
+          "glyph_count": 41,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 31,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 41,
+          "text_flow": {
+            "baselines_pt": [
+              299.692
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 41,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 31
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            298.834,
+            199.411,
+            312.514
+          ],
+          "block_id": "81877bd1d3c70ee6941b4daf128b7795a57ad2e38d15744c4569309ce569726f",
+          "classification": "text",
+          "glyph_count": 44,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 44,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 44,
+          "text_flow": {
+            "baselines_pt": [
+              307.474
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 44,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 44
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            306.616,
+            187.778,
+            320.296
+          ],
+          "block_id": "552513e01f794bd66994f3f91742f99b1714d8bdb5d91d75c24f135da44ed6f6",
+          "classification": "text",
+          "glyph_count": 40,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 37,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 40,
+          "text_flow": {
+            "baselines_pt": [
+              315.256
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 40,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 37
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            314.398,
+            110.443,
+            328.078
+          ],
+          "block_id": "eec0a8aabb74b4ad5a8414fc34521236cf627785fdd0b87731f2b77a28c6e4ee",
+          "classification": "text",
+          "glyph_count": 19,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 19,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 19,
+          "text_flow": {
+            "baselines_pt": [
+              323.038
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 19,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 19
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            329.18,
+            204.117,
+            342.86
+          ],
+          "block_id": "2462376035308169cecfdd014a282f2c4221c5fcd35eaa311220fcea6d22c156",
+          "classification": "text",
+          "glyph_count": 42,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 42,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 42,
+          "text_flow": {
+            "baselines_pt": [
+              337.82
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 42,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 42
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            336.962,
+            211.488,
+            350.642
+          ],
+          "block_id": "5d60723a903a6b7152f2a6e3cdd239b4ee385673c0fd44c6b9d029a4275f774b",
+          "classification": "text",
+          "glyph_count": 47,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 47,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 47,
+          "text_flow": {
+            "baselines_pt": [
+              345.602
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 47,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 47
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            344.744,
+            195.069,
+            358.424
+          ],
+          "block_id": "2529c7b8ba443895eb480c997140db9ebd6a1d8e903d1c280caac06c685a013b",
+          "classification": "text",
+          "glyph_count": 38,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 24,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 38,
+          "text_flow": {
+            "baselines_pt": [
+              353.384
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 38,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 24
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            352.526,
+            210.477,
+            366.206
+          ],
+          "block_id": "4033773185339ebede593e3789158c2041b6101e4918342914fcc0f370f71436",
+          "classification": "text",
+          "glyph_count": 46,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 46,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 46,
+          "text_flow": {
+            "baselines_pt": [
+              361.166
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 46,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 46
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            360.308,
+            77.026,
+            373.988
+          ],
+          "block_id": "d6f02bdbfb3da9666c35249226ff552987a38f9c3bf42d02946b94e39f804e96",
+          "classification": "text",
+          "glyph_count": 10,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 10,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 10,
+          "text_flow": {
+            "baselines_pt": [
+              368.948
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 10,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 10
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            375.09,
+            211.015,
+            388.77
+          ],
+          "block_id": "33f98c940e35ade2efda129be035557f8b83c46a37ed8a178f7eea3c77659a55",
+          "classification": "text",
+          "glyph_count": 46,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 46,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 46,
+          "text_flow": {
+            "baselines_pt": [
+              383.73
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 46,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 46
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            382.872,
+            202.447,
+            396.552
+          ],
+          "block_id": "eef5e9165883384d959375f33b8230c3c731d9432d3589952f449ae060ce8d97",
+          "classification": "text",
+          "glyph_count": 42,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 41,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 42,
+          "text_flow": {
+            "baselines_pt": [
+              391.512
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 42,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 41
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            390.654,
+            204.372,
+            404.334
+          ],
+          "block_id": "354b4c833be8fa615d7b0a458fcb162ac4690b9b3eab95b7b7b814fc2fc446d2",
+          "classification": "text",
+          "glyph_count": 44,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 43,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 44,
+          "text_flow": {
+            "baselines_pt": [
+              399.294
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 44,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 43
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            398.436,
+            191.544,
+            412.116
+          ],
+          "block_id": "731c50af076906b92142c1bd50076322835003266e910d1a7940607c449018f3",
+          "classification": "text",
+          "glyph_count": 42,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 42,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 42,
+          "text_flow": {
+            "baselines_pt": [
+              407.076
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 42,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 42
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            406.218,
+            78.61,
+            419.898
+          ],
+          "block_id": "2344024c3e8b23c99b8b11f7a09c91abc9469619e6770b9e8a58d024a28eba1f",
+          "classification": "text",
+          "glyph_count": 9,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 9,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 9,
+          "text_flow": {
+            "baselines_pt": [
+              414.858
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 9,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 9
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            421.0,
+            197.335,
+            434.68
+          ],
+          "block_id": "3e7402fea61906b8f5e08ebfc86b2a6d37ebbff5341993e1b8cff527f2dc1925",
+          "classification": "text",
+          "glyph_count": 40,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 40,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 40,
+          "text_flow": {
+            "baselines_pt": [
+              429.64
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 40,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 40
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            428.782,
+            213.563,
+            442.462
+          ],
+          "block_id": "7aa7a5806754b89311b5eb29c45cbfcf36d055195263079c525885d050842470",
+          "classification": "text",
+          "glyph_count": 47,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 47,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 47,
+          "text_flow": {
+            "baselines_pt": [
+              437.422
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 47,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 47
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            436.564,
+            203.679,
+            450.244
+          ],
+          "block_id": "35ab9465aeab781ac36dd4853a9ffb590f82b2328400aa10ed95cecb6b5b92b0",
+          "classification": "text",
+          "glyph_count": 43,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 43,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 43,
+          "text_flow": {
+            "baselines_pt": [
+              445.204
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 43,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 43
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            444.346,
+            196.282,
+            458.026
+          ],
+          "block_id": "3dba52c7e0480ad1f5ceb491cfa05234666e27840359e006a654d640710ea82c",
+          "classification": "text",
+          "glyph_count": 44,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 44,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 44,
+          "text_flow": {
+            "baselines_pt": [
+              452.986
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 44,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 44
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            452.128,
+            80.29,
+            465.808
+          ],
+          "block_id": "1bb627ae8a1ba618dd17d80faa01e8a14d831518aa8e345cf88dc1e1fe767fda",
+          "classification": "text",
+          "glyph_count": 10,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 10,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 10,
+          "text_flow": {
+            "baselines_pt": [
+              460.768
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 10,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 10
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            466.91,
+            194.436,
+            480.59
+          ],
+          "block_id": "86fc0a3186556c79b9469688903b180fe8d555969c714b8b36f502ba3aff7a1b",
+          "classification": "text",
+          "glyph_count": 42,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 42,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 42,
+          "text_flow": {
+            "baselines_pt": [
+              475.55
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 42,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 42
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            474.692,
+            206.534,
+            488.372
+          ],
+          "block_id": "2c44e0b263628b91109e0bb2c9860baf278d16cb4f93c7e40b7739887019b3bf",
+          "classification": "text",
+          "glyph_count": 45,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 45,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 45,
+          "text_flow": {
+            "baselines_pt": [
+              483.332
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 45,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 45
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            482.474,
+            208.794,
+            496.154
+          ],
+          "block_id": "7a3279e6c6e7e553123cc33374dab1ec54afd9142458a1ac7979e5386583f834",
+          "classification": "text",
+          "glyph_count": 45,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 45,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 45,
+          "text_flow": {
+            "baselines_pt": [
+              491.114
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 45,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 45
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            490.256,
+            189.885,
+            503.936
+          ],
+          "block_id": "091c2c2766a42dabaece10501bad1a1cc722459d4566ca89e2ef38574c9a6612",
+          "classification": "text",
+          "glyph_count": 40,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 40,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 40,
+          "text_flow": {
+            "baselines_pt": [
+              498.896
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 40,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 40
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            498.038,
+            93.897,
+            511.718
+          ],
+          "block_id": "04e5ca494da5a03d2d66e77c01c28d8a0f8454abd10b5db6100bcea464cb6ff6",
+          "classification": "text",
+          "glyph_count": 14,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 14,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 14,
+          "text_flow": {
+            "baselines_pt": [
+              506.678
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 14,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 14
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            512.82,
+            193.008,
+            526.5
+          ],
+          "block_id": "0ffebead39d42da518d5327fd374d1983c7d05487f92c5061adbe90c95a32e9c",
+          "classification": "text",
+          "glyph_count": 44,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 37,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "abstract_body",
+          "scientific_relations": [],
+          "source_chars": 44,
+          "text_flow": {
+            "baselines_pt": [
+              521.46
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 44,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 37
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            552.332,
+            130.671,
+            570.233
+          ],
+          "block_id": "6639344fdef6e2615a9bade301b169a7c57d2a3ef3591bbee07ed1ddabce12d2",
+          "classification": "text",
+          "glyph_count": 13,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "section_heading",
+          "scientific_relations": [],
+          "source_chars": 13,
+          "text_flow": {
+            "baselines_pt": [
+              566.242
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 13,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            44.0,
+            577.417,
+            344.19,
+            592.531
+          ],
+          "block_id": "cccec0ca17cd8dd6f8526d8210d29a9653495000706489393dfb30e52d4e9d0c",
+          "classification": "text",
+          "glyph_count": 55,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 55,
+          "text_flow": {
+            "baselines_pt": [
+              589.242
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 55,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            390.0,
+            774.25,
+            395.56,
+            787.99
+          ],
+          "block_id": "d43a66cc6d05d12f9632719ab159f1c503163d25ff4247d3390dd95914d1b69f",
+          "classification": "metadata",
+          "glyph_count": 1,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "footer",
+          "scientific_relations": [],
+          "source_chars": 1,
+          "text_flow": {
+            "baselines_pt": [
+              785.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 1,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        }
+      ],
+      "version": "glyph-ink-2"
+    },
+    {
+      "boundary_checks": [],
+      "boundary_conflicts": [],
+      "classification_version": "content-lanes-1",
+      "layout_decoration_objects": [],
+      "pair_counts": {},
+      "pair_limit_reached": false,
+      "pairs": [],
+      "prose_recovery": [],
+      "regions": [
+        {
+          "before_crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "expansion_steps": 1,
+          "group_id": "R1",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "Gec0bdf0a73284450ce3d",
+            "G0311f4cf21f5533c1ac5"
+          ],
+          "seed_size_pt": [
+            511.0,
+            49.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "expansion_steps": 1,
+          "group_id": "R2",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "G214e00f70a3ee7559533"
+          ],
+          "seed_size_pt": [
+            85.256,
+            17.864
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "expansion_steps": 1,
+          "group_id": "R3",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 4,
+          "seed_ids": [
+            "G6d4b0525a09734613fb5",
+            "G62c5924a9145bc5b4e4c",
+            "G3075c037baae913c42c8",
+            "G9b0b4e2f4e34c7e228f5",
+            "Gce3616b06519d1d80f02",
+            "G2dfd816d3731d786006a",
+            "Gb14bd32caefb95e07566"
+          ],
+          "seed_size_pt": [
+            511.0,
+            54.0
+          ],
+          "text_only": false
+        }
+      ],
+      "seed_contacts": [
+        {
+          "block_id": "113cbe18566e4d229736b8bd0d0d76bcba867ee0e786dff6dd369630e2e6a2d9",
+          "classification": "ink_contact",
+          "ink_pixels": 4107,
+          "intersection_size_pt": [
+            57.25,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G0311f4cf21f5533c1ac5",
+          "touches": true
+        },
+        {
+          "block_id": "242834d94f310404d90df33c433f87579a979a7c43c4829475363cd9393e296e",
+          "classification": "ink_contact",
+          "ink_pixels": 4804,
+          "intersection_size_pt": [
+            85.254,
+            17.862
+          ],
+          "proof_error": null,
+          "seed_id": "G214e00f70a3ee7559533",
+          "touches": true
+        },
+        {
+          "block_id": "9418769c6b00992b544b104ae2b7f88e129010a8a5f8ada2282393f89944bb61",
+          "classification": "ink_contact",
+          "ink_pixels": 2258,
+          "intersection_size_pt": [
+            27.23,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "3682a5d21d2c67fa9f0f29e59dce30c9488fc9010a7f8fb88dde0e7b70990238",
+          "classification": "ink_contact",
+          "ink_pixels": 2909,
+          "intersection_size_pt": [
+            41.12,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "630854137fc606c3b67842696993cf1c4f83dada5f90692359ebb45b6e58b664",
+          "classification": "ink_contact",
+          "ink_pixels": 2344,
+          "intersection_size_pt": [
+            35.01,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "2cf357259293b577ccc13eccf1b18a569d70add5218aaf9407e6a2411bdfbbda",
+          "classification": "ink_contact",
+          "ink_pixels": 3317,
+          "intersection_size_pt": [
+            47.26,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        }
+      ],
+      "seeds": [
+        {
+          "core_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ],
+          "id": "Gec0bdf0a73284450ce3d",
+          "kind": "drawing",
+          "object_index": 1,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ],
+          "id": "G0311f4cf21f5533c1ac5",
+          "kind": "drawing",
+          "object_index": 0,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            119.999,
+            596.024,
+            205.255,
+            613.888
+          ],
+          "display_bbox_pt": [
+            118.0,
+            594.025,
+            207.254,
+            615.887
+          ],
+          "id": "G214e00f70a3ee7559533",
+          "kind": "equation",
+          "object_index": 17,
+          "owner_block_id": "242834d94f310404d90df33c433f87579a979a7c43c4829475363cd9393e296e"
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "id": "G6d4b0525a09734613fb5",
+          "kind": "detected_table",
+          "object_index": 0,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "id": "G62c5924a9145bc5b4e4c",
+          "kind": "drawing",
+          "object_index": 7,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ],
+          "id": "G3075c037baae913c42c8",
+          "kind": "drawing",
+          "object_index": 6,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ],
+          "id": "G9b0b4e2f4e34c7e228f5",
+          "kind": "drawing",
+          "object_index": 5,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ],
+          "id": "Gce3616b06519d1d80f02",
+          "kind": "drawing",
+          "object_index": 2,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ],
+          "id": "G2dfd816d3731d786006a",
+          "kind": "drawing",
+          "object_index": 3,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ],
+          "id": "Gb14bd32caefb95e07566",
+          "kind": "drawing",
+          "object_index": 4,
+          "owner_block_id": null
+        }
+      ],
+      "source_page": 2,
+      "text_units": [
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            52.0,
+            30.325,
+            198.07,
+            42.691
+          ],
+          "block_id": "d3bd3ccff5752ac4b8d4afdf812a9c39986d71d25fc37d2a8b50c0549d41eee3",
+          "classification": "metadata",
+          "glyph_count": 31,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "running_header",
+          "scientific_relations": [],
+          "source_chars": 31,
+          "text_flow": {
+            "baselines_pt": [
+              40.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 31,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            52.0,
+            82.0,
+            274.552,
+            97.114
+          ],
+          "block_id": "63ba90ebea21986084eb9a35e2a2f1042846d858e53233e15680bd9b82f7b02d",
+          "classification": "text",
+          "glyph_count": 39,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 39,
+          "text_flow": {
+            "baselines_pt": [
+              93.825
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 39,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            52.0,
+            98.248,
+            185.892,
+            113.362
+          ],
+          "block_id": "ed9bb05410d35dd53e67a53221c10c6c9df0a5a2e9fd9c28a5776803ec542cf1",
+          "classification": "text",
+          "glyph_count": 24,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 24,
+          "text_flow": {
+            "baselines_pt": [
+              110.073
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 24,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            310.0,
+            82.0,
+            514.798,
+            97.114
+          ],
+          "block_id": "0a34ae98121a6ea0e924567c15faeeef3caa94e5c3c343d033ce99990ba3694b",
+          "classification": "text",
+          "glyph_count": 36,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 36,
+          "text_flow": {
+            "baselines_pt": [
+              93.825
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 36,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            310.0,
+            98.248,
+            415.16,
+            113.362
+          ],
+          "block_id": "05adbe2da7108c5c3d274c0f7a01f118bb9712da5b6e8cf20b7d006f9f0b4024",
+          "classification": "text",
+          "glyph_count": 20,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 20,
+          "text_flow": {
+            "baselines_pt": [
+              110.073
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 20,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            52.0,
+            175.0,
+            263.552,
+            190.114
+          ],
+          "block_id": "903df50fb52febcca26e3ddf3b560026490db2c9afe6afe08d2d8ada843fd6c1",
+          "classification": "text",
+          "glyph_count": 37,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 37,
+          "text_flow": {
+            "baselines_pt": [
+              186.825
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 37,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            52.0,
+            191.248,
+            140.66,
+            206.362
+          ],
+          "block_id": "188596d6d856235e650b6295d66817536a55fad58dabc0237669361bc644fda9",
+          "classification": "text",
+          "glyph_count": 17,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 17,
+          "text_flow": {
+            "baselines_pt": [
+              203.073
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 17,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            310.0,
+            175.0,
+            528.878,
+            190.114
+          ],
+          "block_id": "21567cc28e6932ccff98ac418a750e7d482bb932931a7d626bd8e151b894f0e3",
+          "classification": "text",
+          "glyph_count": 38,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 38,
+          "text_flow": {
+            "baselines_pt": [
+              186.825
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 38,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            310.0,
+            191.248,
+            371.149,
+            206.362
+          ],
+          "block_id": "00047983aaf19a4d4cf50eac2b6209da44594bc24accdab57274e2c0fa402575",
+          "classification": "text",
+          "glyph_count": 10,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "paragraph",
+          "scientific_relations": [],
+          "source_chars": 10,
+          "text_flow": {
+            "baselines_pt": [
+              203.073
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 10,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "Vc1a0c54a7855e3c099550c47",
+          "bbox_pt": [
+            60.0,
+            324.25,
+            117.25,
+            337.99
+          ],
+          "block_id": "113cbe18566e4d229736b8bd0d0d76bcba867ee0e786dff6dd369630e2e6a2d9",
+          "classification": "scientific_visual",
+          "glyph_count": 11,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": "visual_or_equation",
+          "role": "paragraph",
+          "scientific_relations": [
+            {
+              "block_id": "113cbe18566e4d229736b8bd0d0d76bcba867ee0e786dff6dd369630e2e6a2d9",
+              "classification": "ink_contact",
+              "ink_pixels": 4107,
+              "intersection_size_pt": [
+                57.25,
+                13.74
+              ],
+              "proof_error": null,
+              "seed_id": "G0311f4cf21f5533c1ac5",
+              "touches": true
+            }
+          ],
+          "source_chars": 11,
+          "text_flow": {
+            "baselines_pt": [
+              335.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 11,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "Vc1a0c54a7855e3c099550c47",
+          "bbox_pt": [
+            52.0,
+            379.25,
+            204.28,
+            392.99
+          ],
+          "block_id": "7acb88de59e914b316e3fa379993919e9240cf78bca49f0f1ac8f6e1c3608048",
+          "classification": "text",
+          "glyph_count": 31,
+          "glyph_proof_error": null,
+          "kind": "caption",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "caption",
+          "scientific_relations": [],
+          "source_chars": 31,
+          "text_flow": {
+            "baselines_pt": [
+              390.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 31,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "bbox_pt": [
+            60.0,
+            451.25,
+            87.23,
+            464.99
+          ],
+          "block_id": "9418769c6b00992b544b104ae2b7f88e129010a8a5f8ada2282393f89944bb61",
+          "classification": "scientific_visual",
+          "glyph_count": 5,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": "visual_or_equation",
+          "role": "paragraph",
+          "scientific_relations": [
+            {
+              "block_id": "9418769c6b00992b544b104ae2b7f88e129010a8a5f8ada2282393f89944bb61",
+              "classification": "ink_contact",
+              "ink_pixels": 2258,
+              "intersection_size_pt": [
+                27.23,
+                13.74
+              ],
+              "proof_error": null,
+              "seed_id": "G6d4b0525a09734613fb5",
+              "touches": true
+            }
+          ],
+          "source_chars": 5,
+          "text_flow": {
+            "baselines_pt": [
+              462.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 5,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "bbox_pt": [
+            200.0,
+            451.25,
+            241.12,
+            464.99
+          ],
+          "block_id": "3682a5d21d2c67fa9f0f29e59dce30c9488fc9010a7f8fb88dde0e7b70990238",
+          "classification": "scientific_visual",
+          "glyph_count": 8,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": "visual_or_equation",
+          "role": "paragraph",
+          "scientific_relations": [
+            {
+              "block_id": "3682a5d21d2c67fa9f0f29e59dce30c9488fc9010a7f8fb88dde0e7b70990238",
+              "classification": "ink_contact",
+              "ink_pixels": 2909,
+              "intersection_size_pt": [
+                41.12,
+                13.74
+              ],
+              "proof_error": null,
+              "seed_id": "G6d4b0525a09734613fb5",
+              "touches": true
+            }
+          ],
+          "source_chars": 8,
+          "text_flow": {
+            "baselines_pt": [
+              462.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 8,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "bbox_pt": [
+            60.0,
+            476.25,
+            95.01,
+            489.99
+          ],
+          "block_id": "630854137fc606c3b67842696993cf1c4f83dada5f90692359ebb45b6e58b664",
+          "classification": "scientific_visual",
+          "glyph_count": 6,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": "visual_or_equation",
+          "role": "paragraph",
+          "scientific_relations": [
+            {
+              "block_id": "630854137fc606c3b67842696993cf1c4f83dada5f90692359ebb45b6e58b664",
+              "classification": "ink_contact",
+              "ink_pixels": 2344,
+              "intersection_size_pt": [
+                35.01,
+                13.74
+              ],
+              "proof_error": null,
+              "seed_id": "G6d4b0525a09734613fb5",
+              "touches": true
+            }
+          ],
+          "source_chars": 6,
+          "text_flow": {
+            "baselines_pt": [
+              487.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 6,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "bbox_pt": [
+            200.0,
+            476.25,
+            247.26,
+            489.99
+          ],
+          "block_id": "2cf357259293b577ccc13eccf1b18a569d70add5218aaf9407e6a2411bdfbbda",
+          "classification": "scientific_visual",
+          "glyph_count": 9,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": "visual_or_equation",
+          "role": "paragraph",
+          "scientific_relations": [
+            {
+              "block_id": "2cf357259293b577ccc13eccf1b18a569d70add5218aaf9407e6a2411bdfbbda",
+              "classification": "ink_contact",
+              "ink_pixels": 3317,
+              "intersection_size_pt": [
+                47.26,
+                13.74
+              ],
+              "proof_error": null,
+              "seed_id": "G6d4b0525a09734613fb5",
+              "touches": true
+            }
+          ],
+          "source_chars": 9,
+          "text_flow": {
+            "baselines_pt": [
+              487.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 9,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V72b35a4cd2b8377c8c8706d7",
+          "bbox_pt": [
+            52.0,
+            508.25,
+            170.93,
+            521.99
+          ],
+          "block_id": "52c9c16dbb718b92132abb72a4b83b7bb0f4f6913d41ff9a8acc33b0979d6410",
+          "classification": "text",
+          "glyph_count": 25,
+          "glyph_proof_error": null,
+          "kind": "caption",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "caption",
+          "scientific_relations": [],
+          "source_chars": 25,
+          "text_flow": {
+            "baselines_pt": [
+              519.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 25,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "text",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": "V61704fbcadd1f8da1f2e38c9",
+          "bbox_pt": [
+            120.0,
+            596.025,
+            205.254,
+            613.887
+          ],
+          "block_id": "242834d94f310404d90df33c433f87579a979a7c43c4829475363cd9393e296e",
+          "classification": "scientific_visual",
+          "glyph_count": 9,
+          "glyph_proof_error": null,
+          "kind": "visual",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [
+            "G214e00f70a3ee7559533"
+          ],
+          "reason": "visual_or_equation",
+          "role": "scientific_visual",
+          "scientific_relations": [
+            {
+              "block_id": "242834d94f310404d90df33c433f87579a979a7c43c4829475363cd9393e296e",
+              "classification": "ink_contact",
+              "ink_pixels": 4804,
+              "intersection_size_pt": [
+                85.254,
+                17.862
+              ],
+              "proof_error": null,
+              "seed_id": "G214e00f70a3ee7559533",
+              "touches": true
+            }
+          ],
+          "source_chars": 9,
+          "text_flow": {
+            "baselines_pt": [
+              610.0
+            ],
+            "evidence": "mathematical_syntax",
+            "glyph_count": 9,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "equation",
+            "math_font_glyphs": 0
+          }
+        },
+        {
+          "asset_id": null,
+          "bbox_pt": [
+            290.0,
+            774.25,
+            295.56,
+            787.99
+          ],
+          "block_id": "03d1ef4a1781e3c72d9a617785c4a74b24a1c285a3d0d1b9d677a4eaa530f673",
+          "classification": "metadata",
+          "glyph_count": 1,
+          "glyph_proof_error": null,
+          "kind": "text",
+          "math_glyph_count": 0,
+          "native_span_membership": true,
+          "positive_seed_ids": [],
+          "reason": null,
+          "role": "footer",
+          "scientific_relations": [],
+          "source_chars": 1,
+          "text_flow": {
+            "baselines_pt": [
+              785.0
+            ],
+            "evidence": "native_glyph_correspondence",
+            "glyph_count": 1,
+            "glyph_error": null,
+            "glyph_verified": true,
+            "lane": "metadata",
+            "math_font_glyphs": 0
+          }
+        }
+      ],
+      "version": "glyph-ink-2"
+    }
+  ],
+  "font_envelope_reproduction": {
+    "sample_glyph_count": 3,
+    "identical_bounds_for_distinct_glyphs": true,
+    "bounds_size_em": [
+      1.08203125,
+      1.0
+    ],
+    "collision_decision": "actual native-glyph ink masks, not these conservative bounds"
+  }
+}

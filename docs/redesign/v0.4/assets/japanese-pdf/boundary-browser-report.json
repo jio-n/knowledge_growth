@@ -1,0 +1,2895 @@
+{
+  "passed": 7,
+  "cases": [
+    "five 7.782pt line pairs are separated by removing only optional crop padding",
+    "seed kind ID extent contact type and five resolved boundaries are visible without body text",
+    "Japanese search selection and original block jump keep a single viewer and original SourceAnchor",
+    "1150 Abstract characters are placed once in order and all eight native assets pass unchanged strict checks",
+    "retry reuses sixteen successful translations and retains readable English fallback",
+    "actual unrelated ink in mandatory scientific crop is rejected before AI and never published",
+    "offline reload and download retain PDF source hash blocks versions and user data"
+  ],
+  "pageerrors": [],
+  "source_hash": "a66b94f2bedc2f124252b6c03809070106159913566c9ac0b07cd648bfd3b159",
+  "coverage": {
+    "abstract": {
+      "candidate_source_chars": 1150,
+      "placed_source_chars": 1150,
+      "placed_translated_source_chars": 1150,
+      "protected_source_chars": 0,
+      "ratio": 1.0,
+      "source_chars": 1150,
+      "translated_source_chars": 1150,
+      "untranslated_reasons": {}
+    },
+    "abstract_complete": true,
+    "body": {
+      "candidate_source_chars": 1563,
+      "placed_source_chars": 1563,
+      "placed_translated_source_chars": 1371,
+      "protected_source_chars": 0,
+      "ratio": 0.8771593090211133,
+      "source_chars": 1563,
+      "translated_source_chars": 1371,
+      "untranslated_reasons": {
+        "ai_uncertain": 192
+      }
+    },
+    "body_preserved_in_visuals": 0,
+    "caption": {
+      "candidate_source_chars": 56,
+      "placed_source_chars": 56,
+      "placed_translated_source_chars": 56,
+      "protected_source_chars": 0,
+      "ratio": 1.0,
+      "source_chars": 56,
+      "translated_source_chars": 56,
+      "untranslated_reasons": {}
+    },
+    "title": {
+      "complete": true,
+      "meaning_review": "complete",
+      "source_blocks": 2,
+      "translated": true,
+      "units": 1
+    }
+  },
+  "quality": {
+    "failed_visuals": 0,
+    "missing_or_duplicate": 0,
+    "outside_page": 0,
+    "overlaps": 0,
+    "passed_visuals": 8,
+    "reading_order_preserved": true,
+    "source_blocks_mapped": 42,
+    "source_mapping_duplicates": 0,
+    "text_blocks_validated": 29,
+    "untranslated_text_validated": 13,
+    "visual_quality_version": "native-3",
+    "visuals": [
+      {
+        "annotations_present": false,
+        "asset_id": "Vef97b68c425b139457082ff3",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 1,
+        "max_glyph_origin_difference_pt": 0.00126,
+        "mean_pixel_difference": 0.000392,
+        "native_size_preserved": true,
+        "output_drawing_count": 1,
+        "output_glyph_count": 11,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          98,
+          26
+        ],
+        "output_ink_pixels": 552,
+        "output_invisible_drawing_count": 5,
+        "output_size_pt": [
+          35.1764,
+          9.002
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.000777,
+        "raw_output_image_size_px": [
+          99,
+          26
+        ],
+        "raw_source_image_size_px": [
+          99,
+          26
+        ],
+        "source_drawing_count": 1,
+        "source_glyph_count": 11,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          98,
+          26
+        ],
+        "source_ink_pixels": 552,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          35.1764,
+          9.002
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V1892f1f36dd79eb9fc245055",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 1,
+        "max_glyph_origin_difference_pt": 0.001123,
+        "mean_pixel_difference": 0.002107,
+        "native_size_preserved": true,
+        "output_drawing_count": 1,
+        "output_glyph_count": 8,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          73,
+          26
+        ],
+        "output_ink_pixels": 394,
+        "output_invisible_drawing_count": 5,
+        "output_size_pt": [
+          25.9901,
+          9.002
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          73,
+          26
+        ],
+        "raw_source_image_size_px": [
+          73,
+          26
+        ],
+        "source_drawing_count": 1,
+        "source_glyph_count": 8,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          73,
+          26
+        ],
+        "source_ink_pixels": 394,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          25.9901,
+          9.002
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V7dbd954f402dd187917ab095",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 2,
+        "max_glyph_origin_difference_pt": 2.7e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 1,
+        "output_glyph_count": 41,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          375,
+          26
+        ],
+        "output_ink_pixels": 2219,
+        "output_invisible_drawing_count": 10,
+        "output_size_pt": [
+          134.7248,
+          9.002
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.000307,
+        "raw_output_image_size_px": [
+          376,
+          26
+        ],
+        "raw_source_image_size_px": [
+          376,
+          26
+        ],
+        "source_drawing_count": 1,
+        "source_glyph_count": 41,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          375,
+          26
+        ],
+        "source_ink_pixels": 2219,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          134.7248,
+          9.002
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "Vd8d46c64c333750b5999d439",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 2,
+        "max_glyph_origin_difference_pt": 0.000241,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 1,
+        "output_glyph_count": 41,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          375,
+          26
+        ],
+        "output_ink_pixels": 2219,
+        "output_invisible_drawing_count": 10,
+        "output_size_pt": [
+          134.7248,
+          9.002
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.000511,
+        "raw_output_image_size_px": [
+          376,
+          26
+        ],
+        "raw_source_image_size_px": [
+          376,
+          26
+        ],
+        "source_drawing_count": 1,
+        "source_glyph_count": 41,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          375,
+          26
+        ],
+        "source_ink_pixels": 2219,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          134.7248,
+          9.002
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V0a0909dc8f5eb13640668c54",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 2,
+        "max_glyph_origin_difference_pt": 5.9e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 1,
+        "output_glyph_count": 16,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          148,
+          26
+        ],
+        "output_ink_pixels": 856,
+        "output_invisible_drawing_count": 10,
+        "output_size_pt": [
+          52.983,
+          9.002
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          148,
+          26
+        ],
+        "raw_source_image_size_px": [
+          148,
+          26
+        ],
+        "source_drawing_count": 1,
+        "source_glyph_count": 16,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          148,
+          26
+        ],
+        "source_ink_pixels": 856,
+        "source_invisible_drawing_count": 0,
+        "source_page": 2,
+        "source_rotation": 0,
+        "source_size_pt": [
+          52.983,
+          9.002
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V0303d08d8ef0a53d4e5a2fb7",
+        "asset_kind": "figure",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 3,
+        "max_glyph_origin_difference_pt": 2.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 2,
+        "output_glyph_count": 12,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          137
+        ],
+        "output_ink_pixels": 7408,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          49.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          1421,
+          137
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          137
+        ],
+        "source_drawing_count": 2,
+        "source_glyph_count": 12,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          137
+        ],
+        "source_ink_pixels": 7408,
+        "source_invisible_drawing_count": 0,
+        "source_page": 3,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          49.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "V4288e6c482ee66cae0bd41ee",
+        "asset_kind": "table",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 4,
+        "max_glyph_origin_difference_pt": 1.2e-05,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 6,
+        "output_glyph_count": 28,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          1420,
+          150
+        ],
+        "output_ink_pixels": 10065,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          511.0,
+          54.0
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.00013,
+        "raw_output_image_size_px": [
+          1421,
+          151
+        ],
+        "raw_source_image_size_px": [
+          1421,
+          151
+        ],
+        "source_drawing_count": 6,
+        "source_glyph_count": 28,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          1420,
+          150
+        ],
+        "source_ink_pixels": 10065,
+        "source_invisible_drawing_count": 0,
+        "source_page": 3,
+        "source_rotation": 0,
+        "source_size_pt": [
+          511.0,
+          54.0
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      },
+      {
+        "annotations_present": false,
+        "asset_id": "Vd85f9809aee8234a1294f771",
+        "asset_kind": "equation",
+        "classification": "native_content_preserved",
+        "crop_no_hidden_text": true,
+        "crop_text_complete": true,
+        "cropbox_size_pt": [
+          595.0,
+          842.0
+        ],
+        "dpi": 200,
+        "drawings_preserved": true,
+        "error": null,
+        "fonts_preserved": true,
+        "glyph_codes_preserved": true,
+        "glyphs_preserved": true,
+        "images_preserved": true,
+        "japanese_page": 5,
+        "max_glyph_origin_difference_pt": 0.000119,
+        "mean_pixel_difference": 0.0,
+        "native_size_preserved": true,
+        "output_drawing_count": 0,
+        "output_glyph_count": 15,
+        "output_image_count": 0,
+        "output_image_size_px": [
+          248,
+          61
+        ],
+        "output_ink_pixels": 1711,
+        "output_invisible_drawing_count": 0,
+        "output_size_pt": [
+          89.254,
+          21.862
+        ],
+        "quality_policy": "scientific_visual",
+        "raw_mean_pixel_difference": 0.0,
+        "raw_output_image_size_px": [
+          249,
+          61
+        ],
+        "raw_source_image_size_px": [
+          249,
+          61
+        ],
+        "source_drawing_count": 0,
+        "source_glyph_count": 15,
+        "source_image_count": 0,
+        "source_image_size_px": [
+          248,
+          61
+        ],
+        "source_ink_pixels": 1711,
+        "source_invisible_drawing_count": 0,
+        "source_page": 3,
+        "source_rotation": 0,
+        "source_size_pt": [
+          89.254,
+          21.862
+        ],
+        "source_text_preserved": true,
+        "status": "passed",
+        "vector_preserved": true,
+        "visible_drawings_preserved": true,
+        "visible_drawings_verified": true
+      }
+    ]
+  },
+  "content_detection": [
+    {
+      "boundary_checks": [],
+      "boundary_conflicts": [],
+      "pair_counts": {
+        "font_envelopes_only": 5
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            682.469,
+            4.44
+          ],
+          "block_ids": [
+            "81487b598def5ba3d3805286eb3cf19381c7f87d3755b63b7cff349780a3f382",
+            "5f8ca825eb7bc21c60142df27511f7e26653c9a03c6d2e22bcbe3d5fb32889aa"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            186,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 13.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            682.465,
+            4.44
+          ],
+          "block_ids": [
+            "5f8ca825eb7bc21c60142df27511f7e26653c9a03c6d2e22bcbe3d5fb32889aa",
+            "56ab55f0c3ef447045b772f0ac3c1ab041eaa3240ebc701546bf55ef62ce1daa"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2730,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            676.698,
+            4.44
+          ],
+          "block_ids": [
+            "56ab55f0c3ef447045b772f0ac3c1ab041eaa3240ebc701546bf55ef62ce1daa",
+            "75b9c2f5e16f4d7867d98d8c4b378e1678c95be7f730deeb22e033432117a94d"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2707,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            183
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "75b9c2f5e16f4d7867d98d8c4b378e1678c95be7f730deeb22e033432117a94d",
+            "fba8567005a82ba414cdc94b8825ad07f6b2a6e041195a74171abe087262e820"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            183,
+            184
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            669.03,
+            4.44
+          ],
+          "block_ids": [
+            "fba8567005a82ba414cdc94b8825ad07f6b2a6e041195a74171abe087262e820",
+            "62890b726c458d48202bffc45b3482bba658fb19a1e72bbe632898d07e609fa1"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            2677,
+            18
+          ],
+          "glyph_counts": [
+            184,
+            186
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 15.0,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 1,
+          "source_render_verified": true
+        }
+      ],
+      "regions": [],
+      "seed_contacts": [],
+      "seeds": [],
+      "source_page": 1,
+      "version": "glyph-ink-2"
+    },
+    {
+      "boundary_checks": [
+        {
+          "before": {
+            "classification": "ink_contact",
+            "ink_pixels": 273,
+            "intersection_size_pt": [
+              36.135,
+              3.218
+            ],
+            "proof_error": null,
+            "touches": true
+          },
+          "block_id": "dc61a9bc31943759c27d61afa2bff46a2e7fd96af00e16528cb42482b55cc64e",
+          "group_id": "R1",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "minimum_crop": {
+            "classification": "bbox_only",
+            "ink_pixels": 0,
+            "intersection_size_pt": [
+              35.175,
+              1.219
+            ],
+            "proof_error": null,
+            "touches": false
+          },
+          "region_members": 1,
+          "resolution": "padding_trimmed",
+          "seed_ids": [
+            "Gbc2acc2e56639e4f98b7"
+          ]
+        },
+        {
+          "before": {
+            "classification": "ink_contact",
+            "ink_pixels": 215,
+            "intersection_size_pt": [
+              26.962,
+              3.218
+            ],
+            "proof_error": null,
+            "touches": true
+          },
+          "block_id": "e8bb29192b45cd38a47fc926534767aa33c5ef4ca51393f03b5a0ae259d06c32",
+          "group_id": "R2",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "minimum_crop": {
+            "classification": "bbox_only",
+            "ink_pixels": 0,
+            "intersection_size_pt": [
+              25.989,
+              1.219
+            ],
+            "proof_error": null,
+            "touches": false
+          },
+          "region_members": 1,
+          "resolution": "padding_trimmed",
+          "seed_ids": [
+            "Gd970090abd65ce1c299c"
+          ]
+        },
+        {
+          "before": {
+            "classification": "ink_contact",
+            "ink_pixels": 525,
+            "intersection_size_pt": [
+              75.65,
+              3.218
+            ],
+            "proof_error": null,
+            "touches": true
+          },
+          "block_id": "5010c8aa24ded28fa486abc66089e998d85d358eff7752a49c0e3cd574cf1713",
+          "group_id": "R3",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "minimum_crop": {
+            "classification": "bbox_only",
+            "ink_pixels": 0,
+            "intersection_size_pt": [
+              75.65,
+              1.219
+            ],
+            "proof_error": null,
+            "touches": false
+          },
+          "region_members": 1,
+          "resolution": "padding_trimmed",
+          "seed_ids": [
+            "Ge28a5dcd19d54ffaf8d6"
+          ]
+        },
+        {
+          "before": {
+            "classification": "ink_contact",
+            "ink_pixels": 779,
+            "intersection_size_pt": [
+              97.798,
+              3.218
+            ],
+            "proof_error": null,
+            "touches": true
+          },
+          "block_id": "3267fdb9f2a1e2b16523cca0325614ff82818a6aa2c0d88f2f4fcaaf31e6d149",
+          "group_id": "R4",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "minimum_crop": {
+            "classification": "bbox_only",
+            "ink_pixels": 0,
+            "intersection_size_pt": [
+              97.798,
+              1.219
+            ],
+            "proof_error": null,
+            "touches": false
+          },
+          "region_members": 1,
+          "resolution": "padding_trimmed",
+          "seed_ids": [
+            "G7b8d8eecdcc54235a551"
+          ]
+        },
+        {
+          "before": {
+            "classification": "ink_contact",
+            "ink_pixels": 383,
+            "intersection_size_pt": [
+              53.934,
+              3.218
+            ],
+            "proof_error": null,
+            "touches": true
+          },
+          "block_id": "6e3edd07dd7847bf3809469ce21fd8bcdbc6983eac4267942580a75464279c66",
+          "group_id": "R5",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "minimum_crop": {
+            "classification": "bbox_only",
+            "ink_pixels": 0,
+            "intersection_size_pt": [
+              52.982,
+              1.219
+            ],
+            "proof_error": null,
+            "touches": false
+          },
+          "region_members": 1,
+          "resolution": "padding_trimmed",
+          "seed_ids": [
+            "G2e121ad4341c4de2a91f"
+          ]
+        }
+      ],
+      "boundary_conflicts": [],
+      "pair_counts": {
+        "font_envelopes_only": 5
+      },
+      "pair_limit_reached": false,
+      "pairs": [
+        {
+          "bbox_intersection_size_pt": [
+            34.135,
+            1.218
+          ],
+          "block_ids": [
+            "ca4d7244586051a549adfcb63338939c93d662b9f4133fac8e0faa46d2c81433",
+            "dc61a9bc31943759c27d61afa2bff46a2e7fd96af00e16528cb42482b55cc64e"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            137,
+            6
+          ],
+          "glyph_counts": [
+            11,
+            11
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            24.962,
+            1.218
+          ],
+          "block_ids": [
+            "130989ef293fc0cf0d459867f724e6456276b919f6d8e2d796b39086656d42fa",
+            "e8bb29192b45cd38a47fc926534767aa33c5ef4ca51393f03b5a0ae259d06c32"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            100,
+            6
+          ],
+          "glyph_counts": [
+            8,
+            11
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            75.65,
+            1.218
+          ],
+          "block_ids": [
+            "3dbcd72a0bbca76ab19ba63490d7f5c696a610d831438f50fb95047ab65b1ee1",
+            "5010c8aa24ded28fa486abc66089e998d85d358eff7752a49c0e3cd574cf1713"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            303,
+            6
+          ],
+          "glyph_counts": [
+            41,
+            20
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            97.798,
+            1.218
+          ],
+          "block_ids": [
+            "3f2ed6cb156263ea4655dd4fc17c1ce90933721b9bb43904c4fb12507a86179d",
+            "3267fdb9f2a1e2b16523cca0325614ff82818a6aa2c0d88f2f4fcaaf31e6d149"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            392,
+            6
+          ],
+          "glyph_counts": [
+            41,
+            27
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        },
+        {
+          "bbox_intersection_size_pt": [
+            51.934,
+            1.218
+          ],
+          "block_ids": [
+            "8e6d817476576ae28a4f33c437cec0b123dd9cc30b0443bf66a02e51ebcf7a68",
+            "6e3edd07dd7847bf3809469ce21fd8bcdbc6983eac4267942580a75464279c66"
+          ],
+          "classification": "font_envelopes_only",
+          "comparison_size_px": [
+            208,
+            6
+          ],
+          "glyph_counts": [
+            16,
+            27
+          ],
+          "glyph_membership_verified": true,
+          "minimum_baseline_difference_pt": 7.782,
+          "overlapping_ink_pixels": 0,
+          "proof_dpi": 288,
+          "source_page": 2,
+          "source_render_verified": true
+        }
+      ],
+      "regions": [
+        {
+          "before_crop_size_pt": [
+            38.135,
+            13.0
+          ],
+          "crop_adjustment": "padding_trimmed",
+          "crop_size_pt": [
+            35.176,
+            9.002
+          ],
+          "expansion_steps": 1,
+          "group_id": "R1",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "Gbc2acc2e56639e4f98b7"
+          ],
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            28.962,
+            13.0
+          ],
+          "crop_adjustment": "padding_trimmed",
+          "crop_size_pt": [
+            25.99,
+            9.002
+          ],
+          "expansion_steps": 1,
+          "group_id": "R2",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "Gd970090abd65ce1c299c"
+          ],
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            137.582,
+            13.0
+          ],
+          "crop_adjustment": "padding_trimmed",
+          "crop_size_pt": [
+            134.725,
+            9.002
+          ],
+          "expansion_steps": 1,
+          "group_id": "R3",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "Ge28a5dcd19d54ffaf8d6"
+          ],
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            137.582,
+            13.0
+          ],
+          "crop_adjustment": "padding_trimmed",
+          "crop_size_pt": [
+            134.725,
+            9.002
+          ],
+          "expansion_steps": 1,
+          "group_id": "R4",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "G7b8d8eecdcc54235a551"
+          ],
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            55.934,
+            13.0
+          ],
+          "crop_adjustment": "padding_trimmed",
+          "crop_size_pt": [
+            52.983,
+            9.002
+          ],
+          "expansion_steps": 1,
+          "group_id": "R5",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "G2e121ad4341c4de2a91f"
+          ],
+          "seed_size_pt": [
+            4.0,
+            6.0
+          ],
+          "text_only": false
+        }
+      ],
+      "seed_contacts": [
+        {
+          "block_id": "ca4d7244586051a549adfcb63338939c93d662b9f4133fac8e0faa46d2c81433",
+          "classification": "ink_contact",
+          "ink_pixels": 194,
+          "intersection_size_pt": [
+            2.96,
+            6.0
+          ],
+          "proof_error": null,
+          "seed_id": "Gbc2acc2e56639e4f98b7",
+          "touches": true
+        },
+        {
+          "block_id": "130989ef293fc0cf0d459867f724e6456276b919f6d8e2d796b39086656d42fa",
+          "classification": "ink_contact",
+          "ink_pixels": 183,
+          "intersection_size_pt": [
+            2.973,
+            6.0
+          ],
+          "proof_error": null,
+          "seed_id": "Gd970090abd65ce1c299c",
+          "touches": true
+        },
+        {
+          "block_id": "3dbcd72a0bbca76ab19ba63490d7f5c696a610d831438f50fb95047ab65b1ee1",
+          "classification": "ink_contact",
+          "ink_pixels": 169,
+          "intersection_size_pt": [
+            2.858,
+            6.0
+          ],
+          "proof_error": null,
+          "seed_id": "Ge28a5dcd19d54ffaf8d6",
+          "touches": true
+        },
+        {
+          "block_id": "3f2ed6cb156263ea4655dd4fc17c1ce90933721b9bb43904c4fb12507a86179d",
+          "classification": "ink_contact",
+          "ink_pixels": 169,
+          "intersection_size_pt": [
+            2.858,
+            6.0
+          ],
+          "proof_error": null,
+          "seed_id": "G7b8d8eecdcc54235a551",
+          "touches": true
+        },
+        {
+          "block_id": "8e6d817476576ae28a4f33c437cec0b123dd9cc30b0443bf66a02e51ebcf7a68",
+          "classification": "ink_contact",
+          "ink_pixels": 180,
+          "intersection_size_pt": [
+            2.952,
+            6.0
+          ],
+          "proof_error": null,
+          "seed_id": "G2e121ad4341c4de2a91f",
+          "touches": true
+        }
+      ],
+      "seeds": [
+        {
+          "core_bbox_pt": [
+            131.1754,
+            125.0,
+            135.1754,
+            131.0
+          ],
+          "display_bbox_pt": [
+            131.1754,
+            125.0,
+            135.1754,
+            131.0
+          ],
+          "id": "Gbc2acc2e56639e4f98b7",
+          "kind": "drawing",
+          "object_index": 0,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            121.9891,
+            225.0,
+            125.9891,
+            231.0
+          ],
+          "display_bbox_pt": [
+            121.9891,
+            225.0,
+            125.9891,
+            231.0
+          ],
+          "id": "Gd970090abd65ce1c299c",
+          "kind": "drawing",
+          "object_index": 1,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            230.7238,
+            325.0,
+            234.7238,
+            331.0
+          ],
+          "display_bbox_pt": [
+            230.7238,
+            325.0,
+            234.7238,
+            331.0
+          ],
+          "id": "Ge28a5dcd19d54ffaf8d6",
+          "kind": "drawing",
+          "object_index": 2,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            230.7238,
+            425.0,
+            234.7238,
+            431.0
+          ],
+          "display_bbox_pt": [
+            230.7238,
+            425.0,
+            234.7238,
+            431.0
+          ],
+          "id": "G7b8d8eecdcc54235a551",
+          "kind": "drawing",
+          "object_index": 3,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            148.982,
+            525.0,
+            152.982,
+            531.0
+          ],
+          "display_bbox_pt": [
+            148.982,
+            525.0,
+            152.982,
+            531.0
+          ],
+          "id": "G2e121ad4341c4de2a91f",
+          "kind": "drawing",
+          "object_index": 4,
+          "owner_block_id": null
+        }
+      ],
+      "source_page": 2,
+      "version": "glyph-ink-2"
+    },
+    {
+      "boundary_checks": [],
+      "boundary_conflicts": [],
+      "pair_counts": {},
+      "pair_limit_reached": false,
+      "pairs": [],
+      "regions": [
+        {
+          "before_crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            511.0,
+            49.0
+          ],
+          "expansion_steps": 1,
+          "group_id": "R1",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "Gec0bdf0a73284450ce3d",
+            "G0311f4cf21f5533c1ac5"
+          ],
+          "seed_size_pt": [
+            511.0,
+            49.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            511.0,
+            54.0
+          ],
+          "expansion_steps": 1,
+          "group_id": "R2",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 4,
+          "seed_ids": [
+            "G6d4b0525a09734613fb5",
+            "G62c5924a9145bc5b4e4c",
+            "G3075c037baae913c42c8",
+            "G9b0b4e2f4e34c7e228f5",
+            "Gce3616b06519d1d80f02",
+            "G2dfd816d3731d786006a",
+            "Gb14bd32caefb95e07566"
+          ],
+          "seed_size_pt": [
+            511.0,
+            54.0
+          ],
+          "text_only": false
+        },
+        {
+          "before_crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "crop_adjustment": "unchanged",
+          "crop_size_pt": [
+            89.254,
+            21.862
+          ],
+          "expansion_steps": 1,
+          "group_id": "R3",
+          "mandatory_seed_and_font_boxes_preserved": true,
+          "member_count": 1,
+          "seed_ids": [
+            "G44c109139167bba2eebc",
+            "G51a4b7a3dd0f585b02c1"
+          ],
+          "seed_size_pt": [
+            85.256,
+            17.864
+          ],
+          "text_only": false
+        }
+      ],
+      "seed_contacts": [
+        {
+          "block_id": "4034e50e22c5c9403354588ae50d83a47316beb834adf6c384cd00919063dc2d",
+          "classification": "ink_contact",
+          "ink_pixels": 4107,
+          "intersection_size_pt": [
+            57.25,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G0311f4cf21f5533c1ac5",
+          "touches": true
+        },
+        {
+          "block_id": "875579f1e2a6402566e3058e571d15deb375b47a5c194a8743b93e5e92b10e6f",
+          "classification": "ink_contact",
+          "ink_pixels": 4804,
+          "intersection_size_pt": [
+            85.254,
+            17.862
+          ],
+          "proof_error": null,
+          "seed_id": "G51a4b7a3dd0f585b02c1",
+          "touches": true
+        },
+        {
+          "block_id": "80ed8cd3c92ad19c7e8ba0f9da26f31a87fd8cc9ab5da1f90b109af6ef598ca3",
+          "classification": "ink_contact",
+          "ink_pixels": 2258,
+          "intersection_size_pt": [
+            27.23,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "3642124ba25dabf9e457c78005902887ef15680ee8bd7c6abdb6d02d532c4087",
+          "classification": "ink_contact",
+          "ink_pixels": 2909,
+          "intersection_size_pt": [
+            41.12,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "a952c07d5e03c7470622f8eb880b72ac552f0dd5a832f393bc4c0c62b1352f75",
+          "classification": "ink_contact",
+          "ink_pixels": 2344,
+          "intersection_size_pt": [
+            35.01,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "2f141b187d92e4a98e567d1f40190122365476fcc76a176fe84d0c2f86a3dab2",
+          "classification": "ink_contact",
+          "ink_pixels": 3317,
+          "intersection_size_pt": [
+            47.26,
+            13.74
+          ],
+          "proof_error": null,
+          "seed_id": "G6d4b0525a09734613fb5",
+          "touches": true
+        },
+        {
+          "block_id": "875579f1e2a6402566e3058e571d15deb375b47a5c194a8743b93e5e92b10e6f",
+          "classification": "ink_contact",
+          "ink_pixels": 4804,
+          "intersection_size_pt": [
+            85.254,
+            17.862
+          ],
+          "proof_error": null,
+          "seed_id": "G44c109139167bba2eebc",
+          "touches": true
+        }
+      ],
+      "seeds": [
+        {
+          "core_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            338.0,
+            553.0,
+            342.0
+          ],
+          "id": "Gec0bdf0a73284450ce3d",
+          "kind": "drawing",
+          "object_index": 1,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            318.0,
+            553.0,
+            367.0
+          ],
+          "id": "G0311f4cf21f5533c1ac5",
+          "kind": "drawing",
+          "object_index": 0,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "id": "G6d4b0525a09734613fb5",
+          "kind": "detected_table",
+          "object_index": 0,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            549.0,
+            443.0,
+            553.0,
+            497.0
+          ],
+          "id": "G62c5924a9145bc5b4e4c",
+          "kind": "drawing",
+          "object_index": 7,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            188.0,
+            443.0,
+            192.0,
+            497.0
+          ],
+          "id": "G3075c037baae913c42c8",
+          "kind": "drawing",
+          "object_index": 6,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            46.0,
+            497.0
+          ],
+          "id": "G9b0b4e2f4e34c7e228f5",
+          "kind": "drawing",
+          "object_index": 5,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            443.0,
+            553.0,
+            447.0
+          ],
+          "id": "Gce3616b06519d1d80f02",
+          "kind": "drawing",
+          "object_index": 2,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            468.0,
+            553.0,
+            472.0
+          ],
+          "id": "G2dfd816d3731d786006a",
+          "kind": "drawing",
+          "object_index": 3,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ],
+          "display_bbox_pt": [
+            42.0,
+            493.0,
+            553.0,
+            497.0
+          ],
+          "id": "Gb14bd32caefb95e07566",
+          "kind": "drawing",
+          "object_index": 4,
+          "owner_block_id": null
+        },
+        {
+          "core_bbox_pt": [
+            119.999,
+            596.024,
+            205.255,
+            613.888
+          ],
+          "display_bbox_pt": [
+            118.0,
+            594.025,
+            207.254,
+            615.887
+          ],
+          "id": "G44c109139167bba2eebc",
+          "kind": "isolated_math_or_special_font",
+          "object_index": 10,
+          "owner_block_id": "875579f1e2a6402566e3058e571d15deb375b47a5c194a8743b93e5e92b10e6f"
+        },
+        {
+          "core_bbox_pt": [
+            119.999,
+            596.024,
+            205.255,
+            613.888
+          ],
+          "display_bbox_pt": [
+            118.0,
+            594.025,
+            207.254,
+            615.887
+          ],
+          "id": "G51a4b7a3dd0f585b02c1",
+          "kind": "equation",
+          "object_index": 13,
+          "owner_block_id": "875579f1e2a6402566e3058e571d15deb375b47a5c194a8743b93e5e92b10e6f"
+        }
+      ],
+      "source_page": 3,
+      "version": "glyph-ink-2"
+    }
+  ],
+  "diagnostics": {
+    "ai_translation_succeeded": 16,
+    "attempt_errors": {
+      "ai_uncertain": 44
+    },
+    "cached_translations": 0,
+    "elapsed_seconds": 0.02,
+    "failure_stage": null,
+    "metadata_units": 7,
+    "pdf_placement_succeeded": 16,
+    "protected_units": 12,
+    "runtime_calls": 25,
+    "split_batches": 5,
+    "stopped_by": null,
+    "title_reviews": 1,
+    "translation_candidates": 22,
+    "translation_failures": {
+      "ai_uncertain": 6
+    },
+    "translation_succeeded": 16,
+    "unsafe_units": 0
+  },
+  "japanese_pages": 5,
+  "rejected": {
+    "error": "visual_text_boundary_unresolved",
+    "diagnostics": {
+      "ai_translation_succeeded": 0,
+      "cached_translations": 0,
+      "failure_stage": "content_detection",
+      "metadata_units": 7,
+      "pdf_placement_succeeded": 0,
+      "protected_units": 13,
+      "translation_candidates": 0,
+      "translation_failures": {},
+      "translation_succeeded": 0,
+      "unsafe_units": 0
+    },
+    "content_detection": [
+      {
+        "boundary_checks": [],
+        "boundary_conflicts": [],
+        "pair_counts": {
+          "font_envelopes_only": 5
+        },
+        "pair_limit_reached": false,
+        "pairs": [
+          {
+            "bbox_intersection_size_pt": [
+              682.469,
+              4.44
+            ],
+            "block_ids": [
+              "d86a78c00d18622711f005a7b869d57736960b85faff48ead560c01519181aa1",
+              "156c15f4f3caf2fede815c694fa282fb0fecdf474993dd5825ef2729c76ad261"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              2730,
+              18
+            ],
+            "glyph_counts": [
+              186,
+              184
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 13.0,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 1,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              682.465,
+              4.44
+            ],
+            "block_ids": [
+              "156c15f4f3caf2fede815c694fa282fb0fecdf474993dd5825ef2729c76ad261",
+              "80cc95a60e826a839cafe2ba6afe7b98cd3943097346b0df9141dc13341f4056"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              2730,
+              18
+            ],
+            "glyph_counts": [
+              184,
+              183
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 15.0,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 1,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              676.698,
+              4.44
+            ],
+            "block_ids": [
+              "80cc95a60e826a839cafe2ba6afe7b98cd3943097346b0df9141dc13341f4056",
+              "6b3653ceb6231e7161a6abb36821c94a8818de19c6e18601171201a434774b99"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              2707,
+              18
+            ],
+            "glyph_counts": [
+              183,
+              183
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 15.0,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 1,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              669.03,
+              4.44
+            ],
+            "block_ids": [
+              "6b3653ceb6231e7161a6abb36821c94a8818de19c6e18601171201a434774b99",
+              "c2514c9c7b3172eb142aad9d28ded76137e2cf778eceb21e678b89271ced01d1"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              2677,
+              18
+            ],
+            "glyph_counts": [
+              183,
+              184
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 15.0,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 1,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              669.03,
+              4.44
+            ],
+            "block_ids": [
+              "c2514c9c7b3172eb142aad9d28ded76137e2cf778eceb21e678b89271ced01d1",
+              "8fc7c4503f280f28ffc38469c755fac539ac73260940b280d03eb565a5db3aea"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              2677,
+              18
+            ],
+            "glyph_counts": [
+              184,
+              186
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 15.0,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 1,
+            "source_render_verified": true
+          }
+        ],
+        "regions": [],
+        "seed_contacts": [],
+        "seeds": [],
+        "source_page": 1,
+        "version": "glyph-ink-2"
+      },
+      {
+        "boundary_checks": [
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 1060,
+              "intersection_size_pt": [
+                36.135,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "1a81d96ccae50c833231bc0cfe535cbe9e4c1ec847d188da3776ded0be7d77a6",
+            "group_id": "R1",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                35.175,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "Gbc2acc2e56639e4f98b7"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 783,
+              "intersection_size_pt": [
+                26.962,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "a2110940244d12ff57bc70aaf97f1ccc1ce00ac0597a32a883e5429bc9209814",
+            "group_id": "R2",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                25.989,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "Gd970090abd65ce1c299c"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 2876,
+              "intersection_size_pt": [
+                97.798,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "8eb922d82ec4e9a88a37bc62c54d58be1ea22a7dd15d36407d818e00caed6138",
+            "group_id": "R3",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 225,
+              "intersection_size_pt": [
+                97.798,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "G7b8d8eecdcc54235a551"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 1553,
+              "intersection_size_pt": [
+                53.934,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "44bc5314899f2ca41f2062b7a988b37a69e3532cf72a197f5b6582e7778e425c",
+            "group_id": "R4",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                52.982,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "G2e121ad4341c4de2a91f"
+            ]
+          }
+        ],
+        "boundary_conflicts": [
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 1060,
+              "intersection_size_pt": [
+                36.135,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "1a81d96ccae50c833231bc0cfe535cbe9e4c1ec847d188da3776ded0be7d77a6",
+            "group_id": "R1",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                35.175,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "Gbc2acc2e56639e4f98b7"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 783,
+              "intersection_size_pt": [
+                26.962,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "a2110940244d12ff57bc70aaf97f1ccc1ce00ac0597a32a883e5429bc9209814",
+            "group_id": "R2",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                25.989,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "Gd970090abd65ce1c299c"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 2876,
+              "intersection_size_pt": [
+                97.798,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "8eb922d82ec4e9a88a37bc62c54d58be1ea22a7dd15d36407d818e00caed6138",
+            "group_id": "R3",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 225,
+              "intersection_size_pt": [
+                97.798,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "G7b8d8eecdcc54235a551"
+            ]
+          },
+          {
+            "before": {
+              "classification": "ink_contact",
+              "ink_pixels": 1553,
+              "intersection_size_pt": [
+                53.934,
+                5.018
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "block_id": "44bc5314899f2ca41f2062b7a988b37a69e3532cf72a197f5b6582e7778e425c",
+            "group_id": "R4",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "minimum_crop": {
+              "classification": "ink_contact",
+              "ink_pixels": 48,
+              "intersection_size_pt": [
+                52.982,
+                3.019
+              ],
+              "proof_error": null,
+              "touches": true
+            },
+            "region_members": 1,
+            "resolution": "unresolved",
+            "seed_ids": [
+              "G2e121ad4341c4de2a91f"
+            ]
+          }
+        ],
+        "pair_counts": {
+          "font_envelopes_only": 4,
+          "overlap_unproven": 1
+        },
+        "pair_limit_reached": false,
+        "pairs": [
+          {
+            "bbox_intersection_size_pt": [
+              34.135,
+              3.018
+            ],
+            "block_ids": [
+              "16d50c8fbc766fbfbf094ddf8a4dd116a5312c54e5d395846fc178a3f84a1803",
+              "1a81d96ccae50c833231bc0cfe535cbe9e4c1ec847d188da3776ded0be7d77a6"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              137,
+              13
+            ],
+            "glyph_counts": [
+              11,
+              11
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 7.782,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 2,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              24.962,
+              3.018
+            ],
+            "block_ids": [
+              "77dce952cee01f70f2fa32c33daea89e58c165708803677e4afde020de68b2dc",
+              "a2110940244d12ff57bc70aaf97f1ccc1ce00ac0597a32a883e5429bc9209814"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              100,
+              13
+            ],
+            "glyph_counts": [
+              8,
+              11
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 7.782,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 2,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              75.65,
+              3.018
+            ],
+            "block_ids": [
+              "cef5de8d0cfe54a31fb3ad4e3ff8e20d3ce1e465a4dcf434254bdb3a5fb1b255",
+              "65a74ea5510b01d8b21affc3f7f857a163320e7d4d17eb86054c4d0a34b11ddf"
+            ],
+            "classification": "overlap_unproven",
+            "glyph_counts": [
+              41,
+              20
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 7.782,
+            "overlapping_ink_pixels": null,
+            "proof_dpi": 288,
+            "source_page": 2,
+            "source_render_verified": false
+          },
+          {
+            "bbox_intersection_size_pt": [
+              97.798,
+              3.018
+            ],
+            "block_ids": [
+              "246c3fb2edf9024d05e96a684b7b48ed666dc59f577c141ccad9d481884a67df",
+              "8eb922d82ec4e9a88a37bc62c54d58be1ea22a7dd15d36407d818e00caed6138"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              392,
+              13
+            ],
+            "glyph_counts": [
+              41,
+              27
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 7.782,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 2,
+            "source_render_verified": true
+          },
+          {
+            "bbox_intersection_size_pt": [
+              51.934,
+              3.018
+            ],
+            "block_ids": [
+              "08e92d9a52d3296e9da212dcf5dcdc7073d00c1288fd463f09524b31c09bc4ff",
+              "44bc5314899f2ca41f2062b7a988b37a69e3532cf72a197f5b6582e7778e425c"
+            ],
+            "classification": "font_envelopes_only",
+            "comparison_size_px": [
+              208,
+              13
+            ],
+            "glyph_counts": [
+              16,
+              27
+            ],
+            "glyph_membership_verified": true,
+            "minimum_baseline_difference_pt": 7.782,
+            "overlapping_ink_pixels": 0,
+            "proof_dpi": 288,
+            "source_page": 2,
+            "source_render_verified": true
+          }
+        ],
+        "regions": [
+          {
+            "before_crop_size_pt": [
+              38.135,
+              14.8
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              38.135,
+              14.8
+            ],
+            "expansion_steps": 1,
+            "group_id": "R1",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "Gbc2acc2e56639e4f98b7"
+            ],
+            "seed_size_pt": [
+              4.0,
+              6.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              28.962,
+              14.8
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              28.962,
+              14.8
+            ],
+            "expansion_steps": 1,
+            "group_id": "R2",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "Gd970090abd65ce1c299c"
+            ],
+            "seed_size_pt": [
+              4.0,
+              6.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              137.582,
+              14.8
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              137.582,
+              14.8
+            ],
+            "expansion_steps": 1,
+            "group_id": "R3",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "G7b8d8eecdcc54235a551"
+            ],
+            "seed_size_pt": [
+              4.0,
+              6.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              55.934,
+              14.8
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              55.934,
+              14.8
+            ],
+            "expansion_steps": 1,
+            "group_id": "R4",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "G2e121ad4341c4de2a91f"
+            ],
+            "seed_size_pt": [
+              4.0,
+              6.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              137.582,
+              22.582
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              137.582,
+              22.582
+            ],
+            "expansion_steps": 1,
+            "group_id": "R5",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 2,
+            "seed_ids": [
+              "G44967b9f980ba501f112",
+              "Ge28a5dcd19d54ffaf8d6"
+            ],
+            "seed_size_pt": [
+              134.725,
+              18.584
+            ],
+            "text_only": false
+          }
+        ],
+        "seed_contacts": [
+          {
+            "block_id": "16d50c8fbc766fbfbf094ddf8a4dd116a5312c54e5d395846fc178a3f84a1803",
+            "classification": "ink_contact",
+            "ink_pixels": 194,
+            "intersection_size_pt": [
+              2.96,
+              6.0
+            ],
+            "proof_error": null,
+            "seed_id": "Gbc2acc2e56639e4f98b7",
+            "touches": true
+          },
+          {
+            "block_id": "77dce952cee01f70f2fa32c33daea89e58c165708803677e4afde020de68b2dc",
+            "classification": "ink_contact",
+            "ink_pixels": 183,
+            "intersection_size_pt": [
+              2.973,
+              6.0
+            ],
+            "proof_error": null,
+            "seed_id": "Gd970090abd65ce1c299c",
+            "touches": true
+          },
+          {
+            "block_id": "cef5de8d0cfe54a31fb3ad4e3ff8e20d3ce1e465a4dcf434254bdb3a5fb1b255",
+            "classification": "ink_contact",
+            "ink_pixels": 169,
+            "intersection_size_pt": [
+              2.858,
+              6.0
+            ],
+            "proof_error": null,
+            "seed_id": "Ge28a5dcd19d54ffaf8d6",
+            "touches": true
+          },
+          {
+            "block_id": "246c3fb2edf9024d05e96a684b7b48ed666dc59f577c141ccad9d481884a67df",
+            "classification": "ink_contact",
+            "ink_pixels": 169,
+            "intersection_size_pt": [
+              2.858,
+              6.0
+            ],
+            "proof_error": null,
+            "seed_id": "G7b8d8eecdcc54235a551",
+            "touches": true
+          },
+          {
+            "block_id": "08e92d9a52d3296e9da212dcf5dcdc7073d00c1288fd463f09524b31c09bc4ff",
+            "classification": "ink_contact",
+            "ink_pixels": 180,
+            "intersection_size_pt": [
+              2.952,
+              6.0
+            ],
+            "proof_error": null,
+            "seed_id": "G2e121ad4341c4de2a91f",
+            "touches": true
+          }
+        ],
+        "seeds": [
+          {
+            "core_bbox_pt": [
+              131.1754,
+              125.0,
+              135.1754,
+              131.0
+            ],
+            "display_bbox_pt": [
+              131.1754,
+              125.0,
+              135.1754,
+              131.0
+            ],
+            "id": "Gbc2acc2e56639e4f98b7",
+            "kind": "drawing",
+            "object_index": 0,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              121.9891,
+              225.0,
+              125.9891,
+              231.0
+            ],
+            "display_bbox_pt": [
+              121.9891,
+              225.0,
+              125.9891,
+              231.0
+            ],
+            "id": "Gd970090abd65ce1c299c",
+            "kind": "drawing",
+            "object_index": 1,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              230.7238,
+              425.0,
+              234.7238,
+              431.0
+            ],
+            "display_bbox_pt": [
+              230.7238,
+              425.0,
+              234.7238,
+              431.0
+            ],
+            "id": "G7b8d8eecdcc54235a551",
+            "kind": "drawing",
+            "object_index": 3,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              148.982,
+              525.0,
+              152.982,
+              531.0
+            ],
+            "display_bbox_pt": [
+              148.982,
+              525.0,
+              152.982,
+              531.0
+            ],
+            "id": "G2e121ad4341c4de2a91f",
+            "kind": "drawing",
+            "object_index": 4,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              99.999,
+              323.519,
+              233.583,
+              342.103
+            ],
+            "display_bbox_pt": [
+              98.0,
+              321.52,
+              235.582,
+              344.102
+            ],
+            "id": "G44967b9f980ba501f112",
+            "kind": "text_collision",
+            "object_index": 5,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              230.7238,
+              325.0,
+              234.7238,
+              331.0
+            ],
+            "display_bbox_pt": [
+              230.7238,
+              325.0,
+              234.7238,
+              331.0
+            ],
+            "id": "Ge28a5dcd19d54ffaf8d6",
+            "kind": "drawing",
+            "object_index": 2,
+            "owner_block_id": null
+          }
+        ],
+        "source_page": 2,
+        "version": "glyph-ink-2"
+      },
+      {
+        "boundary_checks": [],
+        "boundary_conflicts": [],
+        "pair_counts": {},
+        "pair_limit_reached": false,
+        "pairs": [],
+        "regions": [
+          {
+            "before_crop_size_pt": [
+              511.0,
+              49.0
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              511.0,
+              49.0
+            ],
+            "expansion_steps": 1,
+            "group_id": "R1",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "Gec0bdf0a73284450ce3d",
+              "G0311f4cf21f5533c1ac5"
+            ],
+            "seed_size_pt": [
+              511.0,
+              49.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              511.0,
+              54.0
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              511.0,
+              54.0
+            ],
+            "expansion_steps": 1,
+            "group_id": "R2",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 4,
+            "seed_ids": [
+              "G6d4b0525a09734613fb5",
+              "G62c5924a9145bc5b4e4c",
+              "G3075c037baae913c42c8",
+              "G9b0b4e2f4e34c7e228f5",
+              "Gce3616b06519d1d80f02",
+              "G2dfd816d3731d786006a",
+              "Gb14bd32caefb95e07566"
+            ],
+            "seed_size_pt": [
+              511.0,
+              54.0
+            ],
+            "text_only": false
+          },
+          {
+            "before_crop_size_pt": [
+              89.254,
+              21.862
+            ],
+            "crop_adjustment": "unchanged",
+            "crop_size_pt": [
+              89.254,
+              21.862
+            ],
+            "expansion_steps": 1,
+            "group_id": "R3",
+            "mandatory_seed_and_font_boxes_preserved": true,
+            "member_count": 1,
+            "seed_ids": [
+              "G520d853cdb6f0c13be51",
+              "Gb6e09070592cea023feb"
+            ],
+            "seed_size_pt": [
+              85.256,
+              17.864
+            ],
+            "text_only": false
+          }
+        ],
+        "seed_contacts": [
+          {
+            "block_id": "16260bffa4b0494f88c5d7ccbb6895e792666b3e679c1a7f134b170c1f2db248",
+            "classification": "ink_contact",
+            "ink_pixels": 4107,
+            "intersection_size_pt": [
+              57.25,
+              13.74
+            ],
+            "proof_error": null,
+            "seed_id": "G0311f4cf21f5533c1ac5",
+            "touches": true
+          },
+          {
+            "block_id": "f83126e8b9f550b271c7c8ee8f9072a47cef40739a0f5dd8d1874a7d3abcdeb1",
+            "classification": "ink_contact",
+            "ink_pixels": 4804,
+            "intersection_size_pt": [
+              85.254,
+              17.862
+            ],
+            "proof_error": null,
+            "seed_id": "Gb6e09070592cea023feb",
+            "touches": true
+          },
+          {
+            "block_id": "3baf93907ba02cc53c39cf57fc2851bea3e52226825e2b771966859bfd28e183",
+            "classification": "ink_contact",
+            "ink_pixels": 2258,
+            "intersection_size_pt": [
+              27.23,
+              13.74
+            ],
+            "proof_error": null,
+            "seed_id": "G6d4b0525a09734613fb5",
+            "touches": true
+          },
+          {
+            "block_id": "4a124d967a41ed04e226b543b701305f90d0f1d6f0af03e6bf27c1c2f036a253",
+            "classification": "ink_contact",
+            "ink_pixels": 2909,
+            "intersection_size_pt": [
+              41.12,
+              13.74
+            ],
+            "proof_error": null,
+            "seed_id": "G6d4b0525a09734613fb5",
+            "touches": true
+          },
+          {
+            "block_id": "a79222fd85801c96d455aebf62576fc7c52d75251854076365fcd95185c87bee",
+            "classification": "ink_contact",
+            "ink_pixels": 2344,
+            "intersection_size_pt": [
+              35.01,
+              13.74
+            ],
+            "proof_error": null,
+            "seed_id": "G6d4b0525a09734613fb5",
+            "touches": true
+          },
+          {
+            "block_id": "9ac72974d614a4811cd9d0d56e3000b78eea693644147e182e2976ad5e3dda84",
+            "classification": "ink_contact",
+            "ink_pixels": 3317,
+            "intersection_size_pt": [
+              47.26,
+              13.74
+            ],
+            "proof_error": null,
+            "seed_id": "G6d4b0525a09734613fb5",
+            "touches": true
+          },
+          {
+            "block_id": "f83126e8b9f550b271c7c8ee8f9072a47cef40739a0f5dd8d1874a7d3abcdeb1",
+            "classification": "ink_contact",
+            "ink_pixels": 4804,
+            "intersection_size_pt": [
+              85.254,
+              17.862
+            ],
+            "proof_error": null,
+            "seed_id": "G520d853cdb6f0c13be51",
+            "touches": true
+          }
+        ],
+        "seeds": [
+          {
+            "core_bbox_pt": [
+              42.0,
+              338.0,
+              553.0,
+              342.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              338.0,
+              553.0,
+              342.0
+            ],
+            "id": "Gec0bdf0a73284450ce3d",
+            "kind": "drawing",
+            "object_index": 1,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              318.0,
+              553.0,
+              367.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              318.0,
+              553.0,
+              367.0
+            ],
+            "id": "G0311f4cf21f5533c1ac5",
+            "kind": "drawing",
+            "object_index": 0,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              443.0,
+              553.0,
+              497.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              443.0,
+              553.0,
+              497.0
+            ],
+            "id": "G6d4b0525a09734613fb5",
+            "kind": "detected_table",
+            "object_index": 0,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              549.0,
+              443.0,
+              553.0,
+              497.0
+            ],
+            "display_bbox_pt": [
+              549.0,
+              443.0,
+              553.0,
+              497.0
+            ],
+            "id": "G62c5924a9145bc5b4e4c",
+            "kind": "drawing",
+            "object_index": 7,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              188.0,
+              443.0,
+              192.0,
+              497.0
+            ],
+            "display_bbox_pt": [
+              188.0,
+              443.0,
+              192.0,
+              497.0
+            ],
+            "id": "G3075c037baae913c42c8",
+            "kind": "drawing",
+            "object_index": 6,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              443.0,
+              46.0,
+              497.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              443.0,
+              46.0,
+              497.0
+            ],
+            "id": "G9b0b4e2f4e34c7e228f5",
+            "kind": "drawing",
+            "object_index": 5,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              443.0,
+              553.0,
+              447.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              443.0,
+              553.0,
+              447.0
+            ],
+            "id": "Gce3616b06519d1d80f02",
+            "kind": "drawing",
+            "object_index": 2,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              468.0,
+              553.0,
+              472.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              468.0,
+              553.0,
+              472.0
+            ],
+            "id": "G2dfd816d3731d786006a",
+            "kind": "drawing",
+            "object_index": 3,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              42.0,
+              493.0,
+              553.0,
+              497.0
+            ],
+            "display_bbox_pt": [
+              42.0,
+              493.0,
+              553.0,
+              497.0
+            ],
+            "id": "Gb14bd32caefb95e07566",
+            "kind": "drawing",
+            "object_index": 4,
+            "owner_block_id": null
+          },
+          {
+            "core_bbox_pt": [
+              119.999,
+              596.024,
+              205.255,
+              613.888
+            ],
+            "display_bbox_pt": [
+              118.0,
+              594.025,
+              207.254,
+              615.887
+            ],
+            "id": "G520d853cdb6f0c13be51",
+            "kind": "isolated_math_or_special_font",
+            "object_index": 10,
+            "owner_block_id": "f83126e8b9f550b271c7c8ee8f9072a47cef40739a0f5dd8d1874a7d3abcdeb1"
+          },
+          {
+            "core_bbox_pt": [
+              119.999,
+              596.024,
+              205.255,
+              613.888
+            ],
+            "display_bbox_pt": [
+              118.0,
+              594.025,
+              207.254,
+              615.887
+            ],
+            "id": "Gb6e09070592cea023feb",
+            "kind": "equation",
+            "object_index": 13,
+            "owner_block_id": "f83126e8b9f550b271c7c8ee8f9072a47cef40739a0f5dd8d1874a7d3abcdeb1"
+          }
+        ],
+        "source_page": 3,
+        "version": "glyph-ink-2"
+      }
+    ]
+  }
+}

@@ -45,7 +45,15 @@ export async function mount(container, { fileUrl, view = {}, onChange = () => {}
   };
   window.addEventListener("resize", s.onWindowResize); // also detects monitor/DPR changes
   try {
-    s.loading = pdfjsLib.getDocument({ url: fileUrl });
+    // Own the fetch lifetime: PDF.js 4.x's fetch reader cancel() leaves a native
+    // stream cancellation promise unhandled during rapid document replacement.
+    // Awaiting fetch/arrayBuffer here gives every abort a handled rejection.
+    s.fetchController = new AbortController();
+    const response = await fetch(fileUrl, { signal: s.fetchController.signal });
+    if (!response.ok) throw new Error(`PDFの取得に失敗しました (${response.status})`);
+    const data = await response.arrayBuffer();
+    if (s.disposed) return;
+    s.loading = pdfjsLib.getDocument({ data });
     s.doc = await s.loading.promise;
     if (s.disposed) return;
     // Read geometry only, without allocating canvases or text layers for all pages.
@@ -97,6 +105,23 @@ export function rememberPosition() {
 }
 export function refresh() { if (session) reflow(session, true); }
 export function pageCount() { return session?.records.size || 0; }
+
+// Search the active PDF's selectable text, including reflow pages not yet drawn.
+export async function findTextMatches(query) {
+  const current=session, needle=normalizeWhitespace(query).trim();
+  if (!current?.doc || !needle) return [];
+  const matches=[];
+  try {
+    for (let num=1;num<=current.doc.numPages;num++) {
+      const page=await current.doc.getPage(num);
+      if (current.disposed) return [];
+      const text=normalizeWhitespace((await page.getTextContent()).items.map(i=>i.str || "").join(""));
+      if (text.includes(needle)) matches.push({page:num,quote:query});
+      page.cleanup();
+    }
+  } catch (error) { if (!current.disposed) throw error; }
+  return current.disposed ? [] : matches;
+}
 
 function capturePosition(s) {
   const box = s.container.getBoundingClientRect();
@@ -268,6 +293,7 @@ export function unmount() {
   window.removeEventListener("resize", s.onWindowResize);
   window.removeEventListener("pagehide", s.onPageHide);
   for (const r of s.records.values()) { clearTimeout(r.markerTimer); release(r); }
+  s.fetchController?.abort();
   // Destroy the transport/worker even if getDocument or a page render is pending.
   s.loading?.destroy().catch(() => {});
   s.container.textContent = "";
