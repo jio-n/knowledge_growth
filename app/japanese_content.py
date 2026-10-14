@@ -6,6 +6,7 @@ from .japanese_translation import MAX_BLOCK_CHARS, MAX_UNITS, PDFError
 from .japanese_semantics import classify_page,assemble_page,FRONT_ROLES
 from .japanese_extraction import decorative_drawings,prose_text
 from .japanese_overlap import InkProof,overlap_pairs,OVERLAP_VERSION
+from .japanese_boundaries import seed,groups_for
 from collections import Counter
 
 MATH = re.compile(r'[=∑∫√∞±×÷≤≥≠∂∇²³α-ωΑ-Ω]|[\^_{}]|\\(?:frac|sum|begin)')
@@ -17,18 +18,6 @@ def padded(rect, bounds, margin=2):
     return fitz.Rect(r.x0-margin, r.y0-margin, r.x1+margin, r.y1+margin) & bounds
 
 
-def merge_regions(regions):
-    result = []
-    for region in regions:
-        r = fitz.Rect(region)
-        while True:
-            hits = [old for old in result if old.intersects(r)]
-            if not hits: break
-            for old in hits: r |= old; result.remove(old)
-        result.append(r)
-    return result
-
-
 def plan_page(page, blocks):
     bounds = fitz.Rect(0, 0, page.cropbox.width, page.cropbox.height)
     units = [dict(block=b, status='pending', reason=None, kind='text', asset_id=None) for b in blocks]
@@ -37,15 +26,19 @@ def plan_page(page, blocks):
     lines = [line for b in raw['blocks'] if b['type']==0 for line in b['lines']
              if not any(r.contains(fitz.Rect(line['bbox'])) for r in nonbody)]
     drawings,decorations=decorative_drawings(page,blocks)
-    regions = [padded(i['bbox'],bounds) for i in page.get_image_info()]
-    regions += [padded(d['rect'],bounds) for i,d in enumerate(drawings) if i not in decorations]
+    seeds=[seed('image',image['bbox'],bounds,i) for i,image in enumerate(page.get_image_info())]
+    # Keep the existing graphics safety margin mandatory; only optional text
+    # padding can be removed by boundary separation.
+    seeds += [seed('drawing',d['rect'],bounds,i,core_margin=2)
+              for i,d in enumerate(drawings) if i not in decorations]
     # Ingest's figure/table bbox is a candidate, not a scientific boundary. Re-
     # derive graphics from actual objects; a legacy oversized candidate must not
     # expand a small rule to include an entire prose column.
-    regions += [padded(b['bbox']['rect'],bounds) for b in blocks if b.get('bbox') and b.get('role')=='equation_candidate' and b.get('semantic_role')=='scientific_visual']
+    seeds += [seed('equation',b['bbox']['rect'],bounds,i,owner=b['id']) for i,b in enumerate(blocks)
+              if b.get('bbox') and b.get('role')=='equation_candidate' and b.get('semantic_role')=='scientific_visual']
     warning = 'annotations_present' if any(page.annots() or []) else None
     try:
-        regions += [padded(t.bbox,bounds) for t in page.find_tables().tables]
+        seeds += [seed('detected_table',t.bbox,bounds,i,core_margin=2) for i,t in enumerate(page.find_tables().tables)]
     except Exception:
         warning = 'table_detection_failed'
     # Unruled tables: aligned numeric rows plus their nearby header. Keep model
@@ -68,7 +61,7 @@ def plan_page(page, blocks):
             hr=fitz.Rect(header[0][0])
             for box,_ in header[1:]: hr |= box
             if len(header)>=2 and 0 <= r.y0-hr.y1 < 25 and hr.x0<r.x1 and hr.x1>r.x0: r |= hr
-        regions.append(padded(r,bounds))
+        seeds.append(seed('numeric_table',r,bounds,len(seeds),core_margin=2))
     proof=InkProof(page)
     overlaps,limit=overlap_pairs(proof,blocks)
     diagnostics={'source_page':page.number+1,'version':OVERLAP_VERSION,'pairs':overlaps,
@@ -91,41 +84,10 @@ def plan_page(page, blocks):
         prose=(prose_text(text) or b.get('semantic_role') in ('abstract_heading','section_heading')
                or fragment)
         if not prose and (MATH.search(text) or glyphs['math_glyphs'] or glyphs['nonhorizontal_glyphs']):
-            regions.append(padded(rect,bounds))
+            seeds.append(seed('isolated_math_or_special_font',rect,bounds,len(seeds),owner=b['id']))
             b.setdefault('_protection_reasons',[]).append('isolated_math_or_special_font')
-    regions=merge_regions(regions)
-    # Grow once from a positive seed, never from newly included font envelopes.
-    # Text-only collision groups merge by shared members, not rectangular contact.
-    groups=[]
-    by_id={b['id']:b for b in blocks}
-    for region in regions:
-        members={b['id'] for b in blocks if b['text'].strip() and b.get('bbox') and b.get('role') not in CAPTIONS
-                 and proof.touches(b,region) is not False}
-        groups.append({'rect':fitz.Rect(region),'seed':fitz.Rect(region),'members':members,'text_only':False})
-    for pair in overlaps:
-        if pair['classification']=='font_envelopes_only':continue
-        ids=set(pair['block_ids']);r=fitz.Rect(by_id[pair['block_ids'][0]]['bbox']['rect']) | fitz.Rect(by_id[pair['block_ids'][1]]['bbox']['rect'])
-        for bid in ids:by_id[bid].setdefault('_protection_reasons',[]).append(pair['classification'])
-        groups.append({'rect':padded(r,bounds),'seed':padded(r,bounds),'members':ids,'text_only':True})
-    merged=[]
-    for group in groups:
-        while True:
-            hits=[old for old in merged if old['members'] & group['members']]
-            if not hits:break
-            for old in hits:
-                group['rect'] |= old['rect'];group['seed'] |= old['seed'];group['members'] |= old['members']
-                group['text_only'] &= old['text_only'];merged.remove(old)
-        merged.append(group)
-    groups=merged
-    for group in groups:
-        for bid in group['members']:group['rect'] |= padded(by_id[bid]['bbox']['rect'],bounds)
-        for b in blocks:
-            if b['id'] in group['members'] or not b['text'].strip() or not b.get('bbox') or b.get('role') in CAPTIONS:continue
-            if proof.touches(b,group['rect']) is not False:
-                diagnostics['boundary_conflicts'].append({'block_id':b['id'],'region_members':len(group['members'])})
-        diagnostics['regions'].append({'seed_size_pt':[round(group['seed'].width,3),round(group['seed'].height,3)],
-            'crop_size_pt':[round(group['rect'].width,3),round(group['rect'].height,3)],
-            'member_count':len(group['members']),'expansion_steps':1,'text_only':group['text_only']})
+    groups,boundaries=groups_for(proof,blocks,seeds,overlaps,bounds,CAPTIONS)
+    diagnostics.update(boundaries)
     regions=[g['rect'] for g in groups]
     captions=[u for u in units if u['block'].get('role') in CAPTIONS]
     associations={i:[] for i in range(len(regions))}

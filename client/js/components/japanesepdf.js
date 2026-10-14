@@ -108,7 +108,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       if (c?.abstract.source_chars && !c.abstract_complete) status.textContent += " · PDF生成済み／要旨の日本語化は未完了";
       if (r.visual_quality_version !== "native-3") status.textContent += " · 新しい原物検証は未実施（再生成できます）";
       if (r.assembly_version !== "semantic-1") status.textContent += " · 文章構造の再構成は未実施（再生成できます）";
-      if (r.overlap_version !== "glyph-ink-1") status.textContent += " · 文字重なり検証は旧方式（再生成できます）";
+      if (r.overlap_version !== "glyph-ink-2") status.textContent += " · 文字重なり検証は旧方式（再生成できます）";
       if (r.extraction_version !== "glyph-spacing-1") status.textContent += " · 本文の抽出・空白復元は旧方式（再生成できます）";
     } else if (current?.state === "failed") status.textContent = `生成失敗（${current.error}）。原文を閲覧しながら再試行できます。`;
     const d = current?.report?.diagnostics;
@@ -129,10 +129,20 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
         Object.entries(d.attempt_errors || {}).map(([code,count])=>`${TRANSLATION_ERRORS[code] || "翻訳検証エラー"} ${count}件`).join("、")));
       if (current.report.coverage) reportBody.append(el("p", {},
         `本文の読み順を意味単位で構成。本文として識別した原物保持：${current.report.coverage.body_preserved_in_visuals}件（境界確認） · 周辺情報：${d?.metadata_units || 0}単位 · 元blockの対応重複：${current.report.quality?.source_mapping_duplicates ?? "未検査"}`));
+      const contacts={bbox_separated:"矩形は非交差",bbox_only:"矩形のみ接触・inkなし",ink_contact:"ink接触",contact_unproven:"局所検証不能"};
+      const seedKinds={drawing:"描画",image:"画像",detected_table:"検出Table",numeric_table:"数値列Table",equation:"Equation",isolated_math_or_special_font:"独立した数式・特殊font",text_collision:"文字衝突・未証明"};
       for (const page of current.report.content_detection || []) {
         reportBody.append(el("p",{class:"japanese-pdf-overlap-quality"},
           `文字重なり検証 · 原文p.${page.source_page} · ` + Object.entries(page.pair_counts || {}).map(([kind,count])=>`${kind} ${count}組`).join("、") +
           ` · 境界未解決 ${page.boundary_conflicts?.length || 0}件 · 比較上限 ${page.pair_limit_reached ? "到達" : "未到達"}`));
+        for (const seed of page.seeds || []) reportBody.append(el("p",{class:"japanese-pdf-seed-quality"},
+          `seed ${seed.id} · ${seedKinds[seed.kind] || "原物"} · object ${seed.object_index} · 保持必須領域 ${(seed.core_bbox_pt || []).join(", ")}pt`));
+        for (const boundary of page.boundary_checks || []) reportBody.append(el("p",{class:"japanese-pdf-boundary-quality"},
+          `${boundary.group_id} · seed ${(boundary.seed_ids || []).join(", ")} · 元block ${boundary.block_id} · ` +
+          `${contacts[boundary.before?.classification] || "未検証"} → ${contacts[boundary.minimum_crop?.classification] || "未検証"} · `+
+          `${boundary.resolution === "padding_trimmed" ? "追加余白を縮小・分離済み" : "境界未解決"} · `+
+          `原物と全文字範囲 ${boundary.mandatory_seed_and_font_boxes_preserved ? "保持" : "未確認"}` +
+          (boundary.minimum_crop?.proof_error ? ` · ${boundary.minimum_crop.proof_error}` : "")));
         for (const pair of page.pairs || []) reportBody.append(el("p",{},
           `${pair.classification} · baseline差 ${pair.minimum_baseline_difference_pt ?? "未確認"}pt · glyph数 ${(pair.glyph_counts || []).join(" / ")} · 交差ink ${pair.overlapping_ink_pixels ?? "未確認"}px · 原描画照合 ${pair.source_render_verified ? "一致" : "未確認"}`));
         for (const region of page.regions || []) reportBody.append(el("p",{},
@@ -187,7 +197,7 @@ export function createJapanesePdfControls(sourceId, { onSwitch, rememberedId }) 
       current = artifacts.find(a => a.generation_id === rememberedId) || artifacts[0] || result;
       const ready = artifacts.filter(a => a.state === "preview_ready");
       history.textContent = "";
-      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.overlap_version === "glyph-ink-1" ? "文字重なり検証版" : a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
+      for (const a of ready) history.append(el("option", { value: a.generation_id, selected: a.generation_id === current.generation_id || undefined }, `${a.report?.overlap_version === "glyph-ink-2" ? "境界分離検証版（文字重なり検証版）" : a.report?.overlap_version === "glyph-ink-1" ? "旧文字重なり検証版" : a.report?.extraction_version === "glyph-spacing-1" ? "本文抽出改善版" : a.report?.assembly_version === "semantic-1" ? "旧文章構造版" : a.report?.layout_version ? "旧再組版" : "旧座標版"} · 原文p.${a.pages.join(", ")}`));
       history.hidden = !ready.length;
       update();
       if (current.state === "generating") timer = setTimeout(refresh, 1500);

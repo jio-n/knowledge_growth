@@ -80,3 +80,5 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [日本語PDFのAbstract・英文抽出品質](japanese_abstract_reading_quality.md): math/font誤保護、glyph間space、脚注/folio、Abstract文字数ゲート、reflow-3とWindows再検証。
 
 - [1,150文字Abstractのfont外接矩形の誤保護](japanese_overlap_quality.md): glyph/原描画の局所proof、非連鎖領域、タイトル意味review、安全なWindows数値診断、reflow-4。
+
+- [保護領域の余白による境界未解決の分離](japanese_boundary_quality.md): seed provenanceと3値接触診断、必須範囲を保持した余白縮小、reflow-5 / glyph-ink-2とWindows再検証。

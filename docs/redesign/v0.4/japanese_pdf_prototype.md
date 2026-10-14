@@ -15,7 +15,7 @@ Windows p.1の翻訳全件失敗を受け、[部分成功・失敗分類・再�
 さらにpixel差0のoriginal_text不一致に対し、[native-3のclip検証](japanese_clip_quality.md)を追加した。
 
 
-最新の追加修正は[Abstract 1,150文字の誤保護とタイトル完全性](japanese_overlap_quality.md)を参照。layout reflow-4 / glyph-ink-1 / title-meaning-1。
+最新の追加修正は[保護領域の余白と境界分離](japanese_boundary_quality.md)を参照。layout reflow-5 / glyph-ink-2 / title-meaning-1。
 
 ## 方針と画面
 

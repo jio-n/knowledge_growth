@@ -3,7 +3,7 @@ import re
 import fitz
 from PIL import Image,ImageChops,ImageFilter
 
-OVERLAP_VERSION='glyph-ink-1'
+OVERLAP_VERSION='glyph-ink-2'
 PROOF_DPI=288
 MAX_PROOF_PIXELS=2_000_000
 MAX_OVERLAP_PAIRS=512
@@ -84,11 +84,25 @@ class InkProof:
         except Exception:return None
 
     def touches(self,block,clip):
+        return self.contact(block,clip)['touches']
+
+    def contact(self,block,clip):
+        """Three-valued evidence, never interpreting an unavailable mask as ink."""
         box=fitz.Rect(block['bbox']['rect'])
         area=box & clip
-        if area.is_empty:return False
+        report={'touches':False,'classification':'bbox_separated','proof_error':None,
+                'intersection_size_pt':[round(max(0,area.width),3),round(max(0,area.height),3)],
+                'ink_pixels':0}
+        if area.is_empty:return report
+        evidence=self.glyphs(block)
         mask=self.mask(block,area)
-        return None if mask is None else mask.getbbox() is not None
+        if mask is None:
+            report.update(touches=None,classification='contact_unproven',ink_pixels=None,
+                          proof_error=evidence['error'] or 'mask_unavailable')
+        else:
+            count=mask.histogram()[255]
+            report.update(touches=bool(count),classification='ink_contact' if count else 'bbox_only',ink_pixels=count)
+        return report
 
     def compare(self,a,b):
         ra,rb=fitz.Rect(a['bbox']['rect']),fitz.Rect(b['bbox']['rect']);area=ra & rb

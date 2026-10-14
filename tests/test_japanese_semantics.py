@@ -28,7 +28,7 @@ def test_semantic_paper_has_complete_title_abstract_reading_order_and_provenance
     doc_before=client.get(f'/api/sources/{sid}/document').json()
     status,response=generate(client,sid,[1,2,3])
     assert status['state']=='preview_ready',status
-    r=status['report'];assert r['assembly_version']=='semantic-1' and r['layout_version']=='reflow-4'
+    r=status['report'];assert r['assembly_version']=='semantic-1' and r['layout_version']=='reflow-5'
     title=next(u for u in r['semantic_units'] if u['role']=='paper_title')
     assert len(title['original_block_ids'])==3 and title['status']=='translated'
     requests=[b for turn in runtime.inputs for b in turn]

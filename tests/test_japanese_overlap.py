@@ -112,7 +112,7 @@ def test_local_numeric_diagnostic_is_read_only_and_never_emits_content(client):
     with closing(get_db()) as con:original=list(con.iterdump())
     command=[sys.executable,'scripts/diagnose_japanese_overlap.py','--source-id',sid,'--pages','1,2']
     run=subprocess.run(command,capture_output=True,text=True,check=True)
-    report=json.loads(run.stdout);assert not run.stderr and report['overlap_version']=='glyph-ink-1'
+    report=json.loads(run.stdout);assert not run.stderr and report['overlap_version']=='glyph-ink-2'
     assert report['abstract']['candidate_source_chars']==1150 and report['abstract']['protected_source_chars']==0
     assert all(p not in run.stdout for p in PARTS) and TITLE not in run.stdout and 'fontbuffer' not in run.stdout
     with closing(get_db()) as con:assert list(con.iterdump())==original

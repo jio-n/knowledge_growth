@@ -20,7 +20,7 @@ from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQual
 from .japanese_extraction import EXTRACTION_VERSION
 from .japanese_overlap import OVERLAP_VERSION,content_report
 
-LAYOUT_VERSION='reflow-4'
+LAYOUT_VERSION='reflow-5'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
