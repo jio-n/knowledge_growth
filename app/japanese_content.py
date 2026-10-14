@@ -4,6 +4,7 @@ import re
 import fitz
 from .japanese_translation import MAX_BLOCK_CHARS, MAX_UNITS, PDFError
 from .japanese_semantics import classify_page,assemble_page,FRONT_ROLES
+from .japanese_extraction import decorative_drawings,prose_text
 
 MATH = re.compile(r'[=∑∫√∞±×÷≤≥≠∂∇²³α-ωΑ-Ω]|[\^_{}]|\\(?:frac|sum|begin)')
 CAPTIONS = ('figure_caption', 'table_caption')
@@ -33,10 +34,13 @@ def plan_page(page, blocks):
     nonbody=[padded(b['bbox']['rect'],bounds,.2) for b in blocks if b.get('bbox') and b.get('semantic_role') in FRONT_ROLES]
     lines = [line for b in raw['blocks'] if b['type']==0 for line in b['lines']
              if not any(r.contains(fitz.Rect(line['bbox'])) for r in nonbody)]
+    drawings,decorations=decorative_drawings(page,blocks)
     regions = [padded(i['bbox'],bounds) for i in page.get_image_info()]
-    regions += [padded(d['rect'],bounds) for d in page.get_drawings()]
-    regions += [padded(b['bbox']['rect'],bounds) for b in blocks if b.get('bbox') and b.get('role') in
-                ('figure_candidate','table_candidate','equation_candidate')]
+    regions += [padded(d['rect'],bounds) for i,d in enumerate(drawings) if i not in decorations]
+    # Ingest's figure/table bbox is a candidate, not a scientific boundary. Re-
+    # derive graphics from actual objects; a legacy oversized candidate must not
+    # expand a small rule to include an entire prose column.
+    regions += [padded(b['bbox']['rect'],bounds) for b in blocks if b.get('bbox') and b.get('role')=='equation_candidate' and b.get('semantic_role')=='scientific_visual']
     warning = 'annotations_present' if any(page.annots() or []) else None
     try:
         regions += [padded(t.bbox,bounds) for t in page.find_tables().tables]
@@ -50,7 +54,11 @@ def plan_page(page, blocks):
         row = next((row for row in rows if abs(row[0][0].y0-r.y0)<6), None)
         if row is None: rows.append([(r,text)])
         else: row.append((r,text))
-    numeric = [row for row in rows if len(row)>=2 and any(re.fullmatch(r'[+-]?\d+(?:\.\d+)?%?', t) for _,t in row)]
+    numeric_count=lambda row:sum(bool(re.fullmatch(r'[+-]?\d+(?:\.\d+)?%?',t)) for _,t in row)
+    numeric_candidates=[row for row in rows if len(row)>=2 and all(len(t)<80 for _,t in row) and numeric_count(row)]
+    numeric=[row for row in numeric_candidates if numeric_count(row)>=2 or any(
+        other is not row and len(other)==len(row) and abs(row[0][0].y0-other[0][0].y0)<40
+        and all(abs(a.x0-b.x0)<5 for (a,_),(b,_) in zip(sorted(row,key=lambda v:v[0].x0),sorted(other,key=lambda v:v[0].x0))) for other in numeric_candidates)]
     for row in numeric:
         r=fitz.Rect(row[0][0])
         for box,_ in row[1:]: r |= box
@@ -65,12 +73,22 @@ def plan_page(page, blocks):
         rect=fitz.Rect(b['bbox']['rect'])
         if not bounds.contains(rect) or rect.is_empty: warning='invalid_geometry'; continue
         if b.get('semantic_role') in FRONT_ROLES:continue
-        if MATH.search(b['text']) or any(rect.intersects(fitz.Rect(line['bbox'])) and
-                (tuple(line['dir'])!=(1.,0.) or any(re.search(r'math|symbol|dingbat|cmmi|cmsy|cmex',s['font'],re.I) for s in line['spans'])) for line in lines):
+        if not b['text'].strip():continue
+        text=b.get('_line_text',b['text'])
+        prose=(prose_text(text) or b.get('semantic_role') in ('abstract_heading','section_heading')
+               or (b.get('semantic_role')=='abstract_body' and len(re.findall(r'\b[A-Za-z]{2,}\b',text))>=4))
+        if not prose and (MATH.search(text) or any(rect.intersects(fitz.Rect(line['bbox'])) and
+                (tuple(line['dir'])!=(1.,0.) or any(re.search(r'math|symbol|dingbat|cmmi|cmsy|cmex',s['font'],re.I) for s in line['spans'])) for line in lines)):
             regions.append(padded(rect,bounds))
+            b.setdefault('_protection_reasons',[]).append('isolated_math_or_special_font')
         for other in blocks:
-            if other['id']!=b['id'] and other.get('bbox') and b['text'] and other['text'] and rect.intersects(fitz.Rect(other['bbox']['rect'])):
-                regions.append(padded(rect | fitz.Rect(other['bbox']['rect']),bounds))
+            if other['id']!=b['id'] and other.get('bbox') and b['text'] and other['text']:
+                other_rect=fitz.Rect(other['bbox']['rect']);intersection=rect & other_rect
+                # Ascender/descender line boxes often overlap slightly in TeX.
+                # Large/actual overlap remains protected; no drawing is ignored.
+                if not intersection.is_empty and intersection.height>min(rect.height,other_rect.height)*.18:
+                    regions.append(padded(rect | other_rect,bounds))
+                    b.setdefault('_protection_reasons',[]).append('overlapping_text')
     regions=merge_regions(regions)
     # Capture whole intersecting source blocks, not half a line inside a visual.
     while True:
@@ -78,7 +96,7 @@ def plan_page(page, blocks):
         for region in regions:
             r=fitz.Rect(region)
             for b in blocks:
-                if b.get('bbox') and b.get('role') not in CAPTIONS and r.intersects(fitz.Rect(b['bbox']['rect'])):
+                if b['text'].strip() and b.get('bbox') and b.get('role') not in CAPTIONS and r.intersects(fitz.Rect(b['bbox']['rect'])):
                     r |= padded(b['bbox']['rect'],bounds)
             expanded.append(r)
         joined=merge_regions(expanded)
@@ -118,8 +136,20 @@ def plan_page(page, blocks):
         regions=[bounds]; associations={0:[]}
     assets=[]
     consumed=set()
+    candidate_owners={}
+    for u in units:
+        b=u['block']
+        if b['text'].strip() or not b.get('bbox'):continue
+        br=fitz.Rect(b['bbox']['rect']);hits=[((br & r).get_area(),i) for i,r in enumerate(regions) if br.intersects(r)]
+        if hits:candidate_owners[b['id']]=max(hits)[1]
+        else:
+            # Decorative rules have no lexical content. Keep their real source
+            # correspondence in the report, without manufacturing a Figure.
+            b['semantic_role']='page_decoration'
+            u.update(kind='metadata',status='skipped_protected',reason='decorative_rule')
     for i,r in enumerate(regions):
-        members=[u for u in units if warning or (u['block'].get('bbox') and r.intersects(fitz.Rect(u['block']['bbox']['rect'])))]
+        members=[u for u in units if warning or (u['block'].get('bbox') and
+                 (candidate_owners.get(u['block']['id'])==i if not u['block']['text'].strip() else r.intersects(fitz.Rect(u['block']['bbox']['rect']))))]
         attached=associations[i]
         ids=[u['block']['id'] for u in members]
         aid='V'+sha256(repr((page.number,tuple(r),ids)).encode()).hexdigest()[:24]
@@ -131,6 +161,10 @@ def plan_page(page, blocks):
                    reason=warning or ('visual_without_caption' if not attached and role!='equation_candidate' else None))
         assets.append(asset)
         for u in members:
+            if any(r.intersects(padded(d['rect'],bounds)) for j,d in enumerate(drawings) if j not in decorations):
+                u['block'].setdefault('_protection_reasons',[]).append('drawing_region')
+            if any(r.intersects(fitz.Rect(image['bbox'])) for image in page.get_image_info()):
+                u['block'].setdefault('_protection_reasons',[]).append('image_region')
             u.update(status='skipped_unsafe' if warning else 'skipped_protected', reason=warning or 'visual_or_equation', kind='visual', asset_id=aid)
             consumed.add(u['block']['id'])
         for u in attached:
@@ -156,7 +190,7 @@ def detect_units(document,blocks,pages):
         page_units,items=plan_page(document[number-1],tagged)
         for unit in page_units:
             b=unit['block']
-            if (unit['kind']=='visual' and b.get('semantic_role') in ('paragraph','abstract_body','section_heading')
+            if (unit['kind']=='visual' and b.get('semantic_role')=='paragraph'
                     and b.get('_font_size',11)<=11 and len(b['text'])<80
                     and not b['text'].rstrip().endswith(('.', '?', '!'))):
                 b['semantic_role']='scientific_visual'

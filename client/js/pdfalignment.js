@@ -49,7 +49,11 @@ export function originalSelection(report,page,bbox) {
     const candidates=report?.units.filter(u=>u.page===page&&contains(rectOf(u.bbox),r)) || [];
     return candidates.length===1 ? {blockId:candidates[0].block_id,page:candidates[0].page,bbox:candidates[0].bbox}:null;
   }
-  const text=report.units.filter(u=>u.kind!=="visual" && u.placements.some(p=>p.japanese_page===page&&contains(rectOf(p.japanese_bbox),r)));
+  // PDF.js DOM ranges use the font's typographic ascent/descent; Story reports
+  // tighter glyph bounds. Allow a bounded fraction of the placed font size,
+  // only when identifying a unique text unit. Original/asset geometry is never
+  // expanded or persisted, and multi-unit selections remain unresolved.
+  const text=report.units.filter(u=>u.kind!=="visual" && u.placements.some(p=>p.japanese_page===page&&contains(rectOf(p.japanese_bbox),r,Math.max(2,Math.min(5,(u.font_size || 11)*.3)))));
   if (text.length===1) return {blockId:text[0].block_id,page:text[0].page,bbox:text[0].bbox};
   if (text.length>1 && text[0].semantic_unit_id && text.every(u=>u.semantic_unit_id===text[0].semantic_unit_id)) {
     // The selection identifies a whole assembled paragraph/title. Its first
@@ -67,5 +71,5 @@ export function originalSelection(report,page,bbox) {
   const unit=candidates.sort((a,b)=>area(rectOf(a.bbox))-area(rectOf(b.bbox)))[0];
   return {blockId:unit?.block_id || a.original_block_ids[0],page:a.source_page};
 }
-function contains(a,b) { return a&&b&&a[0]-2<=b[0]&&a[1]-2<=b[1]&&a[2]+2>=b[2]&&a[3]+2>=b[3]; }
+function contains(a,b,margin=2) { return a&&b&&a[0]-margin<=b[0]&&a[1]-margin<=b[1]&&a[2]+margin>=b[2]&&a[3]+margin>=b[3]; }
 function area(r) { return (r[2]-r[0])*(r[3]-r[1]); }

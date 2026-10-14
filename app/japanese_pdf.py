@@ -17,8 +17,9 @@ from .japanese_semantics import (ASSEMBLY_VERSION,source_members,report_units,se
 from .japanese_translation import PDFError
 from .japanese_visual_quality import (cropped_visual, visual_quality, VisualQualityError,
     canonical_pixmap, safe_visual_metadata, VISUAL_QUALITY_VERSION, DPI, MAX_VISUAL_PIXELS)
+from .japanese_extraction import EXTRACTION_VERSION
 
-LAYOUT_VERSION='reflow-2'
+LAYOUT_VERSION='reflow-3'
 WIDTH,HEIGHT,MARGIN=595.,842.,44.
 BOTTOM=HEIGHT-MARGIN
 BODY_SIZE=11.
@@ -26,7 +27,12 @@ CAPTION_SIZE=10.
 MAX_PAGES=64
 
 
-def norm(text): return re.sub(r'\s+','',text)
+def norm(text):
+    # Story may shape ASCII fi/fl into a standard Unicode ligature. Restrict
+    # equivalence to these letter glyphs; never normalize scientific numbers,
+    # symbols or arbitrary compatibility characters.
+    text=text.translate(str.maketrans(dict(zip('ﬀﬁﬂﬃﬄﬅﬆ',('ff','fi','fl','ffi','ffl','st','st')))))
+    return re.sub(r'\s+','',text)
 
 
 def geometry(page,rect):
@@ -67,7 +73,7 @@ def balanced_title(text,font,width,size):
     return '\n'.join(result+[remaining])
 
 
-def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT,line_height=1.6,compact=False,untranslated=False,break_lines=False):
+def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT,line_height=1.6,compact=False,untranslated=False,break_lines=False,first_bottom=0):
     # Fixed sizes. Story emits subsequent pages when a paragraph exceeds the
     # first available rectangle; no scale-to-fit or truncation is permitted.
     css=('@font-face {font-family:KGJapanese;src:url(kg-cjk.ttf);}'
@@ -79,7 +85,7 @@ def text_document(text,width,archive,size=BODY_SIZE,first_y=MARGIN,height=HEIGHT
     story=fitz.Story(html='<div lang="ja">'+marker+escaped+'</div>',user_css=css,archive=archive)
     def rectfn(number,filled):
         if number>=MAX_PAGES: raise PDFError('output_page_limit')
-        return fitz.Rect(0,0,width,height),fitz.Rect(MARGIN,first_y if number==0 else MARGIN,width-MARGIN,height-MARGIN),None
+        return fitz.Rect(0,0,width,height),fitz.Rect(MARGIN,first_y if number==0 else MARGIN,width-MARGIN,height-MARGIN-(first_bottom if number==0 else 0)),None
     return story.write_with_links(rectfn)
 
 
@@ -122,17 +128,29 @@ class Reflow:
         role=unit.get('semantic_role')
         translated=self.japanese(unit) if unit['kind']!='metadata' else False
         text=unit['text'] if translated else unit['block']['text']
+        if not text.strip() and role=='page_decoration':
+            self.record(unit,self.page,fitz.Rect(MARGIN,self.y,MARGIN,self.y))
+            unit['_rendered_text']='';return
         if any(not c.isspace() and not self.font.has_glyph(ord(c)) for c in text):raise PDFError('missing_source_glyph')
         untranslated=not translated and unit['kind']!='metadata'
         unit['_rendered_text']=('原文（未翻訳）\n' if untranslated else '')+text
         if self.page.rect.height-self.y-MARGIN<65: self.new_page()
-        size=20. if role=='paper_title' else 10. if unit['kind']=='metadata' else 16. if role in ('abstract_heading','section_heading') else BODY_SIZE
+        size=20. if role=='paper_title' else 16. if role in ('abstract_heading','section_heading') else BODY_SIZE
         if role=='paper_title':text=balanced_title(text,self.font,self.page.rect.width-MARGIN*2,size)
         # Headings stay with the following paragraph by reserving a few lines.
         if role in ('abstract_heading','section_heading') and self.page.rect.height-self.y-MARGIN<130: self.new_page()
-        with text_document(text,self.page.rect.width,self.archive,size,self.y,self.page.rect.height,
-                           1.25 if role=='paper_title' or unit['kind']=='metadata' else 1.6,
-                           unit['kind']=='metadata',untranslated,role=='paper_title') as text_pdf:
+        def compose(first_bottom=0):
+            return text_document(text,self.page.rect.width,self.archive,size,self.y,self.page.rect.height,
+                                 1.25 if role=='paper_title' or unit['kind']=='metadata' else 1.6,
+                                 unit['kind']=='metadata',untranslated,role=='paper_title',first_bottom)
+        text_pdf=compose()
+        if len(text_pdf)>1:
+            lines=lambda p:sum(len(b['lines']) for b in p.get_text('dict')['blocks'] if b['type']==0)
+            if lines(text_pdf[0])<=2:
+                text_pdf.close();self.new_page();text_pdf=compose()
+            elif lines(text_pdf[-1])==1:
+                text_pdf.close();text_pdf=compose(size*1.6)
+        with text_pdf:
             for part,temp in enumerate(text_pdf):
                 if part: self.new_page()
                 rect=text_bounds(temp)
@@ -266,7 +284,7 @@ def generate_pdf(original,units,output_path):
             layout=Reflow(source,output,units,fitz.Archive(directory),font)
             ordered=sorted((u for u in units if 'layout_item' in u),key=lambda u:u['layout_item']['order'])
             titles=[u for u in ordered if u.get('semantic_role')=='paper_title']
-            front=[u for u in ordered if u['kind']=='metadata' and u.get('semantic_role') not in ('running_header','footer')]
+            front=[u for u in ordered if u['kind']=='metadata' and u.get('semantic_role') not in ('running_header','footer','footnote','page_decoration')]
             trailing=[u for u in ordered if u['kind']=='metadata' and u not in front]
             ordered=titles+front+[u for u in ordered if u not in titles+front+trailing]+trailing
             section=''
@@ -284,10 +302,18 @@ def generate_pdf(original,units,output_path):
                             layout.new_page(width,max(HEIGHT,reserve+MARGIN*2))
                 if item['kind'] in ('text','metadata'):
                     if owner['kind']=='metadata':
-                        category=('authors' if owner.get('semantic_role') in ('authors','affiliations','contact') else
+                        if owner.get('semantic_role')=='page_decoration':
+                            layout.paragraph(owner);continue
+                        category=('footnotes' if owner.get('semantic_role')=='footnote' else 'authors' if owner.get('semantic_role') in ('authors','affiliations','contact') else
                                   'trailing' if owner in trailing else 'bibliographic')
                         if category not in labels:
-                            layout.label({'authors':'著者・所属・連絡先（原文）','bibliographic':'書誌情報（原文）',
+                            # A native wide asset deliberately ends its page.
+                            # Reuse its remaining space for text-only end matter,
+                            # rather than create an almost-empty footer page.
+                            if category in ('trailing','footnotes') and layout.y==MARGIN and len(output)>1:
+                                output.delete_page(len(output)-1);layout.page=output[-1]
+                                layout.y=max((fitz.Rect(f['bbox']).y1 for f in layout.flow if f['page']==len(output)),default=MARGIN)+24
+                            layout.label({'authors':'著者・所属・連絡先（原文）','bibliographic':'書誌情報（原文）','footnotes':'脚注（原文）',
                                           'trailing':'原文の周辺情報（本文外）'}[category]);labels.add(category)
                     if owner.get('semantic_role') in ('abstract_heading','section_heading'):section=owner['block']['id']
                     owner['section']='metadata' if owner['kind']=='metadata' else section
@@ -311,10 +337,11 @@ def generate_pdf(original,units,output_path):
         if toc: output.set_toc(toc)
         output.embfile_add('knowledge_growth-japanese-font-NOTICE.txt',
             (ROOT/'docs/licenses/droid-NOTICE.txt').read_bytes(),desc='Droid Sans Fallback: Apache 2.0 license and attribution')
-        output.set_metadata({'title':'日本語再組版・選択ページ試作','creator':'knowledge_growth reflow-2'})
+        output.set_metadata({'title':'日本語再組版・選択ページ試作','creator':'knowledge_growth '+LAYOUT_VERSION})
         output.save(output_path,garbage=4,deflate=True)
     with fitz.open(stream=original,filetype='pdf') as source,fitz.open(output_path) as completed:
         quality=validate_output(source,completed,units,layout.assets,layout.flow)
+        for unit in units:unit['_placement_verified']=True
         translated=[u for u in units if u['status']=='translated']
         reading_coverage=coverage(units)
         by_id={u['block']['id']:u for u in units}
@@ -325,7 +352,10 @@ def generate_pdf(original,units,output_path):
             for key in ('original_block_ids','caption_block_ids'):public_asset[key]=source_ids(a[key])
             public_assets.append(public_asset)
         text_blocks=sum(bool(u['block']['text'].strip()) and u['kind']!='visual' for u in units)
-        return {'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
+        return {'layout_version':LAYOUT_VERSION,'assembly_version':ASSEMBLY_VERSION,'extraction_version':EXTRACTION_VERSION,
+                'reading_quality':{'abstract':'complete' if reading_coverage['abstract_complete'] else 'incomplete' if reading_coverage['abstract']['source_chars'] else 'not_selected',
+                                   'pdf_generated':True},
+                'visual_quality_version':VISUAL_QUALITY_VERSION,'selected_pages':sorted({u['block']['page'] for u in units}),
                 'japanese_page_count':len(completed),'original_page_count':len(source),
                 'counts':dict(Counter(u['status'] for u in units)),'text_blocks':text_blocks,
                 'source_text_blocks':sum(bool(u['block']['text'].strip()) for u in units),

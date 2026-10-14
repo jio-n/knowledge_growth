@@ -16,7 +16,7 @@ from .import_bridge.validator import canonical
 from .japanese_pdf import detect_units, generate_pdf, LAYOUT_VERSION
 from .japanese_translation import PDFError, save_unit, translate_units, translation_diagnostics
 from .japanese_visual_quality import VisualQualityError, VISUAL_QUALITY_VERSION
-from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report
+from .japanese_semantics import ASSEMBLY_VERSION,report_units,semantic_report,coverage
 from .paper_brief import StrictModel
 from .routes_ai import local_control
 
@@ -122,7 +122,7 @@ def run_generation(token, runtime):
                             unit.update(status='failed', reason=code)
                         save_unit(con, source, version, unit)
                 report = {'assembly_version':ASSEMBLY_VERSION,'counts': dict(Counter(u['status'] for u in units)),
-                          'units':report_units(units),'semantic_units':semantic_report(units)}
+                          'units':report_units(units),'semantic_units':semantic_report(units),'coverage':coverage(units)}
                 report['diagnostics'] = translation_diagnostics(units, translation_stats, failure_stage=failure_stage)
                 if isinstance(error, VisualQualityError):
                     report['quality'] = error.quality

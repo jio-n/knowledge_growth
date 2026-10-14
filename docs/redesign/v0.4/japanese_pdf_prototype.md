@@ -1,6 +1,8 @@
 # 選択ページ相当の日本語PDF再組版 — Phase 3-2
 
-最新の`reflow-2 / semantic-1`では、翻訳前に文章を意味単位へ組み立てる。
+最新の`reflow-3 / semantic-1`では、文章構造に加え通常Abstract・glyph間space・脚注/folioを改善した。
+[Abstract・英文抽出・品質ゲート](japanese_abstract_reading_quality.md)を参照。
+翻訳前に文章を意味単位へ組み立てる。
 [タイトル・Abstract・周辺情報・本文カバレッジの改善](japanese_semantic_reflow.md)を参照。
 以下は再組版の初期設計・検証記録。
 

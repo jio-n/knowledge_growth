@@ -14,7 +14,7 @@ from .import_bridge.validator import canonical, _object, _constant
 from .llm.base import LLMError
 from .paper_brief import StrictModel
 
-PROMPT_VERSION = 'japanese-pdf-0.3'
+PROMPT_VERSION = 'japanese-pdf-0.4'
 MAX_BATCH_CHARS = 6000
 MAX_BLOCK_CHARS = 5000
 MAX_BATCH_BLOCKS = 8
@@ -48,7 +48,7 @@ TRANSLATION_ERRORS = frozenset({
     'citations_changed', 'references_changed', 'terms_changed', 'japanese_required',
     'ai_uncertain', 'translation_validation_error', 'output_too_large',
     'translation_attempt_limit', 'translation_time_limit',
-    'assembled_user_edit_review',
+    'assembled_user_edit_review','urls_changed','inline_math_changed',
 })
 
 
@@ -101,7 +101,7 @@ def protected_terms(text):
     # Also protects digit-bearing model names (GPT4o, ViT-B/16, Llama-3.1).
     candidates = re.findall(r'(?<![A-Za-z0-9_])(?:[A-Za-z][A-Za-z0-9]*(?:[-/][A-Za-z0-9.]+)+|[A-Za-z]+[0-9][A-Za-z0-9.]*)(?![A-Za-z0-9_])', text)
     terms = {t.rstrip('.') for t in candidates if any(c.isdigit() for c in t) or re.search(r'[A-Z]{2}|[a-z][A-Z]', t)}
-    terms.update(re.findall(r'(?<![A-Za-z0-9_])(?:MMAD|CLIP|LoRA|ViT|GPT|AUROC)(?![A-Za-z0-9_])', text))
+    terms.update(re.findall(r'(?<![A-Za-z0-9_])(?:MMAD|MLLM|CLIP|LoRA|ViT|GPT|AUROC)(?![A-Za-z0-9_])', text))
     return terms
 
 
@@ -120,6 +120,23 @@ def validate_block(item, original):
         raise TranslationFailure('references_changed')
     if not protected_terms(original).issubset(protected_terms(translated)):
         raise TranslationFailure('terms_changed')
+    urls=lambda s:[x.rstrip('.,;)]}）') for x in re.findall(r'https?://[^\s<>。、「」]+',s)]
+    source_urls=urls(original);target_urls=urls(translated)
+    resolved=[]
+    for token in target_urls:
+        # Japanese prose can immediately follow an ASCII URL. Its ASCII URL
+        # must still match exactly: /paper2 may not pass as /paper. Unicode
+        # source URLs remain strict because their path boundary is ambiguous.
+        matches=[url for url in source_urls if token==url or (url.isascii() and token.startswith(url)
+                 and re.match(r'[\u3040-\u30ff\u3400-\u9fff]',token[len(url):]))]
+        resolved.append(max(matches,key=len) if matches else token)
+    if source_urls and Counter(source_urls)!=Counter(resolved):raise TranslationFailure('urls_changed')
+    # A short inline expression does not turn its prose paragraph into a
+    # Figure. Preserve that expression exactly while translating its context.
+    expressions=lambda s:Counter(re.sub(r'\s+','',x).rstrip('.') for x in re.findall(r'(?<![A-Za-z])(?:[A-Za-zα-ωΑ-Ω](?:\s*[=≤≥±×]\s*[A-Za-z0-9α-ωΑ-Ω.+-]+)+)',s))
+    if expressions(original) and expressions(original)!=expressions(translated):raise TranslationFailure('inline_math_changed')
+    operators=lambda s:Counter(re.findall(r'[=∑∫√∞±×÷≤≥≠∂∇α-ωΑ-Ω]',s))
+    if operators(original) and operators(original)!=operators(translated):raise TranslationFailure('inline_math_changed')
 
 
 def parse_reply(text):
@@ -248,10 +265,15 @@ def translate_units(runtime, source, version, units, *, stats=None):
             b = unit['block']
             row = cached_translation(con, source, version, b)
             originals=unit.get('original_blocks',[b])
+            # Whitespace repair can change a prior S<hash> without changing its
+            # lexical content. Do not supersede an edited older semantic unit.
+            earlier_edit=not (row and row['user_edited']) and any(
+                old['block_id']!=b['id'] and re.sub(r'\s+','',old['source_text'])==re.sub(r'\s+','',b['text'])
+                for old in con.execute("SELECT block_id,source_text FROM translations WHERE source_id=? AND version_id=? AND block_id LIKE 'S%' AND user_edited=1 AND translated_text<>''",(source['id'],version['id'])))
             partial_edit=(not row or not row['user_edited']) and any(con.execute('''SELECT 1 FROM translations
                 WHERE source_id=? AND version_id=? AND block_id=? AND user_edited=1 AND translated_text<>'' ''',
                 (source['id'],version['id'],original['id'])).fetchone() for original in originals if original['id']!=b['id'])
-            if partial_edit:
+            if partial_edit or earlier_edit:
                 unit.update(status='failed',reason='assembled_user_edit_review',translation_error='assembled_user_edit_review')
                 continue
             if row:

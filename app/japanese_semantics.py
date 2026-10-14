@@ -10,9 +10,10 @@ import json
 import re
 import statistics
 import fitz
+from .japanese_extraction import glyph_lines,recover_text,prose_text
 
 ASSEMBLY_VERSION='semantic-1'
-FRONT_ROLES=frozenset({'paper_title','authors','affiliations','contact','bibliographic','marginal_metadata','running_header','footer'})
+FRONT_ROLES=frozenset({'paper_title','authors','affiliations','contact','bibliographic','marginal_metadata','running_header','footer','footnote','page_decoration'})
 METADATA_ROLES=FRONT_ROLES-{'paper_title'}
 BODY_ROLES=frozenset({'abstract_body','paragraph'})
 SECTION=re.compile(r'^(?:\d+(?:\.\d+)*\s+)?(?:Abstract|Introduction|Related Work|Background|Methods?|Methodology|Experiments?|Results?|Discussion|Conclusion|References|Acknowledgments?)\b',re.I)
@@ -57,34 +58,39 @@ def block_lines(page,block):
 def classify_page(page,blocks):
     tagged=deepcopy(blocks)
     width,height=page.cropbox.width,page.cropbox.height
+    glyphs=glyph_lines(page)
     for b in tagged:
         lines,size=block_lines(page,b);b['_font_size']=size
-        # Ingest joins line strings with spaces; source span positions recover
-        # formatting boundaries without changing the source block itself.
-        span_lines=[]
-        for span in (b.get('bbox') or {}).get('spans',[]):
-            y=span['rect'][1]
-            if span_lines and abs(span_lines[-1][0]-y)<3:span_lines[-1][1]+=span['text']
-            else:span_lines.append([y,span['text']])
-        source_lines='\n'.join(x[1] for x in span_lines)
-        if re.sub(r'\s+','',source_lines)==re.sub(r'\s+','',b['text']):b['_line_text']=source_lines
+        source_lines,diagnostic=recover_text(b,glyphs)
+        if source_lines is not None:b['_line_text']=source_lines
+        b['_extraction']=diagnostic
         b['semantic_role']='paragraph' if b['kind']=='para' else 'section_heading' if b['kind']=='heading' else 'scientific_visual'
-        r=rect(b);text=b['text'].strip()
+        r=rect(b);text=restore_line_words(b.get('_line_text',b['text']))
         if b.get('role') in ('figure_caption','table_caption'):b['semantic_role']='caption'
-        elif b.get('role') in ('figure_candidate','table_candidate','equation_candidate'):b['semantic_role']='scientific_visual'
+        elif b.get('role') in ('figure_candidate','table_candidate') or (b.get('role')=='equation_candidate' and not prose_text(text)):b['semantic_role']='scientific_visual'
         elif r and text:
             vertical=any(tuple(line['dir'])!=(1.,0.) for line in lines)
             if vertical and (r.x0<width*.12 or r.x1>width*.88):b['semantic_role']='marginal_metadata'
             elif re.search(r'\barXiv\s*:|\bdoi\s*:|\b(?:Proceedings|Conference|Workshop)\b',text,re.I):b['semantic_role']='bibliographic'
-            elif r.y0>height*.95 and (len(text)<100):b['semantic_role']='footer'
-            elif page.number>0 and r.y1<height*.045 and len(text)<130:b['semantic_role']='running_header'
+            elif (r.y0>height*.88 and re.fullmatch(r'\d{1,4}',text) and abs((r.x0+r.x1)/2-width/2)<width*.14
+                  and not any(other['id']!=b['id'] and other.get('bbox') and other['text'].strip()
+                              and abs(rect(other).y0-r.y0)<size and min(abs(rect(other).x1-r.x0),abs(rect(other).x0-r.x1))<size*3
+                              for other in tagged)):b['semantic_role']='footer'
+            elif r.y0>height*.95 and len(text)<100:b['semantic_role']='footer'
+            elif r.y0>height*.86 and size<=10 and re.match(r'^\d+\s+\S',text):b['semantic_role']='footnote'
+            elif page.number>0 and r.y1<height*.075 and size<=11 and len(text)<130:b['semantic_role']='running_header'
             elif ABSTRACT.fullmatch(text):b['semantic_role']='abstract_heading'
-    visual_regions=[rect(b) for b in tagged if b.get('role') in ('figure_candidate','table_candidate') and rect(b)]
+    # A raised footnote mark can be a separate extraction block. Associate it
+    # with adjacent small prose, never with a page-centred folio or an equation.
     for b in tagged:
-        if (b['semantic_role'] not in FRONT_ROLES|{'caption','scientific_visual'} and rect(b)
-                and b['_font_size']<=11 and len(b['text'])<80 and not b['text'].rstrip().endswith(('.', '?', '!'))
-                and any(r.contains(rect(b)) for r in visual_regions)):
-            b['semantic_role']='scientific_visual'
+        r=rect(b)
+        if not r or r.y0<=height*.86 or b['_font_size']>10:continue
+        text=restore_line_words(b.get('_line_text',b['text']))
+        if not re.fullmatch(r'\d{1,3}',text) or abs((r.x0+r.x1)/2-width/2)<width*.14:continue
+        neighbour=next((other for other in tagged if other is not b and rect(other)
+                        and 0<=rect(other).x0-r.x1<25 and abs(rect(other).y0-r.y0)<12
+                        and other['_font_size']<=10 and len(re.findall(r'[A-Za-z]{2,}',other['text']))>=4),None)
+        if neighbour:b['semantic_role']=neighbour['semantic_role']='footnote'
     candidates=[b for b in tagged if b['text'].strip() and b['semantic_role'] not in METADATA_ROLES|{'caption','scientific_visual'}]
     abstract=next((b for b in candidates if b['semantic_role']=='abstract_heading'),None)
     # First-page title band only. Abstract/numbered section headings are never
@@ -127,9 +133,17 @@ def classify_page(page,blocks):
         role=b['semantic_role']
         if role=='abstract_heading':in_abstract=True;continue
         if role in FRONT_ROLES|{'caption','scientific_visual'}:
-            if role=='scientific_visual' and b['kind'] in ('figure','table'):in_abstract=False
+            if role=='scientific_visual' and b['kind'] in ('figure','table'):
+                # A candidate covering the Abstract must not erase its role or
+                # its protected character count. Genuine separate figures close
+                # the Abstract band; actual section headings always close it.
+                if not any(other is not b and rect(other) and rect(b) and rect(b).intersects(rect(other))
+                           and (prose_text(other.get('_line_text',other['text'])) or
+                                (other.get('semantic_role')=='paragraph' and len(re.findall(r'\b[A-Za-z]{2,}\b',other.get('_line_text',other['text'])))>=4))
+                           for other in tagged):in_abstract=False
             continue
-        heading=bool(SECTION.match(b['text']) and not ABSTRACT.fullmatch(b['text'])) or (
+        text=restore_line_words(b.get('_line_text',b['text']))
+        heading=bool(SECTION.match(text) and not ABSTRACT.fullmatch(text)) or (
             b['kind']=='heading' and b['_font_size']>=body_size*1.15 and len(b['text'])<100)
         if heading:b['semantic_role']='section_heading';in_abstract=False
         else:b['semantic_role']='abstract_body' if in_abstract else 'paragraph'
@@ -229,7 +243,7 @@ def assemble_page(page,units,items):
             for u in captions:consumed.add(u['block']['id'])
             asset['caption_block_ids']=[group['block']['id']]
     # Metadata retains every value/ID, but is kept out of the research flow.
-    for role in ('authors','affiliations','contact','bibliographic','marginal_metadata','running_header','footer'):
+    for role in ('authors','affiliations','contact','bibliographic','marginal_metadata','footnote','running_header','footer','page_decoration'):
         members=sorted((u for u in metadata if u['semantic_role']==role),key=lambda u:(rect(u['block']).y0,rect(u['block']).x0))
         if role=='authors':
             names=[u for u in members if re.search(r'[A-Za-z]{2}',u['block']['text'])]
@@ -286,15 +300,31 @@ def semantic_report(units):
     return [{'id':u['block']['id'],'original_block_ids':[b['id'] for b in source_members(u)],
              'role':u.get('semantic_role'),'group_hash':u.get('group_hash'),
              'assembly_version':ASSEMBLY_VERSION,'status':u['status'],'reason':u['reason'],
-             'translation_id':u.get('translation_id'),'placements':u.get('placements',[])} for u in units]
+             'translation_id':u.get('translation_id'),'placements':u.get('placements',[]),
+             'source_chars':sum(len(re.sub(r'\s+','',b['text'])) for b in source_members(u)),
+             'extraction':{'inferred_spaces':sum(b.get('_extraction',{}).get('inferred_spaces',0) for b in source_members(u)),
+                           'glyph_text_matched':all(b.get('_extraction',{}).get('glyph_text_matched',True) for b in source_members(u)),
+                           'math_font_runs':sum(b.get('_extraction',{}).get('math_font_runs',0) for b in source_members(u))},
+             'protection_reasons':sorted({reason for b in source_members(u) for reason in b.get('_protection_reasons',[])})} for u in units]
 
 
 def coverage(units):
     def measure(selected):
         size=lambda u:sum(len(re.sub(r'\s+','',b['text'])) for b in source_members(u))
+        converted=lambda u:u['status']=='translated' or (bool(u.get('translation_succeeded')) and bool(re.search(r'[\u3040-\u30ff\u3400-\u9fff]',u.get('text',''))))
+        placed=lambda u:bool(u.get('_placement_verified'))
         total=sum(size(u) for u in selected)
-        done=sum(size(u) for u in selected if u['status']=='translated')
-        return {'source_chars':total,'translated_source_chars':done,'ratio':done/total if total else None}
+        done=sum(size(u) for u in selected if converted(u))
+        reasons={}
+        for u in selected:
+            if not converted(u):
+                code=u['reason'] or 'not_translated';reasons[code]=reasons.get(code,0)+size(u)
+        return {'source_chars':total,'translated_source_chars':done,'ratio':done/total if total else None,
+                'candidate_source_chars':sum(size(u) for u in selected if u.get('translation_candidate')),
+                'protected_source_chars':sum(size(u) for u in selected if u['kind']=='visual'),
+                'placed_source_chars':sum(size(u) for u in selected if placed(u)),
+                'placed_translated_source_chars':sum(size(u) for u in selected if placed(u) and u['status']=='translated'),
+                'untranslated_reasons':reasons}
     body=[u for u in units if u.get('semantic_role') in BODY_ROLES]
     title=[u for u in units if u.get('semantic_role')=='paper_title']
     abstract=[u for u in body if u.get('semantic_role')=='abstract_body']

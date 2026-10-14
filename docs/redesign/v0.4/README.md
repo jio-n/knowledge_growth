@@ -76,3 +76,5 @@ T2-02 / T2-03 / T2-06のStructured Brief生成は実装済み。実ChatGPT accou
 - [original_textのclip検証](japanese_clip_quality.md): pixel差0で失敗する不可視Form命令、kind別ポリシー、native-3とWindows再検証。
 
 - [日本語PDFの文章構造・読書品質](japanese_semantic_reflow.md): Semantic Assembly、全文タイトル、Abstract、metadata分離、11pt英文fallback、本文文字数カバレッジ。
+
+- [日本語PDFのAbstract・英文抽出品質](japanese_abstract_reading_quality.md): math/font誤保護、glyph間space、脚注/folio、Abstract文字数ゲート、reflow-3とWindows再検証。
