@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 from . import PARSER_VERSION
 from .acquire import AcquisitionError, digest, identity, official_url
 
-HTML_TAGS = set("article section aside header footer div span p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd figure figcaption table caption thead tbody tfoot tr th td a em strong b i u s sub sup br hr pre code blockquote small abbr img wbr".split())
+HTML_TAGS = set("article section aside header footer div span p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd figure figcaption table caption thead tbody tfoot tr th td a em strong b i u s sub sup br hr pre code blockquote small abbr img wbr cite".split())
 MATH_TAGS = set("math semantics annotation mrow mi mn mo ms mtext mspace msup msub msubsup mfrac msqrt mroot munder mover munderover mtable mtr mtd menclose mpadded mphantom mfenced mmultiscripts mprescripts none".split())
 DROP = set("script style iframe object embed form input button textarea select link meta base noscript template svg canvas video audio source".split())
 

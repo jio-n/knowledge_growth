@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path
 import sys
 from urllib.parse import unquote, urlsplit
@@ -149,6 +150,47 @@ def compare_dom(source, preview):
     return checks, issues
 
 
+def markup_surface_summary(source, acquired):
+    """Classify residual markup without emitting text, URLs or arbitrary attrs.
+
+    This is diagnostic only: unsafe links and unsupported objects remain
+    unresolved until verified independently. Never turn a false negative green.
+    """
+    from urllib.parse import urlsplit
+    from collections import Counter
+    allowed_types = {"image/png", "image/jpeg", "image/gif", "image/webp",
+                     "image/svg+xml", "application/pdf", "text/html"}
+    def scheme(value):
+        value = (value or "").strip()
+        if not value: return "empty"
+        if value.startswith("#"): return "fragment"
+        prefix = urlsplit(value).scheme.lower()
+        if not prefix: return "relative"
+        return prefix if prefix in {"http","https","mailto","data","javascript","ftp"} else "other"
+
+    types, parents, object_links, fallback = Counter(), Counter(), Counter(), Counter()
+    for o in source.find_all("object"):
+        t = (o.get("type") or "").lower().split(";")[0].strip()
+        types[t if t in allowed_types else "unknown"] += 1
+        parent = next((name for name in ("figure", "table", "math", "p", "section")
+                       if o.find_parent(name)), "article")
+        parents[parent] += 1
+        object_links[scheme(o.get("data"))] += 1
+        fallback["has_img"] += bool(o.find("img"))
+        fallback["has_text"] += bool(o.get_text(strip=True))
+    links = Counter(scheme(a.get("href")) for a in source.find_all("a",href=True))
+    regions = Counter()
+    for path in acquired.get("empty_regions", [])[:100]:
+        tags = re.findall(r"([a-z][a-z0-9]*):nth-of-type", str(path))
+        tag = tags[-1] if tags else "unknown"
+        regions[tag if tag in {"div","span","p","figure","table","section","math","a","h2","h3","article"} else "other"] += 1
+    return {"objects": {"count": sum(types.values()),"types":dict(types),
+                        "parent_context":dict(parents),"data_schemes":dict(object_links),
+                        "fallback":dict(fallback)},
+            "links_by_scheme": dict(links),
+            "empty_regions_by_tag": dict(regions)}
+
+
 def audit_export(directory, acquired, replay):
     result = {"audit_version": AUDIT_VERSION, "arxiv_id_version": PINNED,
               "acquisition_status": acquired.get("status", "missing"),
@@ -172,6 +214,7 @@ def audit_export(directory, acquired, replay):
         result["issues"] = ["article_missing"]
         return result
     checks, issues = compare_dom(source, preview)
+    checks["remaining_markup_context"] = markup_surface_summary(source, acquired)
     checks["pinned_version"] = document.get("source", {}).get("arxiv_id_version") == PINNED
     checks["source_hash_matches"] = (
         hashlib.sha256(raw).hexdigest() == document.get("source", {}).get("sha256") == acquired.get("sha256"))

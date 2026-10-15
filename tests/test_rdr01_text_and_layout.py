@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from app.reading_document.acquire import Fetcher
 from app.reading_document.snapshot import snapshot
-from scripts.check_rdr01_live import BROWSER_METRICS_JS, compare_dom, diagnostic_counts, text_delta
+from scripts.check_rdr01_live import BROWSER_METRICS_JS, compare_dom, diagnostic_counts, markup_surface_summary, text_delta
 from tests.fixtures.reading_html_factory import PINNED, html, transport
 
 
@@ -144,3 +144,30 @@ def test_long_identifiers_wrap_but_tables_scroll_locally(tmp_path, width):
             assert page.evaluate("getComputedStyle(document.documentElement).overflowX") != 'hidden'
         finally:
             browser.close()
+
+
+def test_cite_inline_markup_is_preserved_and_does_not_change_text(tmp_path):
+    _, directory, report = export(tmp_path, '<p>See <cite>Model-X</cite> at 91.25%.</p>')
+    assert report['status'] == 'acquired'
+    assert 'cite' not in report.get('removed_markup', {})
+    preview = BeautifulSoup((directory / 'english_preview.html').read_text(), 'lxml')
+    assert preview.cite is not None
+    assert 'See Model-X at 91.25%.' in preview.get_text()
+
+
+def test_remaining_markup_classification_does_not_expose_private_values():
+    original = parse('''
+      <figure><object type="image/svg+xml" data="data:image/svg+xml,PRIVATE_SVG">
+      <span>PRIVATE_OBJECT_TEXT</span></object></figure>
+      <p><a href="mailto:private@example.org">PRIVATE_LINK_TEXT</a>
+      <a href="javascript:private_token()">Other</a></p>''')
+    diagnostics = markup_surface_summary(original, {
+        'empty_regions': ['html:nth-of-type(1) > body:nth-of-type(1) > span:nth-of-type(2)']
+    })
+    assert diagnostics['objects']['types']['image/svg+xml'] == 1
+    assert diagnostics['objects']['parent_context']['figure'] == 1
+    assert diagnostics['objects']['data_schemes']['data'] == 1
+    assert diagnostics['links_by_scheme']['mailto'] == 1
+    assert diagnostics['links_by_scheme']['javascript'] == 1
+    assert diagnostics['empty_regions_by_tag']['span'] == 1
+    assert not any(v in json.dumps(diagnostics) for v in ('PRIVATE_', 'example.org'))
