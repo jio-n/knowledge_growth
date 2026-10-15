@@ -1,0 +1,56 @@
+{
+  "selected_engine": null,
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "ai_calls": 0,
+  "windows_installation": "not_measured; optional engine wheels/models must be tested on Windows",
+  "manual_checks": [
+    "reading order",
+    "omitted content",
+    "figure/caption association",
+    "table cells and values"
+  ],
+  "runs": [
+    {
+      "engine": "docling",
+      "fixture": "two_column.pdf",
+      "sha256": "9990b249e20a03872cc1dcb2c519dd30b1ef061432ec696b6b9922d1ea98ef38",
+      "status": "not_installed",
+      "quality": "not_verified",
+      "elapsed_seconds": null
+    },
+    {
+      "engine": "docling",
+      "fixture": "visual_evidence.pdf",
+      "sha256": "4d184dfdb515f290cb6b6b6b1e5ed0bc72bb621ce4db745299f7622c3edc2b23",
+      "status": "not_installed",
+      "quality": "not_verified",
+      "elapsed_seconds": null
+    },
+    {
+      "engine": "pymupdf4llm",
+      "fixture": "two_column.pdf",
+      "sha256": "9990b249e20a03872cc1dcb2c519dd30b1ef061432ec696b6b9922d1ea98ef38",
+      "status": "extracted",
+      "quality": "not_verified",
+      "elapsed_seconds": 0.0908,
+      "engine_version": "0.0.17",
+      "markdown": "0-pymupdf4llm.md",
+      "characters": 1344,
+      "image_markers": 0,
+      "table_lines": 0
+    },
+    {
+      "engine": "pymupdf4llm",
+      "fixture": "visual_evidence.pdf",
+      "sha256": "4d184dfdb515f290cb6b6b6b1e5ed0bc72bb621ce4db745299f7622c3edc2b23",
+      "status": "extracted",
+      "quality": "not_verified",
+      "elapsed_seconds": 0.0277,
+      "engine_version": "0.0.17",
+      "markdown": "1-pymupdf4llm.md",
+      "characters": 1284,
+      "image_markers": 0,
+      "table_lines": 13
+    }
+  ]
+}

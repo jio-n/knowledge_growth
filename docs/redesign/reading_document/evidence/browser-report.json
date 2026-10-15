@@ -1,0 +1,50 @@
+{
+  "fixture_only": true,
+  "offline": true,
+  "checks": [
+    {
+      "width": 1280,
+      "images": [
+        {
+          "loaded": true,
+          "width": 600
+        }
+      ],
+      "mergedCells": 2,
+      "math": 1,
+      "internalLinks": true,
+      "overflow": false,
+      "pwned": false,
+      "headings": [
+        "Synthetic Reading Document",
+        "Abstract",
+        "1 Introduction",
+        "Appendix A: Reproducibility",
+        "References"
+      ]
+    },
+    {
+      "width": 390,
+      "images": [
+        {
+          "loaded": true,
+          "width": 600
+        }
+      ],
+      "mergedCells": 2,
+      "math": 1,
+      "internalLinks": true,
+      "overflow": false,
+      "pwned": false,
+      "headings": [
+        "Synthetic Reading Document",
+        "Abstract",
+        "1 Introduction",
+        "Appendix A: Reproducibility",
+        "References"
+      ]
+    }
+  ],
+  "remoteRequests": [],
+  "errors": []
+}

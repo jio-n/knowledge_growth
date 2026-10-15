@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 data/
+reading-output/
 .pytest_cache/
 .env
 tests/fixtures/generated/

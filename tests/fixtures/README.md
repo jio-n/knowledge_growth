@@ -55,3 +55,11 @@ user conflict / duplicate importは同一packageと対応する生成DB状態で
 `scripts/smoke_reader_browser.py`で高DPI、ズーム、TextLayer／Evidence、全幅・位置復元、
 canvasの保持数・内部pixel数、描画キャンセル・画面遷移を検証する。
 実論文やPDFバイナリをGitへ追加せず、PyMuPDFでメモリ内に生成する。
+
+## RDR-01 HTML fixture
+
+`reading_html_factory.py`は自作の英文、結合セル付き評価表、MathML/TeX、図とCaption、
+付録・文献を生成する。図もPyMuPDFの標準フォントと描画で作り、外部素材を使わない。
+ID `2601.00001v2` はmock HTTP専用で、実論文の取得を意味しない。
+`scripts/demo_reading_document.py` と独立HTMLテストで使用する。
+MMADの本文・図・PDFや私的資料はfixtureに含めない。

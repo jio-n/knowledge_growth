@@ -23,6 +23,15 @@ Read only the files relevant to the assigned task, in this order:
 Existing architecture contracts remain relevant where v0.4 does not supersede them:
 `docs/architecture/`, `docs/product/`, `docs/decisions/`.
 
+### Reading Document direction (RDR-01)
+
+Read `docs/redesign/reading_document/README.md` for the HTML-first decision and
+its precedence over old PR #9 PDF reproduction instructions. Preserve original
+PDFs; normal body text does not require font/glyph/pixel equality. Prefer explicitly
+version-pinned official arXiv HTML; never infer paper identity from references.
+RDR-01 is a standalone acquisition/English-preview CLI, without DB integration or
+application AI calls. Real MMAD checks stay on the user's local machine.
+
 ## Non-negotiable product constraints
 
 - **Do not require metered API billing for the MVP.**

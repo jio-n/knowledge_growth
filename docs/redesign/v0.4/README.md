@@ -3,6 +3,10 @@
 Status: implementation target  
 Updated: 2026-10-04
 
+2026-10-15 方針変更: [ReadingDocument / RDR-01](../reading_document/README.md)を優先する。
+同版arXiv HTMLの独立取得・構造化・英文previewを追加。通常本文に原font/glyph/pixelの
+一致を要求しない。全文和訳・日本語PDF・既存DB統合は未実施。
+
 Phase 0（T0-01 / T0-02、generated PDF fixtures）は実装・検証済み。
 [baseline・テスト結果・残課題](phase0_baseline.md) と
 [DB migration / backup / 復旧手順](../../development/db_migrations.md) を参照。
