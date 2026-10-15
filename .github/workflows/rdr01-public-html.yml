@@ -1,14 +1,10 @@
 name: RDR-01 public HTML verification
 
-# Explicitly approved one-paper verification on this same-repository PR only.
-# No schedule, no pull_request_target, no secret, no repository writes.
+# A maintainer explicitly starts a live check by adding rdr01-live-check to PR 10.
+# Ordinary pushes do not repeat arXiv downloads. No schedule or repository writes.
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - '.github/workflows/rdr01-public-html.yml'
-      - 'scripts/check_rdr01_live.py'
-      - 'tests/test_rdr01_live_check.py'
+    types: [labeled]
 
 permissions:
   contents: read
@@ -20,6 +16,7 @@ concurrency:
 jobs:
   verify-public-html:
     if: >-
+      github.event.label.name == 'rdr01-live-check' &&
       github.repository == 'jio-n/knowledge_growth' &&
       github.event.pull_request.number == 10 &&
       github.event.pull_request.head.repo.full_name == github.repository &&
