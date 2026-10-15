@@ -1,0 +1,69 @@
+name: RDR-01 public HTML verification
+
+# Explicitly approved one-paper verification on this same-repository PR only.
+# No schedule, no pull_request_target, no secret, no repository writes.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/rdr01-public-html.yml'
+      - 'scripts/check_rdr01_live.py'
+      - 'tests/test_rdr01_live_check.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rdr01-public-html-pr10
+  cancel-in-progress: false
+
+jobs:
+  verify-public-html:
+    if: >-
+      github.repository == 'jio-n/knowledge_growth' &&
+      github.event.pull_request.number == 10 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'spike/reading-document-html-first'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUNBUFFERED: '1'
+      KG_AI_RUNTIME: no_ai
+      KG_DATA_DIR: ${{ runner.temp }}/rdr01-test-db
+    steps:
+      - name: Check out the exact PR head without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Install verification dependencies
+        run: |
+          python -m pip install -r requirements.txt 'fastapi==0.115.14' 'starlette==0.46.2' 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+          python -m pip freeze
+      - name: Run generated-fixture regression tests before accessing arXiv
+        timeout-minutes: 6
+        run: python -m pytest tests/ -q
+      - name: Acquire once, generate preview, audit DOM, and check offline rendering
+        run: >-
+          timeout --signal=TERM 900s python scripts/check_rdr01_live.py
+          --scratch "$RUNNER_TEMP/rdr01-source"
+          --report-dir "$RUNNER_TEMP/rdr01-safe-reports"
+          --browser
+      - name: Save only content-free audit results, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: rdr01-public-html-audit-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/rdr01-safe-reports/live_audit.json
+            ${{ runner.temp }}/rdr01-safe-reports/summary.md
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Remove ephemeral source material
+        if: always()
+        run: rm -rf -- "$RUNNER_TEMP/rdr01-source"
