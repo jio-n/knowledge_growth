@@ -29,7 +29,6 @@ jobs:
     env:
       PYTHONUNBUFFERED: '1'
       KG_AI_RUNTIME: no_ai
-      KG_DATA_DIR: ${{ runner.temp }}/rdr01-test-db
     steps:
       - name: Check out the exact PR head without persistent credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -47,6 +46,8 @@ jobs:
           python -m pip freeze
       - name: Run generated-fixture regression tests before accessing arXiv
         timeout-minutes: 6
+        env:
+          KG_DATA_DIR: ${{ runner.temp }}/rdr01-test-db
         run: python -m pytest tests/ -q
       - name: Acquire once, generate preview, audit DOM, and check offline rendering
         run: >-
