@@ -8,6 +8,7 @@ httpx>=0.27                  # LLM API calls / web fetch / tests
 pymupdf>=1.24                # PDF text extraction
 readability-lxml>=0.8        # web main-content extraction
 beautifulsoup4>=4.12         # HTML -> structured blocks
+pillow>=10.4                # validate bounded local snapshot images
 lxml>=5.2
 lxml_html_clean>=0.1         # required by readability-lxml with lxml>=5
 pytest>=8.0                  # tests (dev)

@@ -10,6 +10,11 @@
 
 # Phase 0A: AI Runtime Foundation（v0.4追加 / P0）
 
+> 2026-10-15: Readerは[ReadingDocument方針](../reading_document/README.md)を優先する。
+> RDR-01の独立取得・構造化・英文previewを実装。Phase 3の既存block/bbox依存は
+> 次の設計時にHTML source_refへ対応させる。RDR-01はPhase 3完了を意味しない。
+> MMAD実データ・同版PDF照合・Docling比較・Windows確認は未検証。
+
 実装・検証・制約: [Phase 0A記録](subscription_first_runtime_foundation.md)。
 
 ## T0A-01 AIRuntime interface

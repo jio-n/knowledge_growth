@@ -1,0 +1,98 @@
+{
+  "task": "RDR-01",
+  "parser_version": "rdr-html-1",
+  "requested_input": "2601.00001v2",
+  "requested_url": "https://arxiv.org/html/2601.00001v2",
+  "arxiv_id_version": "2601.00001v2",
+  "representation": "arxiv_html",
+  "run_at": "2026-10-15T03:32:38.940317+00:00",
+  "offline": false,
+  "ai_calls": 0,
+  "database_opened": false,
+  "pdf_comparison": "not_checked",
+  "registered_pdf_identity": null,
+  "registered_pdf_match": "not_checked",
+  "assets": [
+    {
+      "requested_url": "https://arxiv.org/html/2601.00001v2/figures/pipeline.png",
+      "status": "ok",
+      "resolved_url": "https://arxiv.org/html/2601.00001v2/figures/pipeline.png",
+      "path": "assets/a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc.png",
+      "extension": ".png",
+      "sha256": "a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc",
+      "content_type": "image/png",
+      "acquired_at": "2026-10-15T03:27:13.215931+00:00",
+      "cache_reused": true
+    }
+  ],
+  "unverified": [
+    "Same-version registered PDF content and figure/table comparison",
+    "Source HTML conversion completeness",
+    "MMAD real data",
+    "Windows local execution"
+  ],
+  "cache_reused": true,
+  "source_inventory": {
+    "title": 1,
+    "metadata": 1,
+    "abstract": 1,
+    "heading": 4,
+    "paragraph": 5,
+    "list": 1,
+    "figure": 1,
+    "table": 2,
+    "equation": 2,
+    "footnote": 1,
+    "reference": 1
+  },
+  "block_inventory": {
+    "title": 1,
+    "metadata": 1,
+    "abstract": 1,
+    "heading": 3,
+    "paragraph": 3,
+    "list": 1,
+    "figure": 1,
+    "table": 1,
+    "equation": 1,
+    "footnote": 1,
+    "reference": 1
+  },
+  "duplicate_dom_ids": [],
+  "duplicate_blocks": [],
+  "missing_references": [],
+  "empty_regions": [],
+  "removed_markup": {},
+  "warnings": [],
+  "source_counts": {
+    "paragraphs": 5,
+    "images": 1,
+    "tables": 1,
+    "math": 1
+  },
+  "coverage": "not_established; DOM inventory is not proof of PDF/full-text completeness",
+  "resolved_url": "https://arxiv.org/html/2601.00001v2",
+  "acquired_at": "2026-10-15T03:27:13.189742+00:00",
+  "sha256": "8cda46448eee9d02c55db10906ec279257a792e5d0d3bc5a00dbcf997204c4a5",
+  "version_status": "same_version_html_url",
+  "version_evidence": [
+    {
+      "kind": "resolved_url",
+      "value": "https://arxiv.org/html/2601.00001v2"
+    },
+    {
+      "kind": "link",
+      "value": "https://arxiv.org/html/2601.00001v2"
+    }
+  ],
+  "asset_counts": {
+    "total": 1,
+    "ok": 1,
+    "unresolved": 0
+  },
+  "status": "acquired",
+  "network_events": [],
+  "fixture_only": true,
+  "live_network_verified": false,
+  "fixture_notice": "Original generated HTML/image. Synthetic arXiv ID, mock HTTP; not MMAD."
+}

@@ -1,0 +1,473 @@
+{
+  "schema_version": 1,
+  "parser_version": "rdr-html-1",
+  "title": "Synthetic Reading Document",
+  "metadata": {},
+  "blocks": [
+    {
+      "id": "reading-0",
+      "order": 0,
+      "kind": "title",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "title",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > h1:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper"
+      ],
+      "original_text": "Synthetic Reading Document",
+      "html": "<h1 id=\"source-1\">Synthetic Reading Document</h1>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-1",
+      "order": 1,
+      "kind": "metadata",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": null,
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > div:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper"
+      ],
+      "original_text": "Fixture Author · Original generated material, no real research claims",
+      "html": "<div>Fixture Author · Original generated material, no real research claims</div>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-2",
+      "order": 2,
+      "kind": "abstract",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "abstract",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > div:nth-of-type(2)"
+      },
+      "ancestor_dom_ids": [
+        "paper"
+      ],
+      "original_text": "Abstract\nThis original synthetic article tests a reading document. It retains paragraphs, figures, table cells, and equations.\nThe numbers below are invented test values. No translation or AI service is used.",
+      "html": "<div id=\"source-2\"><h2>Abstract</h2>\n<p id=\"source-3\">This original synthetic article tests a reading document. It retains paragraphs, figures, table cells, and equations.</p>\n<p id=\"source-4\">The numbers below are invented test values. No translation or AI service is used.</p></div>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-3",
+      "order": 3,
+      "kind": "heading",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "S1-title",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > h2:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "1 Introduction",
+      "html": "<h2 id=\"source-6\">1 Introduction</h2>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-4",
+      "order": 4,
+      "kind": "paragraph",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "S1-p1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > p:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "Read in source order. The encoder maps input to output in Figure 1. See Table 1 and [1].",
+      "html": "<p id=\"source-7\">Read in source order. The encoder maps input to output in <a href=\"#source-9\">Figure 1</a>. See <a href=\"#source-11\">Table 1</a> and <a href=\"#source-17\">[1]</a>.</p>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [
+        "#F1",
+        "#T1",
+        "#bib1"
+      ],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-5",
+      "order": 5,
+      "kind": "paragraph",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": null,
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > p:nth-of-type(2)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "Exact values: 91.25%, 0.001, ID-A_7; frozen backbone; few-shot.",
+      "html": "<p>Exact values: 91.25%, 0.001, ID-A_7; frozen backbone; few-shot.</p>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-6",
+      "order": 6,
+      "kind": "list",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "L1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > ul:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "Preserve the first item.Preserve the second item with emphasis.",
+      "html": "<ul id=\"source-8\"><li>Preserve the first item.</li><li>Preserve the second item with <em>emphasis</em>.</li></ul>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-7",
+      "order": 7,
+      "kind": "figure",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "F1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > figure:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "\nFigure 1. Original generated input–encoder–output diagram.",
+      "html": "<figure id=\"source-9\"><img src=\"assets/a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc.png\" alt=\"Input to encoder to output\">\n<figcaption id=\"source-10\"><span>Figure 1.</span> Original generated input–encoder–output diagram.</figcaption></figure>",
+      "asset_refs": [
+        "https://arxiv.org/html/2601.00001v2/figures/pipeline.png"
+      ],
+      "captions": [
+        {
+          "dom_id": "F1-caption",
+          "text": "Figure 1. Original generated input–encoder–output diagram."
+        }
+      ],
+      "labels": [
+        "Figure 1."
+      ],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-8",
+      "order": 8,
+      "kind": "table",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "T1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > figure:nth-of-type(2)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "Table 1. Invented evaluation scores.\nMethodSynthetic benchmarkAccuracyCount\nBaseline89.50200Proposed91.25200",
+      "html": "<figure id=\"source-11\"><figcaption><span>Table 1.</span> Invented evaluation scores.</figcaption>\n<table><thead><tr><th rowspan=\"2\">Method</th><th colspan=\"2\">Synthetic benchmark</th></tr><tr><th>Accuracy</th><th>Count</th></tr></thead>\n<tbody><tr><td>Baseline</td><td>89.50</td><td>200</td></tr><tr><td>Proposed</td><td>91.25</td><td>200</td></tr></tbody></table></figure>",
+      "asset_refs": [],
+      "captions": [
+        {
+          "dom_id": null,
+          "text": "Table 1. Invented evaluation scores."
+        }
+      ],
+      "labels": [
+        "Table 1."
+      ],
+      "references": [],
+      "tables": [
+        {
+          "dom_id": null,
+          "rows": [
+            [
+              {
+                "kind": "th",
+                "text": "Method",
+                "rowspan": "2",
+                "colspan": "1"
+              },
+              {
+                "kind": "th",
+                "text": "Synthetic benchmark",
+                "rowspan": "1",
+                "colspan": "2"
+              }
+            ],
+            [
+              {
+                "kind": "th",
+                "text": "Accuracy",
+                "rowspan": "1",
+                "colspan": "1"
+              },
+              {
+                "kind": "th",
+                "text": "Count",
+                "rowspan": "1",
+                "colspan": "1"
+              }
+            ],
+            [
+              {
+                "kind": "td",
+                "text": "Baseline",
+                "rowspan": "1",
+                "colspan": "1"
+              },
+              {
+                "kind": "td",
+                "text": "89.50",
+                "rowspan": "1",
+                "colspan": "1"
+              },
+              {
+                "kind": "td",
+                "text": "200",
+                "rowspan": "1",
+                "colspan": "1"
+              }
+            ],
+            [
+              {
+                "kind": "td",
+                "text": "Proposed",
+                "rowspan": "1",
+                "colspan": "1"
+              },
+              {
+                "kind": "td",
+                "text": "91.25",
+                "rowspan": "1",
+                "colspan": "1"
+              },
+              {
+                "kind": "td",
+                "text": "200",
+                "rowspan": "1",
+                "colspan": "1"
+              }
+            ]
+          ]
+        }
+      ],
+      "equations": []
+    },
+    {
+      "id": "reading-9",
+      "order": 9,
+      "kind": "equation",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "E1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > div:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "y=Wx+b\ny = W x + b(1)",
+      "html": "<div id=\"source-12\"><math display=\"block\"><semantics><mrow><mi>y</mi><mo>=</mo><mi>W</mi><mi>x</mi><mo>+</mo><mi>b</mi></mrow>\n<annotation encoding=\"application/x-tex\">y = W x + b</annotation></semantics></math><span>(1)</span></div>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [
+        "(1)"
+      ],
+      "references": [],
+      "tables": [],
+      "equations": [
+        {
+          "mathml": "<math display=\"block\"><semantics><mrow><mi>y</mi><mo>=</mo><mi>W</mi><mi>x</mi><mo>+</mo><mi>b</mi></mrow>\n<annotation encoding=\"application/x-tex\">y = W x + b</annotation></semantics></math>",
+          "tex": [
+            "y = W x + b"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading-10",
+      "order": 10,
+      "kind": "footnote",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "note1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(1) > aside:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "S1"
+      ],
+      "original_text": "Footnote: test content only.",
+      "html": "<aside id=\"source-13\">Footnote: test content only.</aside>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-11",
+      "order": 11,
+      "kind": "heading",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": null,
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(2) > h2:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "A1"
+      ],
+      "original_text": "Appendix A: Reproducibility",
+      "html": "<h2>Appendix A: Reproducibility</h2>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-12",
+      "order": 12,
+      "kind": "paragraph",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "A1-p1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(2) > p:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "A1"
+      ],
+      "original_text": "All words and images were generated for this repository.",
+      "html": "<p id=\"source-15\">All words and images were generated for this repository.</p>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-13",
+      "order": 13,
+      "kind": "heading",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": null,
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(3) > h2:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "bib"
+      ],
+      "original_text": "References",
+      "html": "<h2>References</h2>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    },
+    {
+      "id": "reading-14",
+      "order": 14,
+      "kind": "reference",
+      "source_ref": {
+        "representation": "arxiv_html",
+        "dom_id": "bib1",
+        "dom_path": "html:nth-of-type(1) > body:nth-of-type(1) > article:nth-of-type(1) > section:nth-of-type(3) > ul:nth-of-type(1) > li:nth-of-type(1)"
+      },
+      "ancestor_dom_ids": [
+        "paper",
+        "bib"
+      ],
+      "original_text": "[1] Fixture Author. Synthetic reference. 2026. Unrelated ID 2410.09453v3 is not the document identity.",
+      "html": "<li id=\"source-17\">[1] Fixture Author. Synthetic reference. 2026. Unrelated ID 2410.09453v3 is not the document identity.</li>",
+      "asset_refs": [],
+      "captions": [],
+      "labels": [],
+      "references": [],
+      "tables": [],
+      "equations": []
+    }
+  ],
+  "assets": [
+    {
+      "requested_url": "https://arxiv.org/html/2601.00001v2/figures/pipeline.png",
+      "status": "ok",
+      "resolved_url": "https://arxiv.org/html/2601.00001v2/figures/pipeline.png",
+      "path": "assets/a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc.png",
+      "extension": ".png",
+      "sha256": "a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc",
+      "content_type": "image/png",
+      "acquired_at": "2026-10-15T03:27:13.215931+00:00",
+      "cache_reused": true
+    }
+  ],
+  "html": "<article id=\"source-0\">\n<h1 id=\"source-1\">Synthetic Reading Document</h1>\n<div>Fixture Author · Original generated material, no real research claims</div>\n<div id=\"source-2\"><h2>Abstract</h2>\n<p id=\"source-3\">This original synthetic article tests a reading document. It retains paragraphs, figures, table cells, and equations.</p>\n<p id=\"source-4\">The numbers below are invented test values. No translation or AI service is used.</p></div>\n<section id=\"source-5\"><h2 id=\"source-6\">1 Introduction</h2>\n<p id=\"source-7\">Read in source order. The encoder maps input to output in <a href=\"#source-9\">Figure 1</a>. See <a href=\"#source-11\">Table 1</a> and <a href=\"#source-17\">[1]</a>.</p>\n<p>Exact values: 91.25%, 0.001, ID-A_7; frozen backbone; few-shot.</p>\n<ul id=\"source-8\"><li>Preserve the first item.</li><li>Preserve the second item with <em>emphasis</em>.</li></ul>\n<figure id=\"source-9\"><img alt=\"Input to encoder to output\" src=\"assets/a7add607917ed603c99255056fcc9b5936a90093c2d4c9c9d3f22003005703dc.png\"/>\n<figcaption id=\"source-10\"><span>Figure 1.</span> Original generated input–encoder–output diagram.</figcaption></figure>\n<figure id=\"source-11\"><figcaption><span>Table 1.</span> Invented evaluation scores.</figcaption>\n<table><thead><tr><th rowspan=\"2\">Method</th><th colspan=\"2\">Synthetic benchmark</th></tr><tr><th>Accuracy</th><th>Count</th></tr></thead>\n<tbody><tr><td>Baseline</td><td>89.50</td><td>200</td></tr><tr><td>Proposed</td><td>91.25</td><td>200</td></tr></tbody></table></figure>\n<div id=\"source-12\"><math display=\"block\"><semantics><mrow><mi>y</mi><mo>=</mo><mi>W</mi><mi>x</mi><mo>+</mo><mi>b</mi></mrow>\n<annotation encoding=\"application/x-tex\">y = W x + b</annotation></semantics></math><span>(1)</span></div>\n<aside id=\"source-13\">Footnote: test content only.</aside>\n</section>\n<section id=\"source-14\"><h2>Appendix A: Reproducibility</h2><p id=\"source-15\">All words and images were generated for this repository.</p></section>\n<section id=\"source-16\"><h2>References</h2><ul><li id=\"source-17\">[1] Fixture Author. Synthetic reference. 2026. Unrelated ID 2410.09453v3 is not the document identity.</li></ul></section>\n</article>",
+  "source": {
+    "arxiv_id_version": "2601.00001v2",
+    "resolved_url": "https://arxiv.org/html/2601.00001v2",
+    "representation": "arxiv_html",
+    "sha256": "8cda46448eee9d02c55db10906ec279257a792e5d0d3bc5a00dbcf997204c4a5",
+    "version_evidence": [
+      {
+        "kind": "resolved_url",
+        "value": "https://arxiv.org/html/2601.00001v2"
+      },
+      {
+        "kind": "link",
+        "value": "https://arxiv.org/html/2601.00001v2"
+      }
+    ],
+    "registered_pdf_match": "not_checked",
+    "requested_url": "https://arxiv.org/html/2601.00001v2",
+    "acquired_at": "2026-10-15T03:27:13.189742+00:00",
+    "registered_pdf_identity": null,
+    "fixture_only": true
+  }
+}
