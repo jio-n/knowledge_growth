@@ -1,5 +1,31 @@
 # RDR-01: 公開MMAD HTMLの一回検証
 
+
+## 最新追試（2026-10-16 JSTに向けた検査）
+
+PR #10の変更を加えた状態で、実際の公開MMAD v3 HTMLを再取得し、runner内だけで監査した。登録PDFとの照合・AI翻訳は未実施。
+
+| GitHub Actions | commit | 全pytest | 実MMAD監査 |
+|---|---|---|---|
+| [run #4](https://github.com/jio-n/knowledge_growth/actions/runs/38770445639) | `65c5085` | 402 passed | 本文45/45一致、全画像15/15取得・表示、幅390pxで横あふれなし、未対応markupで要確認 |
+| [run #5](https://github.com/jio-n/knowledge_growth/actions/runs/38772223070) | `e5f70fc` | 404 passed | 45段落・全見出し・25キャプション・922表セルが順序と文字列一致、画像15/15、browser正常。依然要確認 |
+
+最新監査の「不完全」は通常本文ではなく、次の残存事項である。いずれも安全確認なしに単純な成功扱いへ変更しない。
+
+- **科学的な図表の欠落リスク**: `<object type=image/svg+xml>` がFigure内に1件あり、relative sourceを参照し、埋め込みfallback画像もfallback文字もない。現在は未対応・原PDF確認の案内を表示している。これは図表の中身が失われる可能性があり、RDR-01の受入前に原物表示／ローカルPDF fallbackを要検討。
+- **メールリンク3件**: `mailto:` hrefを安全方針でリンクとしては除去している（表示テキストは保持）。外部HTTPなどを無条件許可しない。
+- **空領域1件**: 表（table）の空要素候補。表セル922件の文字列・順序と結合状態は元HTMLと一致。現時点でこの空要素が意味を持つかは未判定。
+- 前回69件の `cite` は安全なインライン表現として保持し、追加検査では除去0件となった。
+- Abstractは原HTMLとPreviewの内容が一致。MathMLタグは当該原HTMLに0件で、数式一般の正確さは別検証。
+
+rdr-live-2の安全診断から、元HTMLの画像15、Figure25、Table18、参照切れ0、warning0、p45/45一致、オフライン再利用・画像15/15表示・390/1280px横あふれ0を確認。GitHub Actionsのworkflow全体が failure なのは、`conversion_incomplete` を意図的にfail-closedしているためで、通信失敗ではない。
+
+前回の個別不具合（段落の文字ノード境界・スマートフォン横あふれ）は解消した。**現在の最大課題は未対応SVG図表1件の閲覧であり、次の判断ではテキスト抽出処理の小修正を繰り返さず、科学的素材の保持／原PDF fallbackを検討する。**
+
+この追試のpublic artifactは数値・状態・安全な分類のみ。原HTML、本文、実図表、preview画像、登録PDF、認証情報は含めていない。
+
+
+
 ユーザーの2026-10-15の明示承認により、公開MMAD `2410.09453v3` の取得・英文preview生成・検査をGitHub Actionsで実行した。従来の「実MMADはローカルのみ」という制約に対する限定的な追加承認である。ユーザーの登録PDF、SQLite、原文研究資料、認証情報にはアクセスしていない。PR #9とmainは変更・mergeしていない。実AI翻訳、日本語PDF、DB統合は今回も対象外。
 
 ## 実行結果（2026-10-15）
@@ -70,7 +96,7 @@ python -m pytest tests/test_rdr01_live_check.py -q
 
 ## 次の判断
 
-実データの取得経路は動作した。現時点ではRDR-01受入を確定しない。p要素の差分とconversion_incompleteの内訳、390px横あふれの原因を切り分ける。HTMLの取得成功を論文全文や原PDFの完全保持と同一視しない。従来のglyph/crop処理へ戻す理由はない。
+実データの取得経路は動作した。追試で段落差分と390px横あふれを解消したが、Figure内のSVG1件は未表示のためRDR-01受入を確定しない。HTMLの取得成功を論文全文や原PDFの完全保持と同一視しない。従来のglyph/crop処理へ戻す理由はない。
 
 実AI翻訳、登録済みPDFとの同版・内容照合、Windows、Docling比較は今回未実施。PR #9/#10はDraft・未mergeのまま。
 
