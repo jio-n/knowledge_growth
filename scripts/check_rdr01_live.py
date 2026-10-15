@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from difflib import SequenceMatcher
 from contextlib import redirect_stderr, redirect_stdout
 import hashlib
 import io
@@ -16,17 +17,75 @@ from pathlib import Path
 import sys
 from urllib.parse import unquote, urlsplit
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 PINNED = "2410.09453v3"
-AUDIT_VERSION = "rdr-live-1"
+AUDIT_VERSION = "rdr-live-2"
+
+
+# No artificial spaces at inline tag boundaries: <b>multi</b>modal is
+# "multimodal", not "multi modal". Real whitespace, block boundaries and
+# explicit line breaks remain significant; numbers/negation are not filtered.
+TEXT_BOUNDARIES = frozenset("article section aside header footer div p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd figure figcaption table caption thead tbody tfoot tr th td pre blockquote".split())
 
 
 def text(node):
-    return " ".join(node.get_text(" ", strip=True).split())
+    fragments = []
+    def visit(current):
+        if isinstance(current, Comment):
+            return
+        if isinstance(current, NavigableString):
+            fragments.append(str(current))
+        elif isinstance(current, Tag):
+            if current.name in {"script", "style", "template"}:
+                return
+            # wbr has no separator. libxml may nest following text under it,
+            # so visit its children as well rather than discarding that text.
+            boundary = current.name in TEXT_BOUNDARIES or current.name == "br"
+            if boundary:
+                fragments.append("\n")
+            for child in current.children:
+                visit(child)
+            if boundary:
+                fragments.append("\n")
+    visit(node)
+    return " ".join("".join(fragments).split())
+
+
+def text_delta(source, preview, index):
+    """Bounded numeric diagnostics only; never emit either text or its hash."""
+    result = {"index": index, "source_chars": len(source), "preview_chars": len(preview),
+              "same_character_multiset": Counter(source) == Counter(preview)}
+    if max(len(source), len(preview)) > 10000:
+        result["edit_count_status"] = "size_limit"
+        return result
+    deleted = inserted = 0
+    for operation, a, b, c, d in SequenceMatcher(None, source, preview, autojunk=True).get_opcodes():
+        if operation in {"delete", "replace"}:
+            deleted += b - a
+        if operation in {"insert", "replace"}:
+            inserted += d - c
+    result.update(edit_count_status="measured", deleted_chars=deleted, inserted_chars=inserted)
+    return result
+
+
+def diagnostic_counts(acquired):
+    # Arbitrary tag names/exception payloads in raw reports must not enter the
+    # public Actions artifact. Only a fixed vocabulary and numeric counts do.
+    vocabulary = frozenset("wbr cite q mark dfn samp var time script style iframe object embed form input button textarea select link meta base noscript template svg canvas video audio source unsafe_link".split())
+    removed = Counter()
+    for kind, count in acquired.get("removed_markup", {}).items():
+        if isinstance(count, int) and not isinstance(count, bool) and count > 0:
+            removed[kind if kind in vocabulary else "other_markup"] += count
+    return {"removed_markup": dict(removed),
+            "duplicate_dom_id_count": len(acquired.get("duplicate_dom_ids", [])),
+            "duplicate_block_count": len(acquired.get("duplicate_blocks", [])),
+            "empty_region_count": len(acquired.get("empty_regions", [])),
+            "warning_count": len(acquired.get("warnings", [])),
+            "missing_reference_count": len(acquired.get("missing_references", []))}
 
 
 def compare_dom(source, preview):
@@ -37,10 +96,25 @@ def compare_dom(source, preview):
     """
     issues, checks = [], {}
     for tag in ("h1", "h2", "h3", "p", "li", "figcaption", "th", "td"):
-        a = [text(n) for n in source.find_all(tag)]
-        b = [text(n) for n in preview.find_all(tag)]
+        original_nodes = source.find_all(tag)
+        rendered_nodes = preview.find_all(tag)
+        a = [text(n) for n in original_nodes]
+        b = [text(n) for n in rendered_nodes]
+        legacy_a = [" ".join(n.get_text(" ", strip=True).split()) for n in original_nodes]
+        legacy_b = [" ".join(n.get_text(" ", strip=True).split()) for n in rendered_nodes]
+        changed = [i for i, (left, right) in enumerate(zip(a, b)) if left != right]
+        boundary_only = [i for i, (left, right) in enumerate(zip(a, b))
+                         if left == right and legacy_a[i] != legacy_b[i]]
         checks[tag] = {"source_count": len(a), "preview_count": len(b),
-                       "order_and_text_match": a == b}
+                       "order_and_text_match": a == b,
+                       "comparison": "html_text_stream_v1",
+                       "legacy_order_and_text_match": legacy_a == legacy_b,
+                       "changed_at_same_position": len(changed),
+                       "unpaired_source_nodes": max(0, len(a) - len(b)),
+                       "unpaired_preview_nodes": max(0, len(b) - len(a)),
+                       "node_boundary_only_count": len(boundary_only),
+                       "difference_details": [text_delta(a[i], b[i], i) for i in changed[:20]],
+                       "difference_details_truncated": len(changed) > 20}
         if a != b:
             issues.append(tag + "_text_or_order_changed")
     a = [str(n.get("rowspan", "1")) + ":" + str(n.get("colspan", "1"))
@@ -124,6 +198,7 @@ def audit_export(directory, acquired, replay):
         issues.append("image_assets_incomplete")
     checks["acquisition_warning_count"] = len(acquired.get("warnings", []))
     checks["missing_reference_count"] = len(acquired.get("missing_references", []))
+    checks["conversion_diagnostics"] = diagnostic_counts(acquired)
     if acquired.get("status") == "conversion_incomplete":
         issues.append("conversion_incomplete")
     checks["offline_replay"] = {
@@ -136,6 +211,49 @@ def audit_export(directory, acquired, replay):
     result.update(checks=checks, issues=sorted(set(issues)),
                   verdict="needs_review" if issues else "structural_checks_passed")
     return result
+
+
+# Source-free diagnostics identify whether the page itself overflows or a wide
+# table/pre/math is safely contained in a local horizontal scroll area.
+BROWSER_METRICS_JS = """() => {
+    const safeTags = new Set(['header','main','article','section','div','span','p','a',
+        'h1','h2','h3','h4','h5','h6','ul','ol','li','table','thead','tbody','tr','th',
+        'td','figure','figcaption','caption','img','math','pre','code','blockquote']);
+    const all = [...document.querySelectorAll('header *, main *')];
+    const round = value => Math.round(value * 100) / 100;
+    const inLocalScroller = node => {
+        for (let p = node.parentElement; p; p = p.parentElement) {
+            const rect = p.getBoundingClientRect();
+            if (['auto', 'scroll'].includes(getComputedStyle(p).overflowX) &&
+                rect.left >= -1 && rect.right <= innerWidth + 1) return true;
+        }
+        return false;
+    };
+    const offenders = all.map((node, index) => ({node, index}))
+        .filter(({node}) => {
+            const r = node.getBoundingClientRect();
+            return (r.right > innerWidth + 1 || r.left < -1) && !inLocalScroller(node);
+        });
+    return {
+        width: innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        images: document.querySelectorAll('main img').length,
+        loadedImages: [...document.querySelectorAll('main img')].filter(i => i.complete && i.naturalWidth > 0).length,
+        math: document.querySelectorAll('main math').length,
+        horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
+        articlePresent: !!document.querySelector('main article'),
+        overflowElementCount: offenders.length,
+        overflowElements: offenders.slice(0,20).map(({node, index}) => {
+            const r = node.getBoundingClientRect(), name = node.tagName.toLowerCase();
+            return {index, tag: safeTags.has(name) ? name : 'other',
+                left: round(r.left), right: round(r.right), width: round(r.width),
+                clientWidth: node.clientWidth, scrollWidth: node.scrollWidth};
+        }),
+        overflowDetailsTruncated: offenders.length > 20,
+        localHorizontalScrollers: all.filter(n =>
+            ['auto','scroll'].includes(getComputedStyle(n).overflowX) && n.scrollWidth > n.clientWidth + 1).length
+    };
+}"""
 
 
 def browser_check(directory):
@@ -161,14 +279,7 @@ def browser_check(directory):
             page.set_viewport_size({"width": width, "height": 1000})
             page.goto("https://rdr01.invalid/english_preview.html", wait_until="load")
             page.evaluate("Promise.all(Array.from(document.images, i => i.decode().catch(() => null)))")
-            checks.append(page.evaluate("""() => ({
-                width: innerWidth,
-                images: document.querySelectorAll('main img').length,
-                loadedImages: [...document.querySelectorAll('main img')].filter(i => i.complete && i.naturalWidth > 0).length,
-                math: document.querySelectorAll('main math').length,
-                horizontalOverflow: document.documentElement.scrollWidth > innerWidth + 1,
-                articlePresent: !!document.querySelector('main article')
-            })"""))
+            checks.append(page.evaluate(BROWSER_METRICS_JS))
         browser.close()
     return {"viewports": checks, "page_error_count": len(errors),
             "blocked_request_count": len(violations),

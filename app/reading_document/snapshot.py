@@ -16,12 +16,13 @@ from .acquire import AcquisitionError, Fetcher, digest, identity, official_url
 from .parse import parse_html
 
 CSS = """
-body{margin:0;background:#f3f4f6;color:#172033;font:18px/1.7 Georgia,serif}
-header,main{max-width:960px;margin:auto;padding:24px}header{font:15px/1.6 system-ui}
-main{background:white}h1,h2,h3{line-height:1.25}figure{margin:28px 0}img{max-width:100%;height:auto}
-table{border-collapse:collapse;display:block;overflow-x:auto;max-width:100%;font-size:15px}
+*,*::before,*::after{box-sizing:border-box}
+body{overflow-wrap:anywhere;margin:0;background:#f3f4f6;color:#172033;font:18px/1.7 Georgia,serif}
+header,main{width:100%;max-width:960px;margin:auto;padding:24px}header{font:15px/1.6 system-ui}
+main{background:white;min-width:0}article,section,figure{min-width:0;max-width:100%}h1,h2,h3{line-height:1.25}figure{margin:28px 0}img{max-width:100%;height:auto}
+table{overflow-wrap:normal;word-break:normal;border-collapse:collapse;display:block;overflow-x:auto;max-width:100%;font-size:15px}
 td,th{padding:6px 12px;border:1px solid #ccd2db}figcaption,caption{font-size:16px;text-align:left}
-math[display=block]{display:block;overflow-x:auto;margin:20px 0}a{color:#175ab0}
+math[display=block]{max-width:100%;overflow-wrap:normal;display:block;overflow-x:auto;margin:20px 0}a{color:#175ab0}
 .missing{display:block;background:#fff0df;border:1px solid #b96013;padding:12px}
 pre{overflow:auto} :target{outline:2px solid #d49e26} @media(max-width:600px){main{padding:16px}body{font-size:17px}}
 """

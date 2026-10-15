@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup, Comment, NavigableString, Tag
 from . import PARSER_VERSION
 from .acquire import AcquisitionError, digest, identity, official_url
 
-HTML_TAGS = set("article section aside header footer div span p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd figure figcaption table caption thead tbody tfoot tr th td a em strong b i u s sub sup br hr pre code blockquote small abbr img".split())
+HTML_TAGS = set("article section aside header footer div span p h1 h2 h3 h4 h5 h6 ul ol li dl dt dd figure figcaption table caption thead tbody tfoot tr th td a em strong b i u s sub sup br hr pre code blockquote small abbr img wbr".split())
 MATH_TAGS = set("math semantics annotation mrow mi mn mo ms mtext mspace msup msub msubsup mfrac msqrt mroot munder mover munderover mtable mtr mtd menclose mpadded mphantom mfenced mmultiscripts mprescripts none".split())
 DROP = set("script style iframe object embed form input button textarea select link meta base noscript template svg canvas video audio source".split())
 
@@ -146,6 +146,10 @@ def parse_html(raw, requested, resolved, load_asset):
                 return f'<span class="missing" role="img">[Missing image: {escape(node.get("alt", source))}]</span>'
             attrs.update(src=asset["path"], alt=node.get("alt", "Original figure"))
         attr_html = "".join(f' {k}="{escape(str(v), quote=True)}"' for k, v in attrs.items())
+        if name == "wbr":
+            # libxml may nest subsequent text under this HTML5 void element.
+            # Keep those children, but emit them AFTER a self-closing marker.
+            return f"<wbr{attr_html}/>{children()}"
         if name in ("br", "hr", "img"): return f"<{name}{attr_html}>"
         return f"<{name}{attr_html}>{children()}</{name}>"
 
