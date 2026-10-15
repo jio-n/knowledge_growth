@@ -48,7 +48,8 @@ jobs:
         timeout-minutes: 6
         env:
           KG_DATA_DIR: ${{ runner.temp }}/rdr01-test-db
-        run: python -m pytest tests/ -q
+        # Existing fixtures set KG_LLM_PROVIDER=mock; do not override them.
+        run: env -u KG_AI_RUNTIME python -m pytest tests/ -q
       - name: Acquire once, generate preview, audit DOM, and check offline rendering
         run: >-
           timeout --signal=TERM 900s python scripts/check_rdr01_live.py
